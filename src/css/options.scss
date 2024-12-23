@@ -1,1 +1,13 @@
 @import '~sweetalert2/dist/sweetalert2.css';
+
+fieldset { border-radius: 5px !important; margin-bottom: 20px; }
+
+fieldset > div {
+  margin-left: 5px !important;
+}
+
+legend {
+  font-size: 1.2em;
+  padding: 0 5px;
+  margin-left: 0px;
+}
