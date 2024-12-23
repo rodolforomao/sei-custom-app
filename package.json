@@ -5,7 +5,7 @@
   "main": "index.js",
   "browserslist": "defaults",
   "scripts": {
-    "webpack:dev": "NODE_ENV=development npx webpack --config webpack.config.js",
+    "webpack:dev": "cross-env NODE_ENV=development npx webpack --config webpack.config.js",
     "webpack:dev:watch": "NODE_ENV=development npx webpack --config webpack.config.dev.watch.js --watch",
     "webpack:prod": "NODE_ENV=production npx webpack --config webpack.config.prod.js",
     "webpack:test": "NODE_ENV=test npx webpack --config webpack.config.js",
@@ -53,7 +53,6 @@
     "jest-styled-components": "^7.1.1",
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.7.2",
-    "node-sass": "^7.0.3",
     "postcss": "^8.4.21",
     "postcss-loader": "^6.2.1",
     "posthtml": "^0.16.6",
@@ -67,6 +66,7 @@
     "react-datepicker": "^4.8.0",
     "react-dom": "^17.0.2",
     "react-toggle-switch": "^3.0.4",
+    "sass": "^1.81.0",
     "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.6",
@@ -82,6 +82,7 @@
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@testing-library/react": "^12.1.5",
+    "cross-env": "^7.0.3",
     "react-refresh": "^0.11.0"
   }
 }
