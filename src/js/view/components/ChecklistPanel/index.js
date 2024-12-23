@@ -42,7 +42,7 @@ const ChecklistPanelContainer = ({ cardID, onClose }) => {
 
   const udpateChecklistItemPosition = async (checklistItemID, position) => {
     try {
-      await api.updateCardChecklistItem(cardID, checklistItemID, { pos: position });
+      await api.updateCardChecklistItemPosition(cardID, checklistItemID, { pos: position });
     } catch (e) {
       alert.error('Não foi possível alterar a ordem do item do checklist.');
     }

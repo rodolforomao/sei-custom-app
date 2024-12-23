@@ -80,16 +80,21 @@ const routesId = {
     },
     updateCardChecklistItem: {
         id: 15,
-        shortdesc: "Atualizar item de checklist",
-        longdesc: "Rota utilizada para atualizar um item de checklist."
+        shortdesc: "Atualizar item do checklist",
+        longdesc: "Rota utilizada para atualizar um item do checklist."
+    },
+    updateCardChecklistItemPosition: {
+        id: 16,
+        shortdesc: "Atualizar posição de item do checklist",
+        longdesc: "Rota utilizada para atualizar a posição de um item do checklist."
     },
     deleteCardChecklistItem: {
-        id: 16,
+        id: 17,
         shortdesc: "Deletar item de checklist",
         longdesc: "Rota utilizada para deletar um item de checklist."
     },
     deleteCardChecklist: {
-        id: 17,
+        id: 18,
         shortdesc: "Deletar checklist",
         longdesc: "Rota utilizada para deletar um checklist."
     },

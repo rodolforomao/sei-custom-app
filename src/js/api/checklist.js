@@ -22,6 +22,11 @@ export const updateCardChecklistItem = (cardID, checkItemID, opts) => {
   return doRequestAPI(routesId.updateCardChecklistItem.id, new DataTransfer().setCardId(cardID).setCardChecklistItemId(checkItemID).setCardChecklistItemName(opts.name).setCardChecklistItemState(opts.state));
 };
 
+/* atualizar item do checklist */
+export const updateCardChecklistItemPosition = (cardID, checkItemID, opts) => {
+  return doRequestAPI(routesId.updateCardChecklistItem.id, new DataTransfer().setCardId(cardID).setCardChecklistItemId(checkItemID).setCardChecklistItemPos(opts.pos));
+};
+
 /* remover item do checklist */
 export const deleteCardChecklistItem = (checklistID, checkItemID) => {
   return doRequestAPI(routesId.deleteCardChecklistItem.id, new DataTransfer().setCardChecklistId(checklistID).setCardChecklistItemId(checkItemID));
