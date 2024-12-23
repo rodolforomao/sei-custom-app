@@ -1,4 +1,6 @@
+import axios from 'axios';
 import auth from './auth.js';
+import { getRoute } from 'model/routes_store.js';
 
 /**
  * Se estivermos no ambiente teste (e2e ou playground),
@@ -10,6 +12,19 @@ if (process.env.NODE_ENV === 'test' || process.env.MOCKED_API === 'true') {
   window.MockedTrelloApi = MockedApi;
   MockedApi.setup();
 }
+
+export const doRequestAPI = async (routeId, dataTransfer) => {
+  const route = await getRoute(routeId);
+  const url = dataTransfer.transformString(route.url);
+  console.log("URL: " + url);
+  const obj = JSON.parse(dataTransfer.transformString(route.body));
+  console.log("OBJ: %o", obj);
+  const verb = route.verb;
+  console.log("VERB: " + verb);
+  Object.assign(obj, auth.getCredentials());
+  // Faz a requisição HTTP usando o verbo indicado
+  return axios[verb.toLowerCase()](url, { params: obj });
+};
 
 export const setCredentials = auth.setCredentials;
 export const getCredentials = auth.getCredentials;
