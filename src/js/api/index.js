@@ -16,11 +16,8 @@ if (process.env.NODE_ENV === 'test' || process.env.MOCKED_API === 'true') {
 export const doRequestAPI = async (routeId, dataTransfer) => {
   const route = await getRoute(routeId);
   const url = dataTransfer.transformString(route.url);
-  console.log("URL: " + url);
   const obj = JSON.parse(dataTransfer.transformString(route.body));
-  console.log("OBJ: %o", obj);
   const verb = route.verb;
-  console.log("VERB: " + verb);
   Object.assign(obj, auth.getCredentials());
   // Faz a requisição HTTP usando o verbo indicado
   return axios[verb.toLowerCase()](url, { params: obj });
