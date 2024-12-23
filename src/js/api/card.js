@@ -1,74 +1,35 @@
-import axios from 'axios';
-import auth from './auth.js';
+import DataTransfer from '../model/datatransfer.js';
+import routesId from '../model/routes_id.js';
+import { doRequestAPI } from './index.js';
 
 export const searchCards = (processNumber) => {
-  const url = 'https://api.trello.com/1/search';
-
-  let description = 'SEI ';
-
-  if (processNumber) description += processNumber;
-
-  let params = Object.assign({}, auth.getCredentials(), {
-    query: `description:${description} is:open`,
-    modelTypes: 'cards',
-    card_fields: 'name,desc,labels,id,due,dueComplete,shortUrl,idChecklists',
-    cards_limit: '1000',
-    card_board: 'true',
-    card_list: 'true',
-  });
-
-  return axios.get(url, { params: params });
+  return doRequestAPI(routesId.searchCards.id, new DataTransfer().setCardDesc(processNumber));
 };
 
 export const searchBoardCards = (trelloBoard) => {
-  const url = `https://api.trello.com/1/boards/${trelloBoard.id}/lists`;
-
-  let params = Object.assign({}, auth.getCredentials(), {
-    cards: 'open',
-    filter: 'open',
-    card_fields: 'name,desc,labels,id,due,dueComplete,shortUrl,idChecklists',
-  });
-
-  return axios.get(url, { params: params });
+  return doRequestAPI(routesId.searchBoardCards.id, new DataTransfer().setBoardId(trelloBoard.id));
 };
 
 export const getCardData = (cardID) => {
-  const url = 'https://api.trello.com/1/cards/' + cardID;
-
-  let params = Object.assign({}, auth.getCredentials(), {
-    fields: 'name,desc,labels,id,due,dueComplete,shortUrl,idChecklists',
-    board: 'true',
-    list: 'true',
-  });
-
-  return axios.get(url, { params: params });
+  return doRequestAPI(routesId.getCardData.id, new DataTransfer().setCardId(cardID));
 };
 
 export const createCard = (opts) => {
-  const url = 'https://api.trello.com/1/cards';
-
-  let params = Object.assign({}, auth.getCredentials(), {
-    name: opts.name,
-    desc: opts.desc,
-    pos: 'bottom',
-    idList: opts.defaultList.id,
-  });
-
-  return axios.post(url, params);
+  return doRequestAPI(routesId.createCard.id, new DataTransfer().setCardName(opts.name).setCardDesc(opts.desc).setCardList(opts.defaultList));
 };
 
 export const updateCard = (cardID, opts) => {
-  const url = 'https://api.trello.com/1/cards/' + cardID;
-
-  let params = Object.assign({}, auth.getCredentials(), opts);
-
-  return axios.put(url, params);
+  const dataTransfer = new DataTransfer()
+                        .setCardDesc(opts.desc)
+                        .setCardName(opts.name)
+                        .setCardDue(opts.due)
+                        .setCardDueComplete(opts.dueComplete)
+                        .setListId(opts.idList)
+                        .setBoardId(opts.idBoard);
+  
+  return doRequestAPI(routesId.updateCard.id, dataTransfer);
 };
 
 export const deleteCard = (cardID) => {
-  const url = 'https://api.trello.com/1/cards/' + cardID;
-
-  let params = Object.assign({}, auth.getCredentials());
-
-  return axios.delete(url, { params: params });
+  return doRequestAPI(routesId.deleteCard.id, new DataTransfer().setCardId(cardID));
 };

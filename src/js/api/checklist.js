@@ -1,49 +1,33 @@
-import axios from 'axios';
-import auth from './auth.js';
+import DataTransfer from '../model/datatransfer.js';
+import routesId from '../model/routes_id.js';
+import { doRequestAPI } from './index.js';
 
 /* obter checklists */
 export const getCardChecklistData = (cardID) => {
-  const url = `https://api.trello.com/1/cards/${cardID}/checklists`;
-
-  let params = Object.assign({}, auth.getCredentials(), {
-    checkItems: 'all',
-    checkItem_fields: 'name,pos,state',
-  });
-
-  return axios.get(url, { params: params });
+  return doRequestAPI(routesId.getCardChecklistData.id, new DataTransfer().setCardId(cardID));
 };
 
 /* cria uma checklist */
 export const createCardChecklist = (cardID, checklistName) => {
-  const url = `https://api.trello.com/1/checklists`;
-  let params = Object.assign({}, auth.getCredentials(), { idCard: cardID, name: checklistName });
-  return axios.post(url, params);
+  return doRequestAPI(routesId.createCardChecklist.id, new DataTransfer().setCardId(cardID).setCardChecklistName(checklistName));
 };
 
 /* adicionar item ao checklist */
 export const createCardChecklistItem = (checklistID, opts) => {
-  const url = `https://api.trello.com/1/checklists/${checklistID}/checkItems`;
-  let params = Object.assign({}, auth.getCredentials(), opts);
-  return axios.post(url, params);
+  return doRequestAPI(routesId.createCardChecklistItem.id, new DataTransfer().setCardChecklistId(checklistID).setCardChecklistItemName(opts.name).setCardChecklistItemState(opts.state));
 };
 
 /* atualizar item do checklist */
 export const updateCardChecklistItem = (cardID, checkItemID, opts) => {
-  const url = `https://api.trello.com/1/cards/${cardID}/checkItem/${checkItemID}`;
-  let params = Object.assign({}, auth.getCredentials(), opts);
-  return axios.put(url, params);
+  return doRequestAPI(routesId.updateCardChecklistItem.id, new DataTransfer().setCardId(cardID).setCardChecklistItemId(checkItemID).setCardChecklistItemName(opts.name).setCardChecklistItemState(opts.state));
 };
 
 /* remover item do checklist */
 export const deleteCardChecklistItem = (checklistID, checkItemID) => {
-  const url = `https://api.trello.com/1/checklists/${checklistID}/checkItems/${checkItemID}`;
-  let params = Object.assign({}, auth.getCredentials());
-  return axios.delete(url, { params: params });
+  return doRequestAPI(routesId.deleteCardChecklistItem.id, new DataTransfer().setCardChecklistId(checklistID).setCardChecklistItemId(checkItemID));
 };
 
 /* remover uma checklist */
 export const deleteCardChecklist = (checklistID) => {
-  const url = `https://api.trello.com/1/checklists/${checklistID}`;
-  let params = Object.assign({}, auth.getCredentials());
-  return axios.delete(url, { params: params });
+  return doRequestAPI(routesId.deleteCardChecklist.id, new DataTransfer().setCardChecklistId(checklistID));
 };
