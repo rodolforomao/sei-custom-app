@@ -24,7 +24,7 @@ export const updateCardChecklistItem = (cardID, checkItemID, opts) => {
 
 /* atualizar item do checklist */
 export const updateCardChecklistItemPosition = (cardID, checkItemID, opts) => {
-  return doRequestAPI(routesId.updateCardChecklistItem.id, new DataTransfer().setCardId(cardID).setCardChecklistItemId(checkItemID).setCardChecklistItemPos(opts.pos));
+  return doRequestAPI(routesId.updateCardChecklistItemPosition.id, new DataTransfer().setCardId(cardID).setCardChecklistItemId(checkItemID).setCardChecklistItemPos(opts.pos));
 };
 
 /* remover item do checklist */

@@ -15,7 +15,7 @@ export const getListsFromBoard = async (boardID) => {
 };
 
 export const createBoard = async (boardName) => {
-  return doRequestAPI(routesId.searchBoardsByName.id, new DataTransfer().setBoardName(boardName));
+  return doRequestAPI(routesId.createBoard.id, new DataTransfer().setBoardName(boardName));
 };
 
 export const createList = (boardID, listName) => {
