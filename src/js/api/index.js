@@ -20,7 +20,7 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const verb = route.verb;
   Object.assign(obj, auth.getCredentials());
   // Faz a requisição HTTP usando o verbo indicado
-  return axios[verb.toLowerCase()](url, { params: obj });
+  return axios[verb.toLowerCase()](url, { params: obj }, { withCredentials: true });
 };
 
 export const setCredentials = auth.setCredentials;

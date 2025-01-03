@@ -2,7 +2,7 @@ import * as alert from 'view/alert.js';
 import { loadTrelloRoutes, listRoutes, clearRoutes } from "model/routes_store.js";
 import routesId from "model/routes_id.js";
 import { getRoute } from "model/routes_store.js";
-
+import axios from 'axios';
 import 'css/options.scss';
 
 let ui = {};
@@ -21,12 +21,17 @@ const mapUI = () => {
   //ui.btnSave = document.getElementsByClassName('btn-salvar-config');
   ui.btnTrelloRoutes = document.getElementById('btn-trello-routes');
   ui.btnClearRoutes = document.getElementById('btn-clear-routes');
+  ui.btnAuthReq = document.getElementById('btn-auth-req');
+  ui.btnUserData = document.getElementById('btn-user-data');
+  
 
   for (const btnSave of Array.prototype.slice.call(document.getElementsByClassName('btn-salvar-config'))) {
     btnSave.addEventListener('click', save);
   }
   ui.btnTrelloRoutes.addEventListener('click', loadDefaultRoutes);
   ui.btnClearRoutes.addEventListener('click', clearConfiguredRoutes);
+  ui.btnAuthReq.addEventListener('click', openPopup);
+  ui.btnUserData.addEventListener('click', getUserData);
 
   ui.appKey.addEventListener('input', () => {
     updateTokenUrl();
@@ -225,3 +230,32 @@ document.addEventListener('DOMContentLoaded', () => {
   restore();
   loadRoutesForm();
 });
+
+
+const openPopup = () => {
+  window.open('http://localhost:5173/jwt_temp.html', 'popup', 'width=600,height=400');
+  // Este evento receberá a mensagem de volta do popup após o usuário ser autenticado com sucesso
+  window.addEventListener('message', (event) => {
+    if (event.origin !== 'http://localhost:5173') {
+      return;
+    }
+    const data = event.data;
+    if (data && data.token) {
+      const encodedToken = JSON.stringify({ token: data.token });
+      chrome.cookies.set({
+        url: "http://localhost:5055",
+        name: "SIMA",
+        value: encodedToken,
+        secure: true
+      });
+      alert.success(`Token recuperado com sucesso.`);
+    }
+  });
+};
+
+const getUserData = () => {
+  console.log("Request sem header bla");
+  axios.get('http://localhost:5055/api/user/authUser', {}, {withCredentials: true})
+        .then((response) => {console.log(response.data);})
+        .catch((err) => console.log(err));
+};
