@@ -183,7 +183,6 @@ class DataTransfer {
         while (originalString.match(TOKEN_REGEX)) {
             const key = originalString.match(TOKEN_REGEX)[1];
             const newValue = getKeyValue(this.data, key);
-            console.log("key: %s, value: %s, source: %o", key, newValue, this.data);
             originalString = originalString.replace(`@{${key}}`, newValue);
         }
         return originalString;
