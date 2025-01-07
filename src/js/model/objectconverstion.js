@@ -1,7 +1,7 @@
 /**
  * @global
  * @type {RegExp}
- * @description Regex que captura o token de chave de um objeto
+ * @description Regex que captura o token de chave de um objeto, o TOKEN começa com "@{" e termina com "}"
  */
 export const TOKEN_REGEX = /@\{([^}]+)\}/;
 
