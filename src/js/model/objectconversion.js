@@ -20,6 +20,13 @@ export const TOKEN_PREFIX = "@{";
 export const TOKEN_SUFFIX = "}";
 
 /**
+ * @global
+ * @type {string}
+ * @description Identificador utilizado para saber se a chave de um array é a raiz do array
+ */
+const ARRAY_ROOT_IDENTIFIER = "this";
+
+/**
  * Este método transforma um objeto de dados em outro objeto de dados, seguindo uma estrutura de conversão
  * @param {Object} conversionStruct Este é o objeto que contém a estrutura de conversão, ou seja, após a conversão o retorno será um objeto com a mesma estrutura deste objeto
  * @param {Object} conversionData Objeto que contém os dados que serão a fonte da conversão
@@ -61,14 +68,20 @@ export const getArrayData = (arrayStruct, conversionData) => {
     // Como os dados que vem do arrayStruct são apenas uma estrutura, o que nos interessa é a primeira posição do array
     const dataStruct = arrayStruct[0];
     // Pega a chave do array baseado no primeiro valor do objeto de dados
-    let arrayKey = Object.values(dataStruct)[0];
-    arrayKey = arrayKey.split('.').slice(0, -1).join('.');
+    let arrayKey = Object.values(dataStruct)[0].split('.');
+    // Verifica se o Array é a raiz do objeto
+    if (arrayKey[0] === (TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER)) {
+        arrayKey = TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER;
+    } else {
+        arrayKey = arrayKey.slice(0, -1).join('.');
+    }
     // Transforma a estrutura do array em string para poder fazer a substituição da chave do array
     const conversionString = JSON.stringify(dataStruct);
     const newConversion = JSON.parse(conversionString.replaceAll(arrayKey + ".", "@{"));
     // Aqui é onde realmente monta o array a partir dos dados tratados
     let returnArray = [];
-    for (let arrayItem of getFieldData(conversionData, arrayKey + TOKEN_SUFFIX)) {
+    let arrayData = arrayKey === (TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER) ? conversionData : getFieldData(conversionData, arrayKey +TOKEN_SUFFIX);
+    for (let arrayItem of arrayData) {
         returnArray.push(getObjectData(newConversion, arrayItem));
     }
     return returnArray;
