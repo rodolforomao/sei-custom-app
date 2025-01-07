@@ -1,3 +1,5 @@
+import { TOKEN_REGEX, getKeyValue } from "./objectconverstion";
+
 /**
  * Classe que ajuda a transferir dados do quadro, lista e cartão entre diferentes partes do código.
  */
@@ -178,29 +180,13 @@ class DataTransfer {
      * @returns {String} string transformada com os valores substituídos.
      */
     transformString(originalString) {
-        while (originalString.match(/@\{([^}]+)\}/)) {
-            const key = originalString.match(/@\{([^}]+)\}/)[1];
-            originalString = originalString.replace(`@{${key}}`, this.getKeyValue(key));
+        while (originalString.match(TOKEN_REGEX)) {
+            const key = originalString.match(TOKEN_REGEX)[1];
+            const newValue = getKeyValue(this.data, key);
+            console.log("key: %s, value: %s, source: %o", key, newValue, this.data);
+            originalString = originalString.replace(`@{${key}}`, newValue);
         }
         return originalString;
-    }
-
-    /**
-     * Função que faz a busca do valor correspondente a uma chave informada.
-     * @param {String} key chave que será utilizada para buscar o valor no objeto. A chave pode ser composta por várias chaves separadas por ponto.
-     * @returns {String} valor correspondente à chave informada, ou null caso a chave não exista.
-     */
-    getKeyValue(key) {
-        const keys = key.split('.');
-        let value = this.data;
-        for (let k of keys) {
-            if (value[k] !== undefined) {
-                value = value[k];
-            } else {
-                return null;
-            }
-        }
-        return value;
     }
 }
 
