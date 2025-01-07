@@ -59,10 +59,37 @@ const loadRoutesForm = () => {
     routeOuterDiv.appendChild(getRouteUrlField(routeId, savedRoute.url));
     routeOuterDiv.appendChild(getRouteVerbField(routeId, savedRoute.verb));
     routeOuterDiv.appendChild(getRouteBodyField(routeId, savedRoute.body));
+    routeOuterDiv.appendChild(getRouteResponseField(routeId, savedRoute.response));
     routeFieldset.appendChild(routeLegend);
     routeFieldset.appendChild(routeOuterDiv);
     document.forms['form-routes'].appendChild(routeFieldset);
   });
+};
+
+const getRouteResponseField = (index, savedBody) => {
+  const ident = `rota-${index}-response`;
+  const outerdiv = document.createElement('div');
+  outerdiv.className = 'form-row';
+  const innerDiv = document.createElement('div');
+  innerDiv.className = 'col';
+  // Monta o label do campo
+  const label = document.createElement('label');
+  label.textContent = 'Response Data';
+  label.htmlFor = ident;
+  // Monta o campo de texto
+  const textarea = document.createElement('textarea');
+  textarea.className = 'form-control';
+  textarea.id = ident;
+  textarea.name = ident;
+  textarea.rows = 7;
+  textarea.placeholder = 'Response JSON';
+  if (savedBody !== undefined) {
+    textarea.value = savedBody;
+  }
+  //Adiciona os elementos ao div
+  innerDiv.appendChild(label);
+  innerDiv.appendChild(textarea);
+  return innerDiv;
 };
 
 const getRouteBodyField = (index, savedBody) => {
@@ -80,8 +107,8 @@ const getRouteBodyField = (index, savedBody) => {
   textarea.className = 'form-control';
   textarea.id = ident;
   textarea.name = ident;
-  textarea.rows = 5;
-  textarea.placeholder = 'JSON Body';
+  textarea.rows = 7;
+  textarea.placeholder = 'Response JSON';
   if (savedBody !== undefined) {
     textarea.value = savedBody;
   }
@@ -181,7 +208,8 @@ const save = async (e) => {
     const routeUrl = document.getElementById(`rota-${routeId}-url`).value;
     const routeBody = document.getElementById(`rota-${routeId}-body`).value;
     const routeVerb = document.getElementById(`rota-${routeId}-verb`).value;
-    newRoutes.push({ id: routeId, url: routeUrl, body: routeBody, verb: routeVerb });
+    const routeResponse = document.getElementById(`rota-${routeId}-response`).value;
+    newRoutes.push({ id: routeId, url: routeUrl, body: routeBody, verb: routeVerb, response: routeResponse });
   }
   Object.assign(dataToSave, { routes: newRoutes });
   chrome.storage.sync.set(dataToSave);
