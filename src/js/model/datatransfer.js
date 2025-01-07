@@ -1,4 +1,4 @@
-import { TOKEN_REGEX, getKeyValue } from "./objectconverstion";
+import { TOKEN_REGEX, getKeyValue } from "./objectconversion";
 
 /**
  * Classe que ajuda a transferir dados do quadro, lista e cartão entre diferentes partes do código.

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import auth from './auth.js';
 import { getRoute } from 'model/routes_store.js';
-import { getObjectData } from 'model/objectconverstion.js';
+import { getObjectData } from 'model/objectconversion.js';
 
 /**
  * Se estivermos no ambiente teste (e2e ou playground),
