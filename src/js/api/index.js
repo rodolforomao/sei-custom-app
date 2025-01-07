@@ -1,7 +1,7 @@
 import axios from 'axios';
 import auth from './auth.js';
 import { getRoute } from 'model/routes_store.js';
-import { getObjectData } from 'model/objectconversion.js';
+import { getObjectData, getArrayData } from 'model/objectconversion.js';
 
 /**
  * Se estivermos no ambiente teste (e2e ou playground),
@@ -21,6 +21,7 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const verb = route.verb;
   Object.assign(obj, auth.getCredentials());
   // Faz a requisição HTTP usando o verbo indicado
+  console.log("Params: %o", obj);
   const originalResponse = await axios[verb.toLowerCase()](url, { params: obj }, { withCredentials: true });
   console.log("Resposta original da rota %d: %o", routeId, originalResponse);
   // Faz a transformação da resposta
@@ -28,8 +29,8 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   let newResponse;
   try {
     responseStruct = JSON.parse(route.response);
-    newResponse = getObjectData(responseStruct, originalResponse.data);
-    console.log("222 Resposta transformada da rota %d: %o", routeId, newResponse);
+    newResponse = Array.isArray(responseStruct) ? getArrayData(responseStruct, originalResponse.data) : getObjectData(responseStruct, originalResponse.data);
+    console.log("333 Resposta transformada da rota %d: %o", routeId, newResponse);
     originalResponse.data = newResponse;
   } catch (e) {
     console.log("Ocorreu um erro ao tentar transformar a resposta da rota %d: %o", routeId, e);
