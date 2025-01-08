@@ -38,19 +38,20 @@ export const getObjectData = (conversionStruct, conversionData) => {
         // Verifica se o valor pertence ao objeto ou se foi herdado (os valores herdados não nos interessam)
         if (!conversionStruct.hasOwnProperty(key))
             continue;
-        // Verifica se o valor é uma string, se for, basta pegar o valor que está no objeto de dados
-        if (typeof conversionStruct[key] === 'string') {
+        // Se o valor está nulo vamos usar nulo
+        if (conversionStruct[key] === null) {
+            returnObj[key] = null;
+            continue;
+        }
+        // Verifica se o valor é um objeto, se não for simplesmente retorna o valor
+        if (typeof conversionStruct[key] !== 'object') {
             returnObj[key] = getFieldData(conversionData, conversionStruct[key]);
             continue;
         }
-        // Verifica se o valor é um objeto, se não for, não nos interessa
-        if (typeof conversionStruct[key] !== 'object' || conversionStruct[key] === null)
-            continue;
-        // Verifica se o valor é um array, se for, precisamos iterar sobre ele
+        // Verifica se o valor é um array, se for, chama o método que trata arrays
         if (Array.isArray(conversionStruct[key])) {
-            // O comando abaixo foi sugestão do VSCode, revisar
             returnObj[key] = getArrayData(conversionStruct[key], conversionData);
-        // Aqui sabemos que o objeto é um objeto normal, então monta o objeto
+        // Aqui sabemos que o objeto é um objeto normal, então monta o objeto de forma recursiva
         } else {
             returnObj[key] = getObjectData(conversionStruct[key], conversionData);
         }
@@ -65,26 +66,41 @@ export const getObjectData = (conversionStruct, conversionData) => {
  * @returns {Array} Retorna um array com a estrutura definida em arrayStruct, preenchido com os dados de conversionData
  */
 export const getArrayData = (arrayStruct, conversionData) => {
-    // Como os dados que vem do arrayStruct são apenas uma estrutura, o que nos interessa é a primeira posição do array
-    const dataStruct = arrayStruct[0];
-    // Pega a chave do array baseado no primeiro valor do objeto de dados
-    let arrayKey = Object.values(dataStruct)[0].split('.');
+    let arrayKey = getFirstValidKey(arrayStruct);
+    // Transforma a estrutura do array em string para poder fazer a substituição da chave do array
+    const conversionString = JSON.stringify(arrayStruct[0]);
+    const newConversion = JSON.parse(conversionString.replaceAll(arrayKey + ".", "@{"));
+    // Aqui é onde realmente monta o array a partir dos dados tratados
+    let returnArray = [];
+    let arrayData = arrayKey === (TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER) ? conversionData : getFieldData(conversionData, arrayKey + TOKEN_SUFFIX);
+    for (let arrayItem of arrayData) {
+        returnArray.push(getObjectData(newConversion, arrayItem));
+    }
+    return returnArray;
+}
+
+/**
+ * Pesquisa a primeira chave válida de um array dentro da nova estrutura de conversão
+ * @param {Array} arrayStruct Objeto contendo a definição da estrutura do Array que será montado
+ * @returns {String} Retorna a primeira ocorrência válida da chave do array
+ */
+const getFirstValidKey = (arrayStruct) => {
+    // Como os dados que vem do arrayStruct são apenas uma estrutura, começamos a pesquisa pela primeira posição da estrutura
+    let dataStruct = arrayStruct;
+    // Pega a chave do array baseado no primeiro valor válido dentro da estrutura de retorno
+    while (Array.isArray(Object.values(dataStruct[0])[0]))
+        dataStruct = Object.values(dataStruct[0])[0];
+    let arrayKey = Object.values(dataStruct[0]).find((item) => item.startsWith("@{"));
+    if (!arrayKey)
+        throw new Error("Não foi encontrada uma chave válida na estrutura do JSON de resposta");
+    arrayKey = arrayKey.split('.');
     // Verifica se o Array é a raiz do objeto
     if (arrayKey[0] === (TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER)) {
         arrayKey = TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER;
     } else {
         arrayKey = arrayKey.slice(0, -1).join('.');
     }
-    // Transforma a estrutura do array em string para poder fazer a substituição da chave do array
-    const conversionString = JSON.stringify(dataStruct);
-    const newConversion = JSON.parse(conversionString.replaceAll(arrayKey + ".", "@{"));
-    // Aqui é onde realmente monta o array a partir dos dados tratados
-    let returnArray = [];
-    let arrayData = arrayKey === (TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER) ? conversionData : getFieldData(conversionData, arrayKey +TOKEN_SUFFIX);
-    for (let arrayItem of arrayData) {
-        returnArray.push(getObjectData(newConversion, arrayItem));
-    }
-    return returnArray;
+    return arrayKey;
 }
 
 /**
