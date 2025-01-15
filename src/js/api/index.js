@@ -21,8 +21,15 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const verb = route.verb;
   Object.assign(obj, auth.getCredentials());
   // Faz a requisição HTTP usando o verbo indicado
-  console.log("Params: %o", obj);
-  const originalResponse = await axios[verb.toLowerCase()](url, { params: obj }, { withCredentials: true });
+  //const originalResponse = await axios[verb.toLowerCase()](url, { params: obj }, { withCredentials: true });
+  let originalResponse;
+  if (verb.toLowerCase() == 'get' || verb.toLowerCase() == 'delete') {
+    // console.log("Verbo: GET ou DELETE");
+    originalResponse = await axios[verb.toLowerCase()](url, { params: obj });
+  } else {
+    // console.log("Verbo: OUTROS");
+    originalResponse = await axios[verb.toLowerCase()](url, {}, { params: obj});
+  }
   console.log("Resposta original da rota %d: %o", routeId, originalResponse);
   // Faz a transformação da resposta
   let responseStruct;
