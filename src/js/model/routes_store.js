@@ -130,6 +130,23 @@ export const loadTrelloRoutes = async () => {
     }];
     routes.push({id: routesId.searchBoardCards.id, url: "https://api.trello.com/1/boards/@{board.id}/lists", body: `{"cards":"open","filter":"open","card_fields":"name,desc,labels,id,due,dueComplete,shortUrl,idChecklists"}`, verb: "GET", response: JSON.stringify(response)});
     response = {
+        id:"@{id}",
+        name:"@{name}",
+        desc:"@{desc}",
+        labels: [{
+          id:"@{labels.id}",
+          color:"@{labels.color}"
+        }],
+        due:"@{due}",
+        dueComplete:"@{dueComplete}",
+        shortUrl:"@{shortUrl}",
+        idChecklists:"@{idChecklists}",
+        board: { 
+          id: "@{board.id}"
+        },
+        list: {
+          name: "@{list.name}"
+        }
     };
     routes.push({id: routesId.getCardData.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"fields":"name,desc,labels,id,due,dueComplete,shortUrl,idChecklists","board":"true","list":"true"}`, verb: "GET", response: JSON.stringify(response)});
     response = {
