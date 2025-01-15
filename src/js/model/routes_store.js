@@ -1,6 +1,4 @@
-import { name } from "file-loader";
 import routesId from "./routes_id";
-import { id } from "date-fns/locale";
 
 /**
  * @fileoverview Este arquivo contém as funções para gerenciar as rotas no espaço de armazenamento do plugin.
