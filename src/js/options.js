@@ -214,7 +214,6 @@ const save = async (e) => {
   Object.assign(dataToSave, { routes: newRoutes });
   chrome.storage.sync.set(dataToSave);
   alert.success('As configurações foram salvas com sucesso.');
-  await listRoutes();
 };
 
 const clearConfiguredRoutes = async (event) => {
