@@ -155,6 +155,11 @@ class DataTransfer {
         return this;
     }
 
+    setCardChecklistItemId(name) {
+        this.getCardChecklistItem().id = name;
+        return this;
+    }
+    
     setCardChecklistItemName(name) {
         this.getCardChecklistItem().name = name;
         return this;
