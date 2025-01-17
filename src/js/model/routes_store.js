@@ -75,7 +75,12 @@ export const getRoute = async (routeId) => {
  */
 export const loadTrelloRoutes = async () => {
     let routes = [];
-    let response = {};
+    let response = {
+        boards: [{
+            id: "@{boards.id}",
+            name: "@{boards.name}"
+        }]
+    };
     routes.push({id: routesId.searchAllBoards.id, url: "https://api.trello.com/1/search", body: `{"query":"is:open","modelTypes":"boards","board_fields":"name","boards_limit":"1000"}`, verb: "GET", response: "", response: JSON.stringify(response)});
     response = {
         boards: [{
@@ -166,13 +171,35 @@ export const loadTrelloRoutes = async () => {
     response = {
     };
     routes.push({id: routesId.deleteCard.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"desc":"@{card.desc}","name":"@{card.name}","due":"@{card.due},"dueComplete":"@{card.dueComplete}","list":"@{list.id}","board":"@{board.id}"}`, verb: "DELETE", response: JSON.stringify(response)});
-    response = {
-    };
+    response = [{
+        id: "@{this.id}",
+        name: "@{this.name}",
+        idBoard: "@{this.idBoard}",
+        idCard: "@{this.idCard}",
+        pos: "@{this.pos}",
+        checkItems: [{
+            id: "@{this.checkItems.id}",
+            name: "@{this.checkItems.name}",
+            pos: "@{this.checkItems.pos}",
+            state: "@{this.checkItems.state}",
+            idChecklist: "@{this.checkItems.idChecklist}"
+        }]
+    }];
     routes.push({id: routesId.getCardChecklistData.id, url: "https://api.trello.com/1/cards/@{card.id}/checklists", body: `{"checkItems":"all","checkItem_fields":"name,pos,state"}`, verb: "GET", response: JSON.stringify(response)});
     response = {
+        id: "@{id}",
+        name: "@{name}",
+        idBoard: "@{idBoard}",
+        idCard: "@{idCard}",
+        pos: "@{pos}"
     };
     routes.push({id: routesId.createCardChecklist.id, url: "https://api.trello.com/1/checklists", body: `{"idCard":"@{card.id}","name":"@{card.checklist.name}"}`, verb: "POST", response: JSON.stringify(response)});
     response = {
+        id: "@{id}",
+        name: "@{name}",
+        pos: "@{pos}",
+        state: "@{state}",
+        idChecklist: "@{idChecklist}"
     };
     routes.push({id: routesId.createCardChecklistItem.id, url: "https://api.trello.com/1/checklists/@{card.checklist.id}/checkItems", body: `{"name":"@{card.checlist.item.name}","state":"@{card.checklist.item.state}","position":"bottom"}`, verb: "POST", response: JSON.stringify(response)});
     response = {
