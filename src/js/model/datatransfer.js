@@ -182,10 +182,24 @@ class DataTransfer {
     transformString(originalString) {
         while (originalString.match(TOKEN_REGEX)) {
             const key = originalString.match(TOKEN_REGEX)[1];
-            const newValue = getKeyValue(this.data, key);
-            originalString = originalString.replace(`@{${key}}`, newValue);
+            let newValue = getKeyValue(this.data, key);
+            if (typeof newValue === 'string') {
+                newValue = newValue.replaceAll("\n", "\\n");
+            }
+            if (typeof newValue === 'string')
+                originalString = originalString.replace(`@{${key}}`, newValue);
+            else {
+                if (originalString.indexOf(`"@{${key}}"`) != -1)
+                    originalString = originalString.replace(`"@{${key}}"`, newValue);
+                else
+                    originalString = originalString.replace(`@{${key}}`, newValue);
+            }
         }
         return originalString;
+    }
+
+    getNewValue(key, newValue) {
+        return new RegExp(key, 'g'), newValue.replace(/\\/g, '\\\\');
     }
 }
 
