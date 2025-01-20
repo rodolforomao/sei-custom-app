@@ -21,13 +21,12 @@ export const createCard = (opts) => {
 export const updateCard = (cardID, opts) => {
   const dataTransfer = new DataTransfer()
                         .setCardId(cardID)
-                        .setCardDesc(opts.desc);
-                        // .setCardName(opts.name)
-                        // .setCardDue(opts.due)
-                        // .setCardDueComplete(opts.dueComplete)
-                        // .setListId(opts.idList)
-                        // .setBoardId(opts.idBoard);
-  // console.log("DataTransfer %o", dataTransfer);
+                        .setCardDesc(opts.desc)
+                        .setCardName(opts.name)
+                        .setCardDue(opts.due)
+                        .setCardDueComplete(opts.dueComplete)
+                        .setListId(opts.idList)
+                        .setBoardId(opts.idBoard);
   return doRequestAPI(routesId.updateCard.id, dataTransfer);
 };
 
