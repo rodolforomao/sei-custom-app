@@ -164,7 +164,7 @@ export const loadTrelloRoutes = async () => {
         shortUrl: "@{shortUrl}",
         idChecklists: "@{idChecklists}"
     };
-    routes.push({id: routesId.createCard.id, url: "https://api.trello.com/1/cards", body: `{"name":"@{card.name}","desc":"@{card.desc}","pos":"bottom","idList":"@{list.id}"}`, verb: "POST", response: JSON.stringify(response)});
+    routes.push({id: routesId.createCard.id, url: "https://api.trello.com/1/cards", body: `{"name":"@{card.name}","desc":"@{card.desc}","pos":"bottom","idList":"@{card.list.id}"}`, verb: "POST", response: JSON.stringify(response)});
     response = {
     };
     routes.push({id: routesId.updateCard.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"name":"@{card.name}","desc":"@{card.desc}","pos":"bottom","due":"@{card.due}","dueComplete":"@{card.dueComplete}","idList":"@{list.id}","board":"@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
