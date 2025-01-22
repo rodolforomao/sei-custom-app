@@ -19,17 +19,16 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const url = dataTransfer.transformString(route.url);
   const obj = JSON.parse(dataTransfer.transformString(route.body));
   const verb = route.verb;
+  const sendCookie = url.indexOf("api.trello.com") < 0;
   Object.assign(obj, auth.getCredentials());
-  // Faz a requisição HTTP usando o verbo indicado
-  //const originalResponse = await axios[verb.toLowerCase()](url, { params: obj }, { withCredentials: true });
-  let originalResponse;
-  if (verb.toLowerCase() == 'get' || verb.toLowerCase() == 'delete') {
-    // console.log("Verbo: GET ou DELETE");
-    originalResponse = await axios[verb.toLowerCase()](url, { params: obj });
-  } else {
-    // console.log("Verbo: OUTROS");
-    originalResponse = await axios[verb.toLowerCase()](url, {}, { params: obj});
-  }
+  // console.log("Rota %o - %o", routeId, url);
+  const originalResponse = await axios({
+    method: verb.toLowerCase(),
+    url: url,
+    params: obj,
+    withCredentials: sendCookie
+  });
+
   console.log("Resposta original da rota %d: %o", routeId, originalResponse);
   // Faz a transformação da resposta
   let responseStruct;
