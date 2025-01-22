@@ -273,7 +273,8 @@ const openPopup = () => {
         url: "http://localhost:5055",
         name: "SIMA",
         value: encodedToken,
-        secure: true
+        secure: true,
+        sameSite: "no_restriction"
       });
       alert.success(`Token recuperado com sucesso.`);
     }
