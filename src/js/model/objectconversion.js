@@ -66,6 +66,9 @@ export const getObjectData = (conversionStruct, conversionData) => {
  * @returns {Array} Retorna um array com a estrutura definida em arrayStruct, preenchido com os dados de conversionData
  */
 export const getArrayData = (arrayStruct, conversionData) => {
+    // Se não tem dados no arrayStruct, retorna um array vazio
+    if (arrayStruct.length === 0)
+        return [];
     let arrayKey = getFirstValidKey(arrayStruct);
     // Transforma a estrutura do array em string para poder fazer a substituição da chave do array
     const conversionString = JSON.stringify(arrayStruct[0]);
