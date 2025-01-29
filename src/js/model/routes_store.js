@@ -217,3 +217,92 @@ export const loadTrelloRoutes = async () => {
 
     await chrome.storage.sync.set({[values.routes]: routes});
 };
+
+/**
+ * Carrega as rotas do Trello no espaço de armazenamento do plugin.
+ * @returns {void}
+ */
+export const loadSimaRoutes = async () => {
+    let routes = [];
+    // 1
+    let response = {};
+    routes.push({id: routesId.searchAllBoards.id, url: "https://api.trello.com/1/search", body: `{"query":"is:open","modelTypes":"boards","board_fields":"name","boards_limit":"1000"}`, verb: "GET", response: "", response: JSON.stringify(response)});
+    // 2
+    response = {
+        boards: [{
+            id: "@{this.id}",
+            name: "@{this.name}"
+        }]
+    };
+    routes.push({id: routesId.searchBoardsByName.id, url: "https://api.trello.com/1/search", body: `{"query":"name:@{board.name} is:open","modelTypes":"boards","board_fields":"name","boards_limit":"1000"}`, verb: "GET", response: JSON.stringify(response)});
+    // 3
+    response = {};
+    routes.push({id: routesId.createBoard.id, url: "https://api.trello.com/1/boards", body: `{"name":"@{board.name}","defaultLists":"false"}`, verb: "POST", response: JSON.stringify(response)});
+    // 4
+    response = {
+        lists: [{
+            id: "@{this.id}",
+            name: "@{this.name}"
+        }]
+    };
+    routes.push({id: routesId.getListsFromBoard.id, url: "https://api.trello.com/1/boards/@{board.id}", body: `{"lists":"open","list_fields":"id,name"}`, verb: "GET", response: JSON.stringify(response)});
+    // 5
+    response = {};
+    routes.push({id: routesId.createList.id, url: "https://api.trello.com/1/lists", body: `{"idBoard":"@{board.id}", "name":"@{list.name}","pos":"bottom"}`, verb: "POST", response: JSON.stringify(response)});
+    // 6
+    response = {
+        cards: [{
+            id: "@{this.issueId}",
+            name: "@{this.summary}",
+            desc: "@{this.descr}",
+            labels: [],
+            due: "@{this.endDate}",
+            dueComplete: "@{this.isIssueCompleted}",
+            shortUrl: "",
+            idChecklists: []
+        }]
+    };
+    routes.push({id: routesId.searchCards.id, url: "https://api.trello.com/1/search", body: `{"query":"description:@{card.desc} is:open","modelTypes":"cards","card_fields":"name,desc,labels,id,due,dueComplete,shortUrl,idChecklists","cards_limit":"1000","card_board":"true","card_list":"true"}`, verb: "GET", response: JSON.stringify(response)});
+    // 7
+    response = [{
+        name: "@{this.nameList}",
+        id: "@{this.id}",
+        cards: [{
+            id: "@{this.issues.id}",
+            name: "@{this.issues.summary}",
+            desc: "@{this.issues.descr}",
+            labels: [],
+            due: "@{this.issues.endDate}",
+            dueComplete: "@{this.issues.isIssueCompleted}",
+            shortUrl: "",
+            idChecklists: []
+        }]
+    }];
+    routes.push({id: routesId.searchBoardCards.id, url: "https://api.trello.com/1/boards/@{board.id}/lists", body: `{"cards":"open","filter":"open","card_fields":"name,desc,labels,id,due,dueComplete,shortUrl,idChecklists"}`, verb: "GET", response: JSON.stringify(response)});
+    // 8
+    response = {};
+    routes.push({id: routesId.getCardData.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"fields":"name,desc,labels,id,due,dueComplete,shortUrl,idChecklists","board":"true","list":"true"}`, verb: "GET", response: JSON.stringify(response)});
+    // 9
+    response = {};
+    routes.push({id: routesId.createCard.id, url: "https://api.trello.com/1/cards", body: `{"name":"@{card.name}","desc":"@{card.desc}","pos":"bottom","idList":"@{card.list.id}"}`, verb: "POST", response: JSON.stringify(response)});
+    response = {};
+    routes.push({id: routesId.updateCard.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"name":"@{card.name}","desc":"@{card.desc}","pos":"bottom","due":"@{card.due}","dueComplete":"@{card.dueComplete}","idList":"@{list.id}","board":"@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
+    response = {};
+    routes.push({id: routesId.deleteCard.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"desc":"@{card.desc}","name":"@{card.name}","due":"@{card.due},"dueComplete":"@{card.dueComplete}","list":"@{list.id}","board":"@{board.id}"}`, verb: "DELETE", response: JSON.stringify(response)});
+    response = [];
+    routes.push({id: routesId.getCardChecklistData.id, url: "https://api.trello.com/1/cards/@{card.id}/checklists", body: `{"checkItems":"all","checkItem_fields":"name,pos,state"}`, verb: "GET", response: JSON.stringify(response)});
+    response = {};
+    routes.push({id: routesId.createCardChecklist.id, url: "https://api.trello.com/1/checklists", body: `{"idCard":"@{card.id}","name":"@{card.checklist.name}"}`, verb: "POST", response: JSON.stringify(response)});
+    response = {};
+    routes.push({id: routesId.createCardChecklistItem.id, url: "https://api.trello.com/1/checklists/@{card.checklist.id}/checkItems", body: `{"name":"@{card.checlist.item.name}","state":"@{card.checklist.item.state}","position":"bottom"}`, verb: "POST", response: JSON.stringify(response)});
+    response = {};
+    routes.push({id: routesId.updateCardChecklistItem.id, url: "https://api.trello.com/1/cards/@{card.id}/checkItem/@{card.checklist.item.id}", body: `{"name":"@{card.checklist.item.name}","state":"@{card.checklist.item.state}""}`, verb: "PUT", response: JSON.stringify(response)});
+    response = {};
+    routes.push({id: routesId.updateCardChecklistItemPosition.id, url: "https://api.trello.com/1/cards/@{card.id}/checkItem/@{card.checklist.item.id}", body: `{"pos":"@{card.checklist.item.position}"}`, verb: "PUT", response: JSON.stringify(response)});
+    response = {};
+    routes.push({id: routesId.deleteCardChecklistItem.id, url: "https://api.trello.com/1/checklists/@{card.checklist.id}/checkItems/@{card.checklist.item.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
+    response = {};
+    routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/checklists/@{card.checklist.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
+
+    await chrome.storage.sync.set({[values.routes]: routes});
+};
