@@ -20,14 +20,36 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const obj = JSON.parse(dataTransfer.transformString(route.body));
   const verb = route.verb;
   const sendCookie = url.indexOf("api.trello.com") < 0;
-  Object.assign(obj, auth.getCredentials());
-  // console.log("Rota %o - %o", routeId, url);
-  const originalResponse = await axios({
-    method: verb.toLowerCase(),
-    url: url,
-    params: obj,
-    withCredentials: sendCookie
-  });
+  if (!sendCookie) {
+    Object.assign(obj, auth.getCredentials());
+  }
+  console.log("Rota %o - %o", routeId, url);
+  let originalResponse;
+  if (sendCookie) {
+    console.log("Enviando requisição com credenciais");
+    console.log("Objeto: %o", obj);
+    const params = verb.toLowerCase() === "get" ? obj : {};
+    const data   = verb.toLowerCase() !== "get" ? obj : {};
+    if (Object.keys(params).length > 0)
+      console.log("Enviando requisição com PARAMS");
+    if (Object.keys(data).length > 0)
+      console.log("Enviando requisição com BODY");
+    originalResponse = await axios({
+      url: url,
+      method: verb.toLowerCase(),
+      params: params,
+      data: data,
+      withCredentials: true
+    });
+  } else {
+    console.log("Enviando requisição sem credenciais com URL Params");
+    originalResponse = await axios({
+      method: verb.toLowerCase(),
+      url: url,
+      params: obj,
+      withCredentials: false
+    });
+  }
 
   console.log("Resposta original da rota %d: %o", routeId, originalResponse);
   // Faz a transformação da resposta
