@@ -269,10 +269,12 @@ const openPopup = () => {
     const data = event.data;
     if (data && data.token) {
       const encodedToken = JSON.stringify({ token: data.token });
+      const exp = JSON.parse(window.atob(data.token.split('.')[1])).exp;
       chrome.cookies.set({
         url: "http://localhost:5055",
         name: "SIMA",
         value: encodedToken,
+        expirationDate: exp,
         secure: true,
         sameSite: "no_restriction"
       });
