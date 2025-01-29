@@ -15,7 +15,7 @@ const doRefreshCards = async (processNumber) => {
   /* Primeiro, busca todos os cartões do quadro padrão. */
   const { data: boardLists } = await api.searchBoardCards(defaultBoard);
   const foundCards = handler.getCardsFromBoard(boardLists, defaultBoard);
-
+  
   /* Depois, busca todos os cartões de todos os quadros pelo método search (que tem delay/cache) */
   const {
     data: { cards: searchedCards },
@@ -82,12 +82,12 @@ const getDefaultBoardAndList = async () => {
   const {
     data: { boards },
   } = await api.searchBoardsByName(defaultBoardName);
-  const defaultBoard = boards.find((board) => board.name === defaultBoardName);
+  const defaultBoard = boards.find((board) => board.name.trim() === defaultBoardName.trim());
   if (defaultBoard) {
     const {
       data: { lists },
     } = await api.getListsFromBoard(defaultBoard.id);
-    const defaultList = lists.find((list) => list.name === defaultListName);
+    const defaultList = lists.find((list) => list.name.trim() === defaultListName.trim());
     if (defaultList) {
       return {
         defaultBoard: defaultBoard,
