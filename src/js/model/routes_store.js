@@ -219,7 +219,7 @@ export const loadTrelloRoutes = async () => {
 };
 
 /**
- * Carrega as rotas do Trello no espaço de armazenamento do plugin.
+ * Carrega as rotas do SIMA no espaço de armazenamento do plugin.
  * @returns {void}
  */
 export const loadSimaRoutes = async () => {
@@ -253,8 +253,8 @@ export const loadSimaRoutes = async () => {
     response = {
         cards: [{
             id: "@{this.issueId}",
-            name: "@{this.summary}",
-            desc: "@{this.descr}",
+            name: "@{this.descr}",
+            desc: "@{this.summary}",
             labels: [],
             due: "@{this.endDate}",
             dueComplete: "@{this.isIssueCompleted}",
@@ -269,8 +269,8 @@ export const loadSimaRoutes = async () => {
         id: "@{this.id}",
         cards: [{
             id: "@{this.issues.id}",
-            name: "@{this.issues.summary}",
-            desc: "@{this.issues.descr}",
+            name: "@{this.issues.descr}",
+            desc: "@{this.issues.summary}",
             labels: [],
             due: "@{this.issues.endDate}",
             dueComplete: "@{this.issues.isIssueCompleted}",
@@ -283,24 +283,42 @@ export const loadSimaRoutes = async () => {
     response = {};
     routes.push({id: routesId.getCardData.id, url: "", body: ``, verb: "GET", response: JSON.stringify(response)});
     // 9
-    response = {};
-    routes.push({id: routesId.createCard.id, url: "", body: ``, verb: "POST", response: JSON.stringify(response)});
+    response = {
+        id: "@{id}",
+        name: "@{descr}",
+        desc: "@{summary}",
+        labels: [],
+        due: "@{endDate}",
+        dueComplete: "@{isIssueCompleted}",
+        shortUrl: "",
+        idChecklists: []
+    };
+    routes.push({id: routesId.createCard.id, url: "http://localhost:5055/api/issue/create", body: `{"descr":"@{card.name}","summary":"@{card.desc}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
+    // 10
     response = {};
     routes.push({id: routesId.updateCard.id, url: "", body: ``, verb: "PUT", response: JSON.stringify(response)});
+    // 11
     response = {};
     routes.push({id: routesId.deleteCard.id, url: "", body: ``, verb: "DELETE", response: JSON.stringify(response)});
+    // 12
     response = [];
     routes.push({id: routesId.getCardChecklistData.id, url: "", body: ``, verb: "GET", response: JSON.stringify(response)});
+    // 13
     response = {};
     routes.push({id: routesId.createCardChecklist.id, url: "", body: ``, verb: "POST", response: JSON.stringify(response)});
+    // 14
     response = {};
     routes.push({id: routesId.createCardChecklistItem.id, url: "", body: ``, verb: "POST", response: JSON.stringify(response)});
+    // 15
     response = {};
     routes.push({id: routesId.updateCardChecklistItem.id, url: "", body: ``, verb: "PUT", response: JSON.stringify(response)});
+    // 16
     response = {};
     routes.push({id: routesId.updateCardChecklistItemPosition.id, url: "", body: ``, verb: "PUT", response: JSON.stringify(response)});
+    // 17
     response = {};
     routes.push({id: routesId.deleteCardChecklistItem.id, url: "", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
+    // 18
     response = {};
     routes.push({id: routesId.deleteCardChecklist.id, url: "", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
 
