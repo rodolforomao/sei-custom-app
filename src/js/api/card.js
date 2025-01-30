@@ -15,7 +15,14 @@ export const getCardData = (cardID) => {
 };
 
 export const createCard = (opts) => {
-  return doRequestAPI(routesId.createCard.id, new DataTransfer().setCardName(opts.name).setCardDesc(opts.desc).setCardList(opts.defaultList));
+  return doRequestAPI(
+    routesId.createCard.id, 
+    new DataTransfer().setCardName(opts.name)
+                      .setCardDesc(opts.desc)
+                      .setCardList(opts.defaultList)
+                      .setBoardId(opts.defaultBoard.id)
+                      .setBoardName(opts.defaultBoard.name)
+  );
 };
 
 export const updateCard = (cardID, opts) => {
