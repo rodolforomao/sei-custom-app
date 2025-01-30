@@ -23,7 +23,13 @@ const mapUI = () => {
   ui.btnClearRoutes = document.getElementById('btn-clear-routes');
   ui.btnAuthReq = document.getElementById('btn-auth-req');
   ui.btnUserData = document.getElementById('btn-user-data');
-  
+  ui.btnTrello = document.getElementById('btn-link-trello');
+  ui.btnJwt = document.getElementById('btn-link-jwt');
+  ui.formTrello = document.getElementById('form-trello');
+  ui.formJwt = document.getElementById('form-jwt');
+  ui.defaultDesktop = document.getElementById("selectDesktop");
+  ui.checkCookies = document.getElementById("checkCookies"); 
+ 
 
   for (const btnSave of Array.prototype.slice.call(document.getElementsByClassName('btn-salvar-config'))) {
     btnSave.addEventListener('click', save);
@@ -31,7 +37,10 @@ const mapUI = () => {
   ui.btnTrelloRoutes.addEventListener('click', loadDefaultRoutes);
   ui.btnClearRoutes.addEventListener('click', clearConfiguredRoutes);
   ui.btnAuthReq.addEventListener('click', openPopup);
-  ui.btnUserData.addEventListener('click', getUserData);
+  ui.btnTrello.addEventListener('click', openFormTrello);
+  ui.btnJwt.addEventListener('click', openFormJWT);
+
+  // ui.btnUserData.addEventListener('click', getUserData);
 
   ui.appKey.addEventListener('input', () => {
     updateTokenUrl();
@@ -41,6 +50,16 @@ const mapUI = () => {
     updateTokenUrl();
   });
 };
+
+const openFormTrello = () => {
+  ui.formJwt.style.display = 'none'; 
+  ui.formTrello.style.display = 'block'; 
+}
+
+const openFormJWT = () => {
+  ui.formTrello.style.display = 'none'; 
+  ui.formJwt.style.display = 'block'; 
+}
 
 const loadRoutesForm = () => {
   document.forms['form-routes'].innerHTML = '';
@@ -199,7 +218,10 @@ const save = async (e) => {
     appToken: ui.appToken.value,
     defaultBoard: ui.defaultBoard.value,
     defaultList: ui.defaultList.value,
+    defaultDesktop: parseFloat(ui.defaultDesktop.value) || 0,
+    defaultCheckCookies: ui.checkCookies.checked,
   });
+
   //await clearRoutes();
   const newRoutes = [];
   const values = Object.values(routesId);
@@ -211,28 +233,70 @@ const save = async (e) => {
     const routeResponse = document.getElementById(`rota-${routeId}-response`).value;
     newRoutes.push({ id: routeId, url: routeUrl, body: routeBody, verb: routeVerb, response: routeResponse });
   }
+
   Object.assign(dataToSave, { routes: newRoutes });
   chrome.storage.sync.set(dataToSave);
   alert.success('As configurações foram salvas com sucesso.');
 };
 
 const clearConfiguredRoutes = async (event) => {
+  const form = document.getElementById('form-routes');
+    if (form) {
+        form.style.display = 'none'; // Esconde o formulário
+    }
+
+    const btnSalvarRoutes = document.getElementById('btnSalvarConfig');
+    if (btnSalvarRoutes) {
+      btnSalvarRoutes.style.display = 'none'; // Esconde o formulário
+    }
+
+    const btnLimparRotas = document.getElementById('btn-clear-routes');
+    if (btnLimparRotas) {
+      btnLimparRotas.style.display = 'none'; // Esconde o formulário
+    }
+
+    const btnCarregarRotas = document.getElementById('btn-trello-routes');
+    if (btnCarregarRotas) {
+      btnCarregarRotas.style.display = 'block'; // Esconde o formulário
+    }
+
   event.preventDefault();
   clearRoutes();
   alert.success('Rotas configuradas foram removidas com sucesso.');
 };
 
 const loadDefaultRoutes = async (event) => {
+  const form = document.getElementById('form-routes');
+    if (form) {
+        form.style.display = 'block'; // Esconde o formulário
+    }
+
+    const btnLimparRotas = document.getElementById('btn-clear-routes');
+    if (btnLimparRotas) {
+      btnLimparRotas.style.display = 'block'; // Esconde o formulário
+    }
+
+    const btnCarregarRotas = document.getElementById('btn-trello-routes');
+    if (btnCarregarRotas) {
+      btnCarregarRotas.style.display = 'none'; // Esconde o formulário
+    }
+    
   event.preventDefault();
+
   if (confirm('Deseja realmente carregar as configurações do Trello? Esta ação não pode ser desfeita.')) {
     await loadTrelloRoutes();
     loadRoutesForm();
     await listRoutes();
-    alert.success('Rotas do Trello carregadas com sucesso.');
+
+    // Tornar o botão visível alterando o estilo
+    const btnSalvarConfig = document.getElementById('btnSalvarConfig');
+    btnSalvarConfig.style.display = 'block';
+
+    alert('Rotas do Trello carregadas com sucesso.');
   } else {
     console.log('Rotas do Trello canceladas.');
   }
-}
+};
 
 const restore = () => {
   chrome.storage.sync.get(
@@ -241,12 +305,14 @@ const restore = () => {
       appToken: '',
       defaultBoard: '',
       defaultList: '',
+      defaultDesktop: '',
     },
     (items) => {
       ui.appKey.value = items.appKey;
       ui.appToken.value = items.appToken;
       ui.defaultBoard.value = items.defaultBoard;
       ui.defaultList.value = items.defaultList;
+      ui.defaultDesktop.value = items.defaultDesktop;
       updateTokenUrl();
     }
   );
@@ -260,32 +326,77 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 const openPopup = () => {
-  window.open('http://localhost:5173/jwt_temp.html', 'popup', 'width=600,height=400');
-  // Este evento receberá a mensagem de volta do popup após o usuário ser autenticado com sucesso
+
+  const baseUrl = document.getElementById("urlPlugin").value.trim();
+  if (!baseUrl) {
+    alert("Por favor, insira a URL base.");
+    return;
+  }
+
+  // Garantindo que a URL base não termine com uma barra
+  const sanitizedBaseUrl = baseUrl.endsWith("/")
+    ? baseUrl.slice(0, -1)
+    : baseUrl;
+
+  // Adicionando o restante da URL
+  const parametro = "pluginValidation";
+  const url = `${sanitizedBaseUrl}/menu?param=${parametro}`;
+  // const url = `http://localhost:5173/menu?param=${parametro}`;
+  const popUpOptions = "width=700,height=600,resizable=yes,scrollbars=yes";
+  const popUpWindow = window.open(url, 'popupWindow', popUpOptions);
   window.addEventListener('message', (event) => {
-    if (event.origin !== 'http://localhost:5173') {
+
+    const parsedUrl = new URL(url);
+    const allowedOrigin = parsedUrl.origin;
+    if (event.origin !== allowedOrigin) {
+      console.warn('Origem não autorizada:', event.origin);
       return;
     }
     const data = event.data;
-    if (data && data.token) {
+
+    if(data && data.desktops){
+
+      const selectElement = document.getElementById("selectDesktop");
+
+  // Limpa as opções existentes
+      selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
+
+      // Adiciona as novas opções vindas do `data.desktops`
+      data.desktops.forEach(desktop => {
+        const option = document.createElement("option");
+        option.value = desktop.id;  // Supondo que tenha um ID
+        option.textContent = desktop.nameDesktop; // Supondo que tenha um nome
+        selectElement.appendChild(option);
+  });
+
+    }
+
+    if (data && data.token) { 
+
       const encodedToken = JSON.stringify({ token: data.token });
       const exp = JSON.parse(window.atob(data.token.split('.')[1])).exp;
+
+      const backendDomain = "http://localhost:5055";
+
       chrome.cookies.set({
-        url: "http://localhost:5055",
+        url: backendDomain, 
         name: "SIMA",
-        value: encodedToken,
+        value: encodedToken, 
         expirationDate: exp,
         secure: true,
-        sameSite: "no_restriction"
+        sameSite: "no_restriction" 
       });
-      alert.success(`Token recuperado com sucesso.`);
+
+    } else {
+      console.error('Token inválido ou ausente no evento:', data);
     }
   });
 };
 
 const getUserData = () => {
   console.log("Request sem header bla");
-  axios.get('http://localhost:5055/api/user/authUser', {}, {withCredentials: true})
-        .then((response) => {console.log(response.data);})
-        .catch((err) => console.log(err));
+  axios.get('http://localhost:5055/api/user/authUser', {}, { withCredentials: true })
+    .then((response) => { console.log(response.data); })
+    .catch((err) => console.log(err));
 };
+

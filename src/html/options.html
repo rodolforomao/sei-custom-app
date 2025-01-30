@@ -10,62 +10,99 @@
 
 <body>
   <div class="container">
-    <button id="btn-auth-req" type="button">Pegar o Token</button><button id="btn-user-data" type="button">Pegar dados do usuário</button>
+    <!-- <button id="btn-auth-req" type="button">Pegar o Token</button> -->
+    <!-- <button id="btn-user-data" type="button">Pegar dados do usuário</button> -->
     <h1 class="text-center" style="margin: 20px 0;">SEI - Custom App</h1>
 
-    <h3 style="padding-bottom: 15px;">Configurações de autenticação</h3>
+    <h4 style="padding-bottom: 15px;">Configurações de autenticação</h4>
 
-    <form>
-      <div class="form-group">
-        <label for="txt-app-key">Trello APP-KEY:</label>
-        <input type="text" class="form-control" id="txt-app-key" placeholder="APP-KEY..." />
-        <small class="form-text text-muted">A app-key pode ser obtida <a href="https://trello.com/power-ups/admin">neste
-            endereço</a>
-          <strong>(Certifique-se que você esteja logado no Trello!)</strong>. Você deve estar logado no Trello quando
-          acessar. A chave é aquele conjunto de caracteres descrito no campo cinza. Apenas copie e cole aqui.</small>
-      </div>
+    <ul class="nav justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link" href="#" id="btn-link-trello">TRELLO</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" id="btn-link-jwt">JWT</a>
+      </li>
+    </ul>
 
-      <div class="form-group">
-        <label for="txt-app-token">Trello APP-TOKEN:</label>
-        <input type="text" class="form-control" id="txt-app-token" placeholder="APP-TOKEN..." />
-        <small class="form-text text-muted">Já o token pode ser obtido acessando a seguinte url:
-          <a id="anchor-token-url" target="_blank" href="#">
-            <pre id="lbl-token-url"></pre>
-          </a><span id="lbl-no-app-key-info">Lembre de substituir <strong>&lt;APP KEY&gt;</strong> pela chave
-            acima.</span></small>
-      </div>
+    <section id="form-trello" class="form-container" style="display: none;">
+      <form>
+        <div class="form-group">
+          <label for="txt-app-key">Trello APP-KEY:</label>
+          <input type="text" class="form-control" id="txt-app-key" placeholder="APP-KEY..." />
+          <small class="form-text text-muted">A app-key pode ser obtida <a
+              href="https://trello.com/power-ups/admin">neste endereço</a>
+            <strong>(Certifique-se que você esteja logado no Trello!)</strong>.
+          </small>
+        </div>
+        <div class="form-group">
+          <label for="txt-app-token">Trello APP-TOKEN:</label>
+          <input type="text" class="form-control" id="txt-app-token" placeholder="APP-TOKEN..." />
+          <small class="form-text text-muted">Já o token pode ser obtido acessando a seguinte URL.</small>
+        </div>
+      </form>
+    </section>
 
+    <section id="form-jwt" class="form-container" style="display: none;">
+      <form class="form-inline">
+        <div class="form-group mb-2">
+          <label for="urlPluginSei" class="sr-only">URL</label>
+          <input type="text" class="form-control" id="urlPlugin" placeholder="URL" />
+        </div>
+        <button style="margin-left: 1%;" type="submit" id="btn-auth-req"
+          class="btn btn-secondary mb-2 btn-sm">Login</button>
+      </form>
       <div class="form-group">
-        <label for="txt-default-board">Quadro padrão:</label>
-        <input type="text" class="form-control" id="txt-default-board" placeholder="Nome do quadro..." />
-        <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nesse quadro que
-          já deve existir na sua conta (a
-          extensão não o cria automaticamente). Cuide para digitar o nome exatamente como ele existe no Trello.</small>
+        <label for="selectDesktop">Área de trabalho</label>
+        <select class="form-control" id="selectDesktop">
+          <option></option>
+        </select>
       </div>
+    </section>
 
-      <div class="form-group">
-        <label for="txt-default-list">Lista padrão:</label>
-        <input type="text" class="form-control" id="txt-default-list" placeholder="Nome da lista..." />
-        <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nessa lista que já
-          deve existir na sua conta e
-          pertencer ao quadro acima (a extensão não a cria automaticamente). Cuide para digitar o nome exatamente como
-          ela existe no Trello.</small>
-      </div>
-      <p class="text-center"><button type="submit" class="btn btn-primary btn-salvar-config">Salvar configurações</button></p>
-    </form>
+    <div class="form-group">
+      <label for="txt-default-board">Quadro padrão:</label>
+      <input type="text" class="form-control" id="txt-default-board" placeholder="Nome do quadro..." />
+      <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nesse
+        quadro.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="txt-default-list">Lista padrão:</label>
+      <input type="text" class="form-control" id="txt-default-list" placeholder="Nome da lista..." />
+      <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nesta lista.</small>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="checkCookies">
+      <label class="form-check-label" for="flexCheckChecked">
+        Usar autenticação por Cookies
+      </label>
+      <small class="form-text text-muted">A autenticação com o backend deve ser feita enviando os dados de autenticação por Cookies?</small>
+    </div>
+
+    <p style="padding-top: 1% ;" class="text-center"><button type="submit" class="btn btn-primary btn-salvar-config btn-sm">Salvar configurações</button>
+    </p>
+
   </div>
+
+
   <div class="container">
-    <form id="form-routes" name="form-routes">
+    <form id="form-routes" name="form-routes" style="display: none;">
       <!-- Os campos deste formulário são carregados dinamicamente pelo options.js com o método loadRoutesForm() -->
     </form>
-    <p class="text-center"><button type="submit" class="btn btn-primary btn-salvar-config">Salvar configurações</button></p>
-    <div class="row">
-      <div class="col-md-6">
-        <button id="btn-trello-routes" type="button" class="btn btn-secondary">Carregar rotas do Trello</button>
-      </div>
-      <div class="col-md-6">
-        <button id="btn-clear-routes" type="button" class="btn btn-danger">Limpar as rotas atuais</button>
-      </div>
+    <div class="d-flex justify-content-center">
+      <button type="submit" class="btn btn-primary btn-salvar-config2 btn-sm" id="btnSalvarConfig" style="display: none;">
+        Salvar configurações
+      </button>
+    </div>
+    <div class="d-flex flex-column align-items-start">
+      <button style="background-color: #23973e; display: block;" id="btn-trello-routes" type="button" class="btn btn-sm mb-2">
+        <span>+</span> Carregar rotas do Trello
+      </button>
+      <button  style="background-color: #d01d1de8; display: none;" id="btn-clear-routes" type="button" class="btn btn-sm mb-4">
+        <span>-</span> Limpar as rotas atuais
+      </button>
     </div>
   </div>
   <script src="options.js"></script>
