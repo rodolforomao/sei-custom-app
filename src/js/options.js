@@ -27,7 +27,9 @@ const mapUI = () => {
   ui.btnJwt = document.getElementById('btn-link-jwt');
   ui.formTrello = document.getElementById('form-trello');
   ui.formJwt = document.getElementById('form-jwt');
-
+  ui.defaultDesktop = document.getElementById("selectDesktop");
+  ui.checkCookies = document.getElementById("checkCookies"); 
+ 
 
   for (const btnSave of Array.prototype.slice.call(document.getElementsByClassName('btn-salvar-config'))) {
     btnSave.addEventListener('click', save);
@@ -216,7 +218,10 @@ const save = async (e) => {
     appToken: ui.appToken.value,
     defaultBoard: ui.defaultBoard.value,
     defaultList: ui.defaultList.value,
+    defaultDesktop: parseFloat(ui.defaultDesktop.value) || 0,
+    defaultCheckCookies: ui.checkCookies.checked,
   });
+
   //await clearRoutes();
   const newRoutes = [];
   const values = Object.values(routesId);
@@ -228,6 +233,7 @@ const save = async (e) => {
     const routeResponse = document.getElementById(`rota-${routeId}-response`).value;
     newRoutes.push({ id: routeId, url: routeUrl, body: routeBody, verb: routeVerb, response: routeResponse });
   }
+
   Object.assign(dataToSave, { routes: newRoutes });
   chrome.storage.sync.set(dataToSave);
   alert.success('As configurações foram salvas com sucesso.');
@@ -299,12 +305,14 @@ const restore = () => {
       appToken: '',
       defaultBoard: '',
       defaultList: '',
+      defaultDesktop: '',
     },
     (items) => {
       ui.appKey.value = items.appKey;
       ui.appToken.value = items.appToken;
       ui.defaultBoard.value = items.defaultBoard;
       ui.defaultList.value = items.defaultList;
+      ui.defaultDesktop.value = items.defaultDesktop;
       updateTokenUrl();
     }
   );
@@ -345,6 +353,23 @@ const openPopup = () => {
       return;
     }
     const data = event.data;
+
+    if(data && data.desktops){
+
+      const selectElement = document.getElementById("selectDesktop");
+
+  // Limpa as opções existentes
+      selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
+
+      // Adiciona as novas opções vindas do `data.desktops`
+      data.desktops.forEach(desktop => {
+        const option = document.createElement("option");
+        option.value = desktop.id;  // Supondo que tenha um ID
+        option.textContent = desktop.nameDesktop; // Supondo que tenha um nome
+        selectElement.appendChild(option);
+  });
+
+    }
 
     if (data && data.token) { 
 
