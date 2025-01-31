@@ -184,7 +184,8 @@ export const addCardFor = (processNumber, newCardData) => {
     desc: 'SEI ' + processNumber,
   };
   if ('name' in newCardData) options['name'] = newCardData['name'];
-  if ('description' in newCardData) options['desc'] += '\n' + newCardData['description'];
+  // TODO: Criar um controle nas configurações do plugin para definir se essa descrição deve ser adicionada
+  //if ('description' in newCardData) options['desc'] += '\n' + newCardData['description'];
 
   getDefaultBoardAndList()
     .then((response) => {

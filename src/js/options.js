@@ -1,5 +1,5 @@
 import * as alert from 'view/alert.js';
-import { loadTrelloRoutes, listRoutes, clearRoutes } from "model/routes_store.js";
+import { loadTrelloRoutes, loadSimaRoutes, listRoutes, clearRoutes } from "model/routes_store.js";
 import routesId from "model/routes_id.js";
 import { getRoute } from "model/routes_store.js";
 import axios from 'axios';
@@ -13,9 +13,9 @@ const defaultTokenUrl =
 const mapUI = () => {
   ui.appKey = document.getElementById('txt-app-key');
   ui.appToken = document.getElementById('txt-app-token');
-  ui.anchorTokenUrl = document.getElementById('anchor-token-url');
-  ui.lblTokenUrl = document.getElementById('lbl-token-url');
-  ui.lblNoAppKeyInfo = document.getElementById('lbl-no-app-key-info');
+  // ui.anchorTokenUrl = document.getElementById('anchor-token-url');
+  //ui.lblTokenUrl = document.getElementById('lbl-token-url');
+  //ui.lblNoAppKeyInfo = document.getElementById('lbl-no-app-key-info');
   ui.defaultBoard = document.getElementById('txt-default-board');
   ui.defaultList = document.getElementById('txt-default-list');
   //ui.btnSave = document.getElementsByClassName('btn-salvar-config');
@@ -199,15 +199,15 @@ const getVerbSelectElement = (index, savedBody) => {
 const updateTokenUrl = () => {
   const appKey = ui.appKey.value;
   if (appKey.length === 0) {
-    ui.lblNoAppKeyInfo.style.display = 'initial';
+    //ui.lblNoAppKeyInfo.style.display = 'initial';
     const tokenUrl = defaultTokenUrl + '&key=<APP KEY>';
-    ui.lblTokenUrl.textContent = tokenUrl;
-    ui.anchorTokenUrl.removeAttribute('href');
+    // ui.lblTokenUrl.textContent = tokenUrl;
+    // ui.anchorTokenUrl.removeAttribute('href');
   } else {
-    ui.lblNoAppKeyInfo.style.display = 'none';
+    //ui.lblNoAppKeyInfo.style.display = 'none';
     const tokenUrl = defaultTokenUrl + '&key=' + appKey;
-    ui.lblTokenUrl.textContent = tokenUrl;
-    ui.anchorTokenUrl.setAttribute('href', tokenUrl);
+    // ui.lblTokenUrl.textContent = tokenUrl;
+    // ui.anchorTokenUrl.setAttribute('href', tokenUrl);
   }
 };
 
@@ -284,9 +284,10 @@ const loadDefaultRoutes = async (event) => {
   event.preventDefault();
 
   if (confirm('Deseja realmente carregar as configurações do Trello? Esta ação não pode ser desfeita.')) {
-    await loadTrelloRoutes();
+    await loadSimaRoutes();
+    // await loadTrelloRoutes();
     loadRoutesForm();
-    await listRoutes();
+    // await listRoutes();
 
     // Tornar o botão visível alterando o estilo
     const btnSalvarConfig = document.getElementById('btnSalvarConfig');
@@ -339,14 +340,14 @@ const openPopup = () => {
     : baseUrl;
 
   // Adicionando o restante da URL
-  const parametro = "pluginValidation";
-  const url = `${sanitizedBaseUrl}/menu?param=${parametro}`;
+  // const parametro = "pluginValidation";
+  // const url = `${sanitizedBaseUrl}/menu?param=${parametro}`;
   // const url = `http://localhost:5173/menu?param=${parametro}`;
   const popUpOptions = "width=700,height=600,resizable=yes,scrollbars=yes";
-  const popUpWindow = window.open(url, 'popupWindow', popUpOptions);
+  const popUpWindow = window.open(baseUrl, 'popupWindow', popUpOptions);
   window.addEventListener('message', (event) => {
 
-    const parsedUrl = new URL(url);
+    const parsedUrl = new URL(baseUrl);
     const allowedOrigin = parsedUrl.origin;
     if (event.origin !== allowedOrigin) {
       console.warn('Origem não autorizada:', event.origin);
@@ -376,7 +377,7 @@ const openPopup = () => {
       const encodedToken = JSON.stringify({ token: data.token });
       const exp = JSON.parse(window.atob(data.token.split('.')[1])).exp;
 
-      const backendDomain = "http://localhost:5055";
+      const backendDomain = "https://servicos.dnit.gov.br";
 
       chrome.cookies.set({
         url: backendDomain, 
