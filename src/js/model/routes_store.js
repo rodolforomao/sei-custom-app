@@ -234,7 +234,7 @@ export const loadSimaRoutes = async () => {
             name: "@{this.name}"
         }]
     };
-    routes.push({id: routesId.searchBoardsByName.id, url: "http://localhost:5055/api/project/search", body: `{ "descrProject":"@{board.name}" }`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.searchBoardsByName.id, url: "http://localhost:5055/api/project/search/", body: `{ "descrProject":"@{board.name}" }`, verb: "GET", response: JSON.stringify(response)});
     // 3
     response = {};
     routes.push({id: routesId.createBoard.id, url: "", body: ``, verb: "POST", response: JSON.stringify(response)});
@@ -245,7 +245,7 @@ export const loadSimaRoutes = async () => {
             name: "@{this.name}"
         }]
     };
-    routes.push({id: routesId.getListsFromBoard.id, url: "http://localhost:5055/api/project/@{board.id}/lists", body: `{}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.getListsFromBoard.id, url: "http://localhost:5055/api/project/@{board.id}/lists/", body: `{}`, verb: "GET", response: JSON.stringify(response)});
     // 5
     response = {};
     routes.push({id: routesId.createList.id, url: "", body: ``, verb: "POST", response: JSON.stringify(response)});
@@ -262,7 +262,7 @@ export const loadSimaRoutes = async () => {
             idChecklists: []
         }]
     };
-    routes.push({id: routesId.searchCards.id, url: "http://localhost:5055/api/project/sei", body: `{"numberSei":"@{card.desc}"}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.searchCards.id, url: "http://localhost:5055/api/project/sei/", body: `{"numberSei":"@{card.desc}"}`, verb: "GET", response: JSON.stringify(response)});
     // 7
     response = [{
         name: "@{this.nameList}",
@@ -278,7 +278,7 @@ export const loadSimaRoutes = async () => {
             idChecklists: []
         }]
     }];
-    routes.push({id: routesId.searchBoardCards.id, url: "http://localhost:5055/api/project/@{board.id}/return/issues", body: `{}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.searchBoardCards.id, url: "http://localhost:5055/api/project/@{board.id}/return/issues/", body: `{}`, verb: "GET", response: JSON.stringify(response)});
     // 8
     response = {};
     routes.push({id: routesId.getCardData.id, url: "", body: ``, verb: "GET", response: JSON.stringify(response)});
@@ -293,7 +293,7 @@ export const loadSimaRoutes = async () => {
         shortUrl: "",
         idChecklists: []
     };
-    routes.push({id: routesId.createCard.id, url: "http://localhost:5055/api/issue/create", body: `{"descr":"@{card.name}","summary":"@{card.desc}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
+    routes.push({id: routesId.createCard.id, url: "http://localhost:5055/api/issue/create/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
     // 10
     response = {};
     routes.push({id: routesId.updateCard.id, url: "", body: ``, verb: "PUT", response: JSON.stringify(response)});
