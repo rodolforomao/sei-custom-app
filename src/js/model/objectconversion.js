@@ -7,17 +7,32 @@ export const TOKEN_REGEX = /@\{([^}]+)\}/;
 
 /**
  * @global
+ * @type {RegExp}
+ * @description Regex que verifica se uma string contém '[' e ']'
+ */
+// const arrayBracketsRegex = /\[.*?\]/;
+const arrayBracketsRegex = /\[(\d+)\]/;
+
+/**
+ * @global
  * @type {string}
  * @description Prefixo do token que identifica uma chave de objeto
  */
-export const TOKEN_PREFIX = "@{";
+const TOKEN_PREFIX = "@{";
 
 /**
  * @global
  * @type {string}
  * @description Sufixo do token que identifica uma chave de objeto
  */
-export const TOKEN_SUFFIX = "}";
+const TOKEN_SUFFIX = "}";
+
+/**
+ * @global
+ * @type {string}
+ * @description String utilizada para separar os campos dentro do TOKEN
+ */
+const TOKEN_SEPARATOR = ".";
 
 /**
  * @global
@@ -69,15 +84,26 @@ export const getArrayData = (arrayStruct, conversionData) => {
     // Se não tem dados no arrayStruct, retorna um array vazio
     if (arrayStruct.length === 0)
         return [];
-    let arrayKey = getFirstValidKey(arrayStruct);
+    // Pega a chave do array baseado no primeiro valor do objeto de dados
+    const arrayKey = getArrayKey(arrayStruct);
+    // Como os dados que vem do arrayStruct são apenas uma estrutura, o que nos interessa é a primeira posição do array
+    const dataStruct = arrayStruct[0];
+    const originalKey = Object.values(dataStruct)[0];
+    // Verifica se foi indicada a posição do array
+    const [shouldFlatten, arrayPos] = checkFlattenArray(originalKey);
     // Transforma a estrutura do array em string para poder fazer a substituição da chave do array
-    const conversionString = JSON.stringify(arrayStruct[0]);
-    const newConversion = JSON.parse(conversionString.replaceAll(arrayKey + ".", "@{"));
+    const conversionString = JSON.stringify(dataStruct);
+    let searchString = shouldFlatten ? originalKey : arrayKey;
+    searchString += TOKEN_SEPARATOR;
+    const newConversion = JSON.parse(conversionString.replaceAll(searchString, TOKEN_PREFIX));
     // Aqui é onde realmente monta o array a partir dos dados tratados
     let returnArray = [];
-    let arrayData = arrayKey === (TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER) ? conversionData : getFieldData(conversionData, arrayKey + TOKEN_SUFFIX);
+    let arrayData = getArrayDataToIterate(conversionData, arrayKey, arrayPos);
     for (let arrayItem of arrayData) {
-        returnArray.push(getObjectData(newConversion, arrayItem));
+        if (typeof dataStruct === 'object')
+            returnArray.push(getObjectData(newConversion, arrayItem));
+        else
+            returnArray.push(getFieldData(arrayItem, newConversion));
     }
     return returnArray;
 }
@@ -87,23 +113,58 @@ export const getArrayData = (arrayStruct, conversionData) => {
  * @param {Array} arrayStruct Objeto contendo a definição da estrutura do Array que será montado
  * @returns {String} Retorna a primeira ocorrência válida da chave do array
  */
-const getFirstValidKey = (arrayStruct) => {
+function getArrayKey(arrayStruct) {
     // Como os dados que vem do arrayStruct são apenas uma estrutura, começamos a pesquisa pela primeira posição da estrutura
     let dataStruct = arrayStruct;
     // Pega a chave do array baseado no primeiro valor válido dentro da estrutura de retorno
     while (Array.isArray(Object.values(dataStruct[0])[0]))
         dataStruct = Object.values(dataStruct[0])[0];
-    let arrayKey = Object.values(dataStruct[0]).find((item) => item.startsWith("@{"));
-    if (!arrayKey)
-        throw new Error("Não foi encontrada uma chave válida na estrutura do JSON de resposta");
-    arrayKey = arrayKey.split('.');
+    let arrayKey = Object.values(dataStruct[0]).find((item) => item.startsWith(TOKEN_PREFIX));
+    if (!arrayKey) {
+        if (dataStruct[0].startsWith(TOKEN_PREFIX))
+            arrayKey = dataStruct[0];
+        else
+            throw new Error("Não foi encontrada uma chave válida na estrutura do JSON de resposta");
+    }
+    arrayKey = arrayKey.split(TOKEN_SEPARATOR);
     // Verifica se o Array é a raiz do objeto
     if (arrayKey[0] === (TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER)) {
         arrayKey = TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER;
     } else {
-        arrayKey = arrayKey.slice(0, -1).join('.');
+        arrayKey = arrayKey.slice(0, -1).join(TOKEN_SEPARATOR);
     }
     return arrayKey;
+}
+
+/**
+ * Função para recuperar os dados que serão percorridos no array dentro de um objeto a partir de uma string que indica onde está o array dentro do objeto
+ * @param {Object} conversionData Objeto com os dados do Array que será percorrido
+ * @param {String} arrayKey Chave do objeto onde está o array com os dados que serão percorridos
+ * @param {int} arrayPos Caso deseje apenas 1 posição do array informe a posição desejada
+ * @returns Um array com os dados que serão percorridos
+ */
+function getArrayDataToIterate(conversionData, arrayKey, arrayPos = null) {
+    if (arrayKey.startsWith(TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER)) {
+        return arrayPos !== null ? conversionData.slice(arrayPos, arrayPos + 1) : conversionData;
+    }
+    const arrayData = getFieldData(conversionData, arrayKey + TOKEN_SUFFIX);
+    return arrayPos !== null ? arrayData.slice(arrayPos, arrayPos + 1) : arrayData;
+}
+
+/**
+ * Método que verifica se a chave do array contém a indicação da posição de um array e retorna a posição do array
+ * @param {arrayKey} arrayKey Essa é a chave do array que será verificada
+ * @returns [boolean, int] Retorna um array com dois valores, o primeiro é um booleano que indica se a chave do array contém indicação de posição, o segundo é a posição do array
+ */
+function checkFlattenArray(arrayKey) {
+    // A string tem indicação de posição do array?
+    if (!arrayBracketsRegex.test(arrayKey)) {
+        // Se não tem posicionamento do array, retorna nulo
+        return [false, null];
+    }
+    // Se está dentro do padrão do TOKEN, recupera o valor corresponde ao TOKEN
+    const arrayPos = arrayKey.match(arrayBracketsRegex)[1];
+    return [true, parseInt(arrayPos, 10)];
 }
 
 /**
