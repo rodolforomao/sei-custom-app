@@ -14,7 +14,7 @@ export const getCards = (cardList, filteredProcessNumber = null) => {
     // Verifica se o backend já retornou uma lista de processos associados a este cartão
     if (cardFromTrello.seiNumbers) {
       // Se já tem uma lista dos processos, vamos usa-la para identificar os números dos processos
-      processList = cardFromTrello.seiNumbers;
+      processList = cardFromTrello.seiNumbers ? cardFromTrello.seiNumbers : [];
     } else {
       // Caso o backend não tenha retornado uma lista de processos, vamos extrair os números dos processos da descrição (padrão original do plugin do Trello)
       while ((match = new RegExp(extractSEIInfoRegex).exec(description))) {
