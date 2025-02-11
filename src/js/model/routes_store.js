@@ -264,7 +264,8 @@ export const loadSimaRoutes = async () => {
             due: "@{this.endDate}",
             dueComplete: "@{this.isIssueCompleted}",
             shortUrl: "",
-            idChecklists: ["@{this.checklist.checklistID}"]
+            idChecklists: ["@{this.checklist.checklistID}"],
+            seiNumbers: ["@{this.processes.descrNumberDocument}"]
         }]
     };
     routes.push({id: routesId.searchCards.id, url: base_url + "/api/project/sei/", body: `{"numberSei":"@{card.desc}"}`, verb: "GET", response: JSON.stringify(response)});
@@ -284,7 +285,8 @@ export const loadSimaRoutes = async () => {
             due: "@{this.issues.endDate}",
             dueComplete: "@{this.issues.isIssueCompleted}",
             shortUrl: "",
-            idChecklists: ["@{this.issues.checklist.checklistID}"]
+            idChecklists: ["@{this.issues.checklist.checklistID}"],
+            seiNumbers: ["@{this.issues.processes.descrNumberDocument}"]
         }]
     }];
     routes.push({id: routesId.searchBoardCards.id, url: base_url + "/api/project/@{board.id}/return/issues/", body: `{}`, verb: "GET", response: JSON.stringify(response)});
