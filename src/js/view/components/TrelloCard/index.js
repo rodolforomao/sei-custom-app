@@ -158,7 +158,8 @@ class TrelloCard extends React.Component {
       uiLabels.push(
         <span
           key={idx}
-          className={classNames(styles.label, styles['label-' + (label.color || 'default')] || styles.default)}
+          
+          style={{ backgroundColor: label.color, marginLeft: '2px', marginRight: '2px', color: '#FFFFFF', padding: '2px 3px' }}
         >
           {label.name}
         </span>
