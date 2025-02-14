@@ -34,6 +34,20 @@ const TOKEN_SUFFIX = "}";
  */
 const TOKEN_SEPARATOR = ".";
 
+    /**
+     * @global
+     * @type {string}
+     * @description String utilizada para identificar o início da posição de um array
+     */
+    const TOKEN_ARRAY_START = "[";
+
+    /**
+     * @global
+     * @type {string}
+     * @description String utilizada para identificar o final da posição de um array
+     */
+    const TOKEN_ARRAY_END = "[";
+
 /**
  * @global
  * @type {string}
@@ -144,7 +158,8 @@ function getArrayKey(arrayStruct) {
  */
 function getArrayDataToIterate(conversionData, arrayKey, arrayPos = null) {
     if (arrayPos !== null && Number.isInteger(arrayPos)) {
-        arrayKey = arrayKey.slice(0, -3);
+        const slicePos = arrayKey.length - arrayKey.lastIndexOf(TOKEN_ARRAY_START);
+        arrayKey = arrayKey.slice(0, -slicePos);
     }
     if (arrayKey.startsWith(TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER)) {
         return arrayPos !== null ? conversionData.slice(arrayPos, arrayPos + 1) : conversionData;
