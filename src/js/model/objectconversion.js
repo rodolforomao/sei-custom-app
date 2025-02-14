@@ -88,13 +88,12 @@ export const getArrayData = (arrayStruct, conversionData) => {
     const arrayKey = getArrayKey(arrayStruct);
     // Como os dados que vem do arrayStruct são apenas uma estrutura, o que nos interessa é a primeira posição do array
     const dataStruct = arrayStruct[0];
-    const originalKey = Object.values(dataStruct)[0];
+    const originalKey = (typeof dataStruct) === 'object' ? Object.values(dataStruct)[0] : arrayKey;
     // Verifica se foi indicada a posição do array
-    const [shouldFlatten, arrayPos] = checkFlattenArray(originalKey);
+    const arrayPos = checkFlattenArray(originalKey);
     // Transforma a estrutura do array em string para poder fazer a substituição da chave do array
     const conversionString = JSON.stringify(dataStruct);
-    let searchString = shouldFlatten ? originalKey : arrayKey;
-    searchString += TOKEN_SEPARATOR;
+    let searchString = arrayKey + TOKEN_SEPARATOR;
     const newConversion = JSON.parse(conversionString.replaceAll(searchString, TOKEN_PREFIX));
     // Aqui é onde realmente monta o array a partir dos dados tratados
     let returnArray = [];
@@ -144,6 +143,9 @@ function getArrayKey(arrayStruct) {
  * @returns Um array com os dados que serão percorridos
  */
 function getArrayDataToIterate(conversionData, arrayKey, arrayPos = null) {
+    if (arrayPos !== null && Number.isInteger(arrayPos)) {
+        arrayKey = arrayKey.slice(0, -3);
+    }
     if (arrayKey.startsWith(TOKEN_PREFIX + ARRAY_ROOT_IDENTIFIER)) {
         return arrayPos !== null ? conversionData.slice(arrayPos, arrayPos + 1) : conversionData;
     }
@@ -160,11 +162,11 @@ function checkFlattenArray(arrayKey) {
     // A string tem indicação de posição do array?
     if (!arrayBracketsRegex.test(arrayKey)) {
         // Se não tem posicionamento do array, retorna nulo
-        return [false, null];
+        return null;
     }
     // Se está dentro do padrão do TOKEN, recupera o valor corresponde ao TOKEN
     const arrayPos = arrayKey.match(arrayBracketsRegex)[1];
-    return [true, parseInt(arrayPos, 10)];
+    return parseInt(arrayPos, 10);
 }
 
 /**
