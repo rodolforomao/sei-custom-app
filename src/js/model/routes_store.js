@@ -289,7 +289,7 @@ export const loadSimaRoutes = async () => {
             seiNumbers: ["@{this.issues.processes.descrNumberDocument}"]
         }]
     }];
-    routes.push({id: routesId.searchBoardCards.id, url: base_url + "/api/project/@{board.id}/return/issues/", body: `{}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.searchBoardCards.id, url: base_url + "/api/project/return/issues/", body: `{}`, verb: "GET", response: JSON.stringify(response)});
     // 8
     response = {};
     routes.push({id: routesId.getCardData.id, url: "", body: ``, verb: "GET", response: JSON.stringify(response)});
