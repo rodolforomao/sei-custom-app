@@ -223,6 +223,7 @@ export const loadTrelloRoutes = async () => {
  * @returns {void}
  */
 export const loadSimaRoutes = async () => {
+    // const base_url = "https://servicos.dnit.gov.br/sima-back";
     const base_url = "http://localhost:5055";
     let routes = [];
     // 1
@@ -289,7 +290,7 @@ export const loadSimaRoutes = async () => {
             seiNumbers: ["@{this.issues.processes.descrNumberDocument}"]
         }]
     }];
-    routes.push({id: routesId.searchBoardCards.id, url: base_url + "/api/project/return/issues/", body: `{}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.searchBoardCards.id, url: base_url + "/api/project/return/issues/", body: `{"cardsWithProcess":true}`, verb: "GET", response: JSON.stringify(response)});
     // 8
     response = {};
     routes.push({id: routesId.getCardData.id, url: "", body: ``, verb: "GET", response: JSON.stringify(response)});
