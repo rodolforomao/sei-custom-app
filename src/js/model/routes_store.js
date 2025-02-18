@@ -223,8 +223,8 @@ export const loadTrelloRoutes = async () => {
  * @returns {void}
  */
 export const loadSimaRoutes = async () => {
-    // const base_url = "https://servicos.dnit.gov.br/sima-back";
-    const base_url = "http://localhost:5055";
+    const base_url = "https://servicos.dnit.gov.br/sima-back";
+    // const base_url = "http://localhost:5055";
     let routes = [];
     // 1
     let response = {};
@@ -285,7 +285,7 @@ export const loadSimaRoutes = async () => {
             }],
             due: "@{this.issues.endDate}",
             dueComplete: "@{this.issues.isIssueCompleted}",
-            shortUrl: "",
+            shortUrl: "@{this.issues.shortUrl}",
             idChecklists: ["@{this.issues.checklist.checklistID}"],
             seiNumbers: ["@{this.issues.processes.descrNumberDocument}"]
         }]
