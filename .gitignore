@@ -3,3 +3,5 @@ dist/
 resources/
 webpack.config.stage.js
 stage/
+.env
+.vscode/
