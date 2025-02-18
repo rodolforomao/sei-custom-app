@@ -5,3 +5,4 @@ webpack.config.stage.js
 stage/
 .env
 .vscode/
+package-lock.json
