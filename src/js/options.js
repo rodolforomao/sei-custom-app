@@ -293,7 +293,7 @@ const loadDefaultRoutes = async (event) => {
     const btnSalvarConfig = document.getElementById('btnSalvarConfig');
     btnSalvarConfig.style.display = 'block';
 
-    alert('Rotas do Trello carregadas com sucesso.');
+    alert.success('Rotas do Trello carregadas com sucesso.');
   } else {
     console.log('Rotas do Trello canceladas.');
   }
@@ -330,7 +330,7 @@ const openPopup = () => {
 
   const baseUrl = document.getElementById("urlPlugin").value.trim();
   if (!baseUrl) {
-    alert("Por favor, insira a URL base.");
+    alert.error("Por favor, insira a URL base.");
     return;
   }
 
@@ -340,9 +340,6 @@ const openPopup = () => {
     : baseUrl;
 
   // Adicionando o restante da URL
-  // const parametro = "pluginValidation";
-  // const url = `${sanitizedBaseUrl}/menu?param=${parametro}`;
-  // const url = `http://localhost:5173/menu?param=${parametro}`;
   const popUpOptions = "width=700,height=600,resizable=yes,scrollbars=yes";
   const popUpWindow = window.open(baseUrl, 'popupWindow', popUpOptions);
   window.addEventListener('message', (event) => {
@@ -377,7 +374,8 @@ const openPopup = () => {
       const encodedToken = JSON.stringify({ token: data.token });
       const exp = JSON.parse(window.atob(data.token.split('.')[1])).exp;
 
-      const backendDomain = "https://servicos.dnit.gov.br";
+      const backendDomain = "https://servicos.dnit.gov.br/sima-back";
+      // const backendDomain = "http://localhost:5055";
 
       chrome.cookies.set({
         url: backendDomain, 
