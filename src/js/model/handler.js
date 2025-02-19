@@ -64,11 +64,13 @@ export const getCardsFromBoard = (lists, board) => {
   for (const list of lists) {
     for (const cardFromList of list.cards) {
       const listData = { ...list };
+      // Verifica se na lista existe a informação de qual é o quadro do cartão, se não tiver usa o quadro padrão
+      const boardData = list.board ? list.board : board;
       delete listData['cards'];
       cards.push({
         ...cardFromList,
         list: listData,
-        board: { ...board },
+        board: boardData,
       });
     }
   }
