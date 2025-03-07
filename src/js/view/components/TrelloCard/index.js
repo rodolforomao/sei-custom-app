@@ -95,7 +95,7 @@ class TrelloCard extends React.Component {
   }
 
   onChangeLocation(type, newLocation) {
-    if (this.props.onChangeLocation) this.props.onChangeLocation(this.props.cardID, type, newLocation);
+    if (this.props.onChangeLocation) this.props.onChangeLocation(this.props.cardID, type, newLocation, this.props.location.board);
   }
 
   onChangeDue(due, dueComplete) {
@@ -310,7 +310,7 @@ class TrelloCard extends React.Component {
         ></EditableParagraph>
 
         {this.renderLabels()}
-
+        
         <div className={styles.location} data-testid="card-location">
           em{' '}
           <CardLocationSelector
