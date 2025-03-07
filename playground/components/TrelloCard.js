@@ -77,7 +77,14 @@ const TrelloCardPlayground = () => {
         onChangeDescription={(cardID, newDescription) =>
           actions.updateCardData(cardID, { description: newDescription })
         }
-        onChangeLocation={(cardID, type, newLocation) => actions.updateCardData(cardID, { [type]: newLocation })}
+        onChangeLocation={(cardID, type, newLocation, boardData) => {
+            if (type === 'board') { 
+              actions.updateCardData(cardID, { [type]: newLocation })
+            } else {
+              actions.updateCardData(cardID, { [type]: newLocation, board: boardData })
+            }
+          }
+        }
         onChangeDue={(cardID, due, dueComplete) =>
           actions.updateCardData(cardID, { due: due, dueComplete: dueComplete })
         }
