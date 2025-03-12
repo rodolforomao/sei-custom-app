@@ -47,13 +47,15 @@ export const setCards = (cards) => {
 };
 
 export const updateCardsWithID = (cardID, updatedCards) => {
-  /* remove all cards that matches cardID */
-  data.cards = data.cards.filter((card) => card.cardID !== cardID);
-
-  /* add new cards (can be nothing, if the card was removed) */
-  data.cards = data.cards.concat(updatedCards);
-
-  triggerEvent('onDataChanged');
+  // Acha a posição do cartão na lista de cartões
+  let cardIndex = data.cards.findIndex((card) => card.cardID === cardID);
+  // Se o cartão foi encontrado, atualiza ele
+  if (cardIndex !== -1) {
+    if (updatedCards.length > 0) {
+      data.cards[cardIndex] = updatedCards[0];
+    }
+    triggerEvent('onDataChanged');
+  }
 };
 
 export const addCards = (newCards) => {
