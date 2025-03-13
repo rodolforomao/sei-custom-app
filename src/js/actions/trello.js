@@ -149,11 +149,23 @@ export const updateCardData = (cardID, newCardData) => {
 
   /* adicionar os processos na descrição nova */
   if ('description' in newCardData) {
-    trelloData['desc'] = store
-      .getAllProcesssFromCardID(cardID)
-      .map((processNumber) => 'SEI ' + processNumber)
-      .join('\n')
-      .concat('\n' + newCardData['description']);
+    // Monta um array com o número dos processos que não estão presentes na nova descrição
+    let processNumbers = store.getAllProcesssFromCardID(cardID).filter((processNumber) => !newCardData['description'].includes(processNumber)).map((processNumber) => 'SEI ' + processNumber);
+    // TODO: Adicionar aqui o controle para saber se o número do processo deve ser adicionado na descrição
+    if (processNumbers.length > 0 && false) {
+      trelloData['desc'] = processNumbers.join('\n') + '\n' + newCardData['description'];
+    } else {
+      trelloData['desc'] = newCardData['description'];
+    }
+    // processNumbers;
+    // trelloData['desc'] = store
+    //   .getAllProcesssFromCardID(cardID)
+    //   .map((processNumber) => 'SEI ' + processNumber)
+    //   .join('\n')
+    //   .concat('\n' + newCardData['description']);
+    //   trelloData['desc'] = newCardData['description']
+      console.log("trelloData['desc']: %o", trelloData['desc']);
+      console.log("NewCardData: %o", newCardData);
   }
 
   if ('name' in newCardData) trelloData['name'] = newCardData['name'];
