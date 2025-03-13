@@ -86,11 +86,13 @@ class CardLocationSelector extends React.Component {
   }
 
   render() {
+    const renderCaret = this.props.type === 'board' ? false : true;
     return (
       <div className={classNames(styles.wrapper, 'btn-menu-trigger')}>
+        
         <span className={styles.label}>
           {this.props.selected.name}
-          <CaretIcon $show={this.props.showSelector} onClick={this.onCaretClick.bind(this)} />
+          <CaretIcon $show={renderCaret} onClick={this.onCaretClick.bind(this)} />
         </span>
 
         {this.state.menuOpen && (

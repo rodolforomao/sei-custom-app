@@ -6,7 +6,7 @@ import styled from 'styled-components';
 export const CaretIcon = styled(FontAwesomeIcon).attrs(() => ({
   icon: faCaretDown,
 }))`
-  display: inline-block;
+  display: ${(props) => (props.$show ? 'inline-block' : 'none')};
   vertical-align: middle;
   overflow: hidden;
   font-size: 14px;
