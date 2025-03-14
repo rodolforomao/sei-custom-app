@@ -249,7 +249,8 @@ export const loadTrelloRoutes = async () => {
  */
 export const loadSimaRoutes = async () => {
     // const base_url = "https://servicos.dnit.gov.br/sima-back";
-    const base_url = "http://localhost:5055";
+    const base_url = "https://sistemas.dnit.gov.br/sima-back";
+    // const base_url = "http://localhost:5055";
     let routes = [];
     // 1
     let response = {
@@ -348,7 +349,7 @@ export const loadSimaRoutes = async () => {
             name: "@{list.name}"
         }
     };
-    routes.push({id: routesId.getCardData.id, url: base_url + "/api/issue/@{card.id}/view/", body: `{}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.getCardData.id, url: base_url + "/api/issue/view/", body: `{"issueId": "@{card.id}"}`, verb: "GET", response: JSON.stringify(response)});
     // 9
     response = {
         id: "@{id}",
@@ -363,7 +364,7 @@ export const loadSimaRoutes = async () => {
     routes.push({id: routesId.createCard.id, url: base_url + "/api/issue/create/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [{"type": 1, "numberDocument": "@{card.desc}"}],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
     // 10
     response = {};
-    routes.push({id: routesId.updateCard.id, url: base_url + "/api/issue/@{card.id}/batchUpdate/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","endDate":"@{card.due}","isIssueCompleted":"@{card.dueComplete}","listId":"@{list.id}","projectId": "@{board.id}","board":"@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
+    routes.push({id: routesId.updateCard.id, url: base_url + "/api/issue/@{card.id}/batchUpdate/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","endDate":"@{card.due}","isIssueCompleted":"@{card.dueComplete}","listId":"@{list.id}","projectId": "@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
     // 11
     response = {};
     routes.push({id: routesId.deleteCard.id, url: "", body: ``, verb: "DELETE", response: JSON.stringify(response)});
