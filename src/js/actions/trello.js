@@ -157,15 +157,6 @@ export const updateCardData = (cardID, newCardData) => {
     } else {
       trelloData['desc'] = newCardData['description'];
     }
-    // processNumbers;
-    // trelloData['desc'] = store
-    //   .getAllProcesssFromCardID(cardID)
-    //   .map((processNumber) => 'SEI ' + processNumber)
-    //   .join('\n')
-    //   .concat('\n' + newCardData['description']);
-    //   trelloData['desc'] = newCardData['description']
-      console.log("trelloData['desc']: %o", trelloData['desc']);
-      console.log("NewCardData: %o", newCardData);
   }
 
   if ('name' in newCardData) trelloData['name'] = newCardData['name'];

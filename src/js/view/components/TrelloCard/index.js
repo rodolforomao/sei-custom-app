@@ -87,11 +87,11 @@ class TrelloCard extends React.Component {
   }
 
   onChangeName(newName) {
-    if (this.props.onChangeName) this.props.onChangeName(this.props.cardID, newName);
+    if (this.props.onChangeName) this.props.onChangeName(this.props.cardID, newName, this.props.location.board);
   }
 
   onChangeDescription(newDescription) {
-    if (this.props.onChangeDescription) this.props.onChangeDescription(this.props.cardID, newDescription);
+    if (this.props.onChangeDescription) this.props.onChangeDescription(this.props.cardID, newDescription, this.props.location.board);
   }
 
   onChangeLocation(type, newLocation) {
@@ -100,7 +100,7 @@ class TrelloCard extends React.Component {
 
   onChangeDue(due, dueComplete) {
     this.setState({ isEditingDue: false });
-    if (this.props.onChangeDue) this.props.onChangeDue(this.props.cardID, due, dueComplete);
+    if (this.props.onChangeDue) this.props.onChangeDue(this.props.cardID, due, dueComplete, this.props.location.board);
   }
 
   onMouseEnter() {

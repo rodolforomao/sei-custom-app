@@ -73,21 +73,19 @@ const TrelloCardPlayground = () => {
         {...card}
         refreshCard={(cardID) => actions.refreshCardData(cardID)}
         deleteCard={(cardID) => actions.deleteCard(cardID)}
-        onChangeName={(cardID, newName) => actions.updateCardData(cardID, { name: newName })}
-        onChangeDescription={(cardID, newDescription) =>
-          actions.updateCardData(cardID, { description: newDescription })
-        }
+        onChangeName={(cardID, newName, boardData) => actions.updateCardData(cardID, { name: newName, board: boardData })}
+        onChangeDescription={(cardID, newDescription, boardData) => actions.updateCardData(cardID, { description: newDescription, board: boardData }) }
         onChangeLocation={(cardID, type, newLocation, boardData) => {
             if (type === 'board') { 
               actions.updateCardData(cardID, { [type]: newLocation })
             } else {
-              actions.updateCardData(cardID, { [type]: newLocation, board: boardData })
+              const obj = { [type]: newLocation, board: boardData };
+              console.log("[OCL] Obj: %o", obj);
+              actions.updateCardData(cardID, obj)
             }
           }
         }
-        onChangeDue={(cardID, due, dueComplete) =>
-          actions.updateCardData(cardID, { due: due, dueComplete: dueComplete })
-        }
+        onChangeDue={(cardID, due, dueComplete, boardData) => actions.updateCardData(cardID, { due: due, dueComplete: dueComplete, board: boardData }) }
         hasAnotherCard={false}
         fullWidth={false}
         originalAnchor={anchor.current}
