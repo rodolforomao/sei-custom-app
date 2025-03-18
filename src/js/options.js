@@ -2,7 +2,7 @@ import * as alert from 'view/alert.js';
 import { loadTrelloRoutes, loadSimaRoutes, listRoutes, clearRoutes } from "model/routes_store.js";
 import routesId from "model/routes_id.js";
 import { getRoute } from "model/routes_store.js";
-import axios from 'axios';
+import { openJWTPopup } from "actions/jwt_authentication.js";
 import 'css/options.scss';
 
 let ui = {};
@@ -28,8 +28,8 @@ const mapUI = () => {
   ui.formTrello = document.getElementById('form-trello');
   ui.formJwt = document.getElementById('form-jwt');
   ui.defaultDesktop = document.getElementById("selectDesktop");
-  ui.checkCookies = document.getElementById("checkCookies"); 
- 
+  ui.checkCookies = document.getElementById("checkCookies");
+
 
   for (const btnSave of Array.prototype.slice.call(document.getElementsByClassName('btn-salvar-config'))) {
     btnSave.addEventListener('click', save);
@@ -52,13 +52,13 @@ const mapUI = () => {
 };
 
 const openFormTrello = () => {
-  ui.formJwt.style.display = 'none'; 
-  ui.formTrello.style.display = 'block'; 
+  ui.formJwt.style.display = 'none';
+  ui.formTrello.style.display = 'block';
 }
 
 const openFormJWT = () => {
-  ui.formTrello.style.display = 'none'; 
-  ui.formJwt.style.display = 'block'; 
+  ui.formTrello.style.display = 'none';
+  ui.formJwt.style.display = 'block';
 }
 
 const loadRoutesForm = () => {
@@ -241,24 +241,24 @@ const save = async (e) => {
 
 const clearConfiguredRoutes = async (event) => {
   const form = document.getElementById('form-routes');
-    if (form) {
-        form.style.display = 'none'; // Esconde o formulário
-    }
+  if (form) {
+    form.style.display = 'none'; // Esconde o formulário
+  }
 
-    const btnSalvarRoutes = document.getElementById('btnSalvarConfig');
-    if (btnSalvarRoutes) {
-      btnSalvarRoutes.style.display = 'none'; // Esconde o formulário
-    }
+  const btnSalvarRoutes = document.getElementById('btnSalvarConfig');
+  if (btnSalvarRoutes) {
+    btnSalvarRoutes.style.display = 'none'; // Esconde o formulário
+  }
 
-    const btnLimparRotas = document.getElementById('btn-clear-routes');
-    if (btnLimparRotas) {
-      btnLimparRotas.style.display = 'none'; // Esconde o formulário
-    }
+  const btnLimparRotas = document.getElementById('btn-clear-routes');
+  if (btnLimparRotas) {
+    btnLimparRotas.style.display = 'none'; // Esconde o formulário
+  }
 
-    const btnCarregarRotas = document.getElementById('btn-trello-routes');
-    if (btnCarregarRotas) {
-      btnCarregarRotas.style.display = 'block'; // Esconde o formulário
-    }
+  const btnCarregarRotas = document.getElementById('btn-trello-routes');
+  if (btnCarregarRotas) {
+    btnCarregarRotas.style.display = 'block'; // Esconde o formulário
+  }
 
   event.preventDefault();
   clearRoutes();
@@ -267,20 +267,20 @@ const clearConfiguredRoutes = async (event) => {
 
 const loadDefaultRoutes = async (event) => {
   const form = document.getElementById('form-routes');
-    if (form) {
-        form.style.display = 'block'; // Esconde o formulário
-    }
+  if (form) {
+    form.style.display = 'block'; // Esconde o formulário
+  }
 
-    const btnLimparRotas = document.getElementById('btn-clear-routes');
-    if (btnLimparRotas) {
-      btnLimparRotas.style.display = 'block'; // Esconde o formulário
-    }
+  const btnLimparRotas = document.getElementById('btn-clear-routes');
+  if (btnLimparRotas) {
+    btnLimparRotas.style.display = 'block'; // Esconde o formulário
+  }
 
-    const btnCarregarRotas = document.getElementById('btn-trello-routes');
-    if (btnCarregarRotas) {
-      btnCarregarRotas.style.display = 'none'; // Esconde o formulário
-    }
-    
+  const btnCarregarRotas = document.getElementById('btn-trello-routes');
+  if (btnCarregarRotas) {
+    btnCarregarRotas.style.display = 'none'; // Esconde o formulário
+  }
+
   event.preventDefault();
 
   if (confirm('Deseja realmente carregar as configurações do Trello? Esta ação não pode ser desfeita.')) {
@@ -327,75 +327,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 const openPopup = () => {
-
-  const baseUrl = document.getElementById("urlPlugin").value.trim();
-  if (!baseUrl) {
-    alert.error("Por favor, insira a URL base.");
-    return;
-  }
-
-  // Garantindo que a URL base não termine com uma barra
-  const sanitizedBaseUrl = baseUrl.endsWith("/")
-    ? baseUrl.slice(0, -1)
-    : baseUrl;
-
-  // Adicionando o restante da URL
-  const popUpOptions = "width=700,height=600,resizable=yes,scrollbars=yes";
-  const popUpWindow = window.open(baseUrl, 'popupWindow', popUpOptions);
-  window.addEventListener('message', (event) => {
-
-    const parsedUrl = new URL(baseUrl);
-    const allowedOrigin = parsedUrl.origin;
-    if (event.origin !== allowedOrigin) {
-      console.warn('Origem não autorizada:', event.origin);
-      return;
-    }
-    const data = event.data;
-
-    if(data && data.desktops){
-
-      const selectElement = document.getElementById("selectDesktop");
-
-  // Limpa as opções existentes
-      selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
-
-      // Adiciona as novas opções vindas do `data.desktops`
-      data.desktops.forEach(desktop => {
-        const option = document.createElement("option");
-        option.value = desktop.id;  // Supondo que tenha um ID
-        option.textContent = desktop.nameDesktop; // Supondo que tenha um nome
-        selectElement.appendChild(option);
-  });
-
-    }
-
-    if (data && data.token) { 
-
-      const encodedToken = JSON.stringify({ token: data.token });
-      const exp = JSON.parse(window.atob(data.token.split('.')[1])).exp;
-
-      const backendDomain = "https://servicos.dnit.gov.br/sima-back";
-      // const backendDomain = "http://localhost:5055";
-
-      chrome.cookies.set({
-        url: backendDomain, 
-        name: "SIMA",
-        value: encodedToken, 
-        expirationDate: exp,
-        secure: true,
-        sameSite: "no_restriction" 
-      });
-
-    } else {
-      console.error('Token inválido ou ausente no evento:', data);
-    }
-  });
+  openJWTPopup(document.getElementById("urlPlugin").value, document.getElementById("selectDesktop"));
 };
-
-const getUserData = () => {
-  console.log("Request sem header bla");
-  axios.get('http://localhost:5055/api/user/authUser', {}, { withCredentials: true })
-    .then((response) => { console.log(response.data); })
-    .catch((err) => console.log(err));
-};
-
