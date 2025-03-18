@@ -333,7 +333,8 @@ export const loadSimaRoutes = async () => {
         desc: "@{summary}",
         labels: [{
             id: "@{badge.id}",
-            color: "@{badge.color}"
+            color: "@{badge.color}",
+            name: "@{badge.nameTag}"
         }],
         due: "@{endDate}",
         dueComplete: "@{isIssueCompleted}",
