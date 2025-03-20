@@ -327,5 +327,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 const openPopup = () => {
-  openJWTPopup(document.getElementById("urlPlugin").value, document.getElementById("selectDesktop"));
+  openJWTPopup(document.getElementById("urlPlugin").value, document.getElementById("selectDesktop"))
+  .catch((error) => {
+    alert.error('Erro ao realizar autenticação.', error);
+  });
 };

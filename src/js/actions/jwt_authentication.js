@@ -1,6 +1,7 @@
 const popUpOptions = "width=700,height=600,resizable=yes,scrollbars=yes";
 
 export const openJWTPopup = async (authUrl, desktopsSelect) => {
+    console.log("Opening JWT Popup with URL: %o", authUrl);
     return new Promise((resolve, reject) => {
         authUrl = sanitizeUrl(authUrl);
         if (!authUrl) {
@@ -13,7 +14,7 @@ export const openJWTPopup = async (authUrl, desktopsSelect) => {
     });
 };
 
-const handleAuthResponse = (event, authUrl, desktopsSelect, resolve, reject) => {
+const handleAuthResponse = async (event, authUrl, desktopsSelect, resolve, reject) => {
     const parsedUrl = new URL(authUrl);
     const allowedOrigin = parsedUrl.origin;
     // Verifica a origem da mensagem e desconsidera mensagens de outras origens
@@ -31,27 +32,37 @@ const handleAuthResponse = (event, authUrl, desktopsSelect, resolve, reject) => 
         updateDesktopsSelect(desktopsSelect, event.data.desktops);
 
     if (event.data.token) {
-        updateJWTToken(event.data.token, event.data.destinyDomain);
+        await updateJWTToken(event.data.token, event.data.destinyDomain);
         saveAuthUrl(authUrl);
     }
     resolve();
 };
 
 const saveAuthUrl = (authUrl) => {
-    chrome.storage.sync.set({authUrl: authUrl});
+    chrome.storage.sync.set({ authUrl: authUrl });
 };
 
-const updateJWTToken = (token, destinyDomain) => {
-    const encodedToken = JSON.stringify({token: token});
-    const exp = JSON.parse(window.atob(token.split('.')[1])).exp;
+const updateJWTToken = async (token, destinyDomain) => {
+    return new Promise((resolve, reject) => {
+        const encodedToken = JSON.stringify({ token: token });
+        const exp = JSON.parse(window.atob(token.split('.')[1])).exp;
+        const data = {
+            from: "options",
+            action: "setCookie",
+            destinyDomain: destinyDomain,
+            encodedToken: encodedToken,
+            exp: exp
+        };
 
-    chrome.cookies.set({
-        url: destinyDomain,
-        name: "SIMA",
-        value: encodedToken,
-        expirationDate: exp,
-        secure: true,
-        sameSite: "no_restriction"
+        chrome.runtime.sendMessage(data, (response) => {
+            if (response.success) {
+                console.log("Response: %o", response);
+                resolve();
+            } else {
+                console.log("Erro ao tentar enviar mensagem: %o", response.error);
+                reject(response.error);
+            }
+        });
     });
 };
 
@@ -64,7 +75,7 @@ const updateDesktopsSelect = (desktopsSelect, desktops) => {
     // Adiciona as novas opções vindas do `data.desktops`
     desktops.forEach(desktop => {
         const option = document.createElement("option");
-        option.value = desktop.id; 
+        option.value = desktop.id;
         option.textContent = desktop.nameDesktop;
         desktopsSelect.appendChild(option);
     });

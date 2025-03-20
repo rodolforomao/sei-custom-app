@@ -1,5 +1,6 @@
 import axios from 'axios';
 import auth from './auth.js';
+import * as alert from 'view/alert.js';
 import { getRoute } from 'model/routes_store.js';
 import { getObjectData, getArrayData } from 'model/objectconversion.js';
 import { openJWTPopup } from "../actions/jwt_authentication.js";
@@ -16,10 +17,10 @@ if (process.env.NODE_ENV === 'test' || process.env.MOCKED_API === 'true') {
 }
 
 export const doRequestAPI = async (routeId, dataTransfer) => {
-  console.log("[INICIO] Rota %o - %o", routeId, url);
   // Monta a URL e o objeto de requisição já trocando os placeholders pelos valores corretos
   const route = await getRoute(routeId);
   const url = dataTransfer.transformString(route.url);
+  console.log("[INICIO] Rota %o - %o", routeId, url);
   const obj = JSON.parse(dataTransfer.transformString(route.body));
   // Monta as outras variáveis que serão usadas na requisição
   const verb = route.verb.toLowerCase();
@@ -61,9 +62,12 @@ const sendRequest = async (url, method, params, data, withCredentials, shouldRet
     });
     return httpResponse;
   } catch (e) {
+    console.log("Erro ao tentar enviar requisição: %o", e);
     if (e.response.status === 401 && shouldRetry) {
+      if (!confirm("Sua sessão expirou. Deseja fazer login novamente?"))
+        return null;
       const authUrl = await getAuthURL();
-      openJWTPopup(authUrl, null);
+      await openJWTPopup(authUrl, null);
       return await sendRequest(url, method, params, data, withCredentials, false);
     }
     console.log("Erro ao tentar enviar requisição: %o", e);
@@ -73,17 +77,24 @@ const sendRequest = async (url, method, params, data, withCredentials, shouldRet
 
 const getAuthURL = async () => {
   let authUrl = '';
-  chrome.storage.sync.get(
-    {
-      authUrl: ''
-    },
-    (items) => {
-      authUrl = items.authUrl;
-    }
-  );
-  console.log("Auth URL is %o", authUrl);
-  return route.url;
-}
+  try {
+    authUrl = await new Promise((resolve, reject) => {
+      chrome.storage.sync.get({ authUrl: '' }, (items) => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          console.log("Items 2: %o", items);
+          resolve(items.authUrl);
+        }
+      });
+    });
+    console.log("Auth URL is %o", authUrl);
+    return authUrl;
+  } catch (e) {
+    console.log("Propagando o erro %o", e);
+    throw e;
+  }
+};
 
 export const setCredentials = auth.setCredentials;
 export const getCredentials = auth.getCredentials;

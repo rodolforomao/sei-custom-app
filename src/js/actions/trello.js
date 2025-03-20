@@ -46,7 +46,8 @@ export const doRefreshCardsWithID = (cardID) => {
         resolve();
       })
       .catch((error) => {
-        if (error.response.status === 404) {
+        console.log(error);
+        if (error.response.status !== undefined && error.response.status === 404) {
           /* cartão não existe mais, removê-lo da lista */
           store.updateCardsWithID(cardID, []);
           resolve();
