@@ -325,8 +325,23 @@ document.addEventListener('DOMContentLoaded', () => {
   loadRoutesForm();
 });
 
+const buttons = document.querySelectorAll('.nav-item button');
+
+// Função para destacar o botão clicado
+buttons.forEach(button => {
+  button.addEventListener('click', function() {
+    // Remove a classe "highlighted" de todos os botões
+    buttons.forEach(btn => btn.classList.remove('highlighted'));
+    
+    // Adiciona a classe "highlighted" ao botão clicado
+    this.classList.add('highlighted');
+  });
+});
+
 
 const openPopup = () => {
+  event.preventDefault(); 
+  ui.formJwt.style.display = 'block';
   openJWTPopup(document.getElementById("urlPlugin").value, document.getElementById("selectDesktop"))
   .catch((error) => {
     alert.error('Erro ao realizar autenticação.', error);
