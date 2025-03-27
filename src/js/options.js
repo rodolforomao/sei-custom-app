@@ -52,8 +52,9 @@ const mapUI = () => {
 };
 
 const openFormTrello = () => {
-  ui.formJwt.style.display = 'none';
-  ui.formTrello.style.display = 'block';
+
+  ui.formJwt.style.display = 'none'; 
+  ui.formTrello.style.display = 'block'; 
 }
 
 const openFormJWT = () => {
@@ -61,7 +62,41 @@ const openFormJWT = () => {
   ui.formJwt.style.display = 'block';
 }
 
+const validationRoute = async () => {
+  const routes = Object.values(routesId);
+  const routeId = routes[0]?.id;
+  const savedRoute = await getRoute(routeId);
+
+  if (savedRoute.url) {
+    return true;
+  }
+  return false;
+};
+
+const toggleFormDisplay = async () => {
+  const form = document.getElementById("form-routes");
+  const buttonSaveConfiguration = document.getElementById("btnSalvarConfig");
+  const btnCarregarRotas = document.getElementById('btn-trello-routes');
+  const btnLimparRotas = document.getElementById('btn-clear-routes');
+  
+
+  if (!form) return;
+
+  const isValid = await validationRoute();
+  form.style.display = isValid ? "block" : "none";
+  buttonSaveConfiguration.style.display = isValid ? "block" : "none";
+  btnCarregarRotas.style.display = isValid? "none" : "block";
+  btnLimparRotas.style.display =isValid ? "block" : "none";
+
+
+};
+
+
+toggleFormDisplay();
+
+
 const loadRoutesForm = () => {
+  
   document.forms['form-routes'].innerHTML = '';
   const routes = Object.values(routesId);
   routes.forEach(async (route) => {
@@ -222,7 +257,7 @@ const save = async (e) => {
     defaultCheckCookies: ui.checkCookies.checked,
   });
 
-  //await clearRoutes();
+  await clearRoutes();
   const newRoutes = [];
   const values = Object.values(routesId);
   for (const value of values) {
@@ -240,20 +275,16 @@ const save = async (e) => {
 };
 
 const clearConfiguredRoutes = async (event) => {
-  const form = document.getElementById('form-routes');
-  if (form) {
-    form.style.display = 'none'; // Esconde o formulário
+ 
+  const formRoutes = document.getElementById('form-routes');
+  if (formRoutes) {
+    formRoutes.reset(); // Reseta os campos do formulário
   }
-
-  const btnSalvarRoutes = document.getElementById('btnSalvarConfig');
-  if (btnSalvarRoutes) {
-    btnSalvarRoutes.style.display = 'none'; // Esconde o formulário
-  }
-
-  const btnLimparRotas = document.getElementById('btn-clear-routes');
-  if (btnLimparRotas) {
-    btnLimparRotas.style.display = 'none'; // Esconde o formulário
-  }
+    
+    const btnLimparRotas = document.getElementById('btn-clear-routes');
+    if (btnLimparRotas) {
+      btnLimparRotas.style.display = 'none'; // Esconde o formulário
+    }
 
   const btnCarregarRotas = document.getElementById('btn-trello-routes');
   if (btnCarregarRotas) {
@@ -265,40 +296,32 @@ const clearConfiguredRoutes = async (event) => {
   alert.success('Rotas configuradas foram removidas com sucesso.');
 };
 
+const toggleElementDisplay = (id, display) => {
+  const element = document.getElementById(id);
+  if (element) element.style.display = display;
+};
+
 const loadDefaultRoutes = async (event) => {
-  const form = document.getElementById('form-routes');
-  if (form) {
-    form.style.display = 'block'; // Esconde o formulário
-  }
-
-  const btnLimparRotas = document.getElementById('btn-clear-routes');
-  if (btnLimparRotas) {
-    btnLimparRotas.style.display = 'block'; // Esconde o formulário
-  }
-
-  const btnCarregarRotas = document.getElementById('btn-trello-routes');
-  if (btnCarregarRotas) {
-    btnCarregarRotas.style.display = 'none'; // Esconde o formulário
-  }
-
   event.preventDefault();
+
+  toggleElementDisplay('form-routes', 'block');
+  toggleElementDisplay('btn-clear-routes', 'block');
+  toggleElementDisplay('btn-trello-routes', 'none');
 
   if (confirm('Deseja realmente carregar as configurações do Trello? Esta ação não pode ser desfeita.')) {
     await loadSimaRoutes();
-    // await loadTrelloRoutes();
     loadRoutesForm();
-    // await listRoutes();
-
-    // Tornar o botão visível alterando o estilo
-    const btnSalvarConfig = document.getElementById('btnSalvarConfig');
-    btnSalvarConfig.style.display = 'block';
+    
+    toggleElementDisplay('btnSalvarConfig', 'block');
 
     alert.success('Rotas do Trello carregadas com sucesso.');
   } else {
     console.log('Rotas do Trello canceladas.');
+    
+    toggleElementDisplay('btn-clear-routes', 'none');
+    toggleElementDisplay('btn-trello-routes', 'block');
   }
 };
-
 const restore = () => {
   chrome.storage.sync.get(
     {
