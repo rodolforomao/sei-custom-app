@@ -248,8 +248,8 @@ export const loadTrelloRoutes = async () => {
  * @returns {void}
  */
 export const loadSimaRoutes = async () => {
-    // const base_url = "https://servicos.dnit.gov.br/sima-back";
-    const base_url = "https://sistemas.dnit.gov.br/sima-back";
+    const base_url = "https://servicos.dnit.gov.br/sima-back";
+    // const base_url = "https://sistemas.dnit.gov.br/sima-back";
     // const base_url = "http://localhost:5055";
     let routes = [];
     // 1
@@ -360,7 +360,8 @@ export const loadSimaRoutes = async () => {
         due: "@{endDate}",
         dueComplete: "@{isIssueCompleted}",
         shortUrl: "",
-        idChecklists: []
+        idChecklists: [],
+        seiNumbers: "@{seiNumbers}"
     };
     routes.push({id: routesId.createCard.id, url: base_url + "/api/issue/create/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [{"type": 1, "numberDocument": "@{card.desc}"}],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
     // 10

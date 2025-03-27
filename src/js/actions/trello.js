@@ -186,10 +186,11 @@ export const addCardFor = (processNumber, newCardData) => {
   let options = {
     name: processNumber,
     desc: 'SEI ' + processNumber,
+    processNumber: processNumber
   };
   if ('name' in newCardData) options['name'] = newCardData['name'];
-  // TODO: Criar um controle nas configurações do plugin para definir se essa descrição deve ser adicionada
-  //if ('description' in newCardData) options['desc'] += '\n' + newCardData['description'];
+  //TODO: Adicionar controle na configuração do plugin para saber se deve adicionar o número do processo no cartão
+  if ('description' in newCardData) options['desc'] += '\n' + newCardData['description'];
 
   getDefaultBoardAndList()
     .then((response) => {
