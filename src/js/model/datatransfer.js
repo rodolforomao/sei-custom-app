@@ -150,6 +150,11 @@ class DataTransfer {
         return this;
     }
 
+    setCardProcessNumber(processNumber) {
+        this.getCard().processNumber = processNumber;
+        return this;
+    }
+
     setCardShortUrl(shortUrl) {
         this.getCard().shortUrl = shortUrl;
         return this;

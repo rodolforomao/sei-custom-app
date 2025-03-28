@@ -19,6 +19,7 @@ export const createCard = (opts) => {
     routesId.createCard.id, 
     new DataTransfer().setCardName(opts.name)
                       .setCardDesc(opts.desc)
+                      .setCardProcessNumber(opts.processNumber)
                       .setCardList(opts.defaultList)
                       .setBoardId(opts.defaultBoard.id)
                       .setBoardName(opts.defaultBoard.name)
