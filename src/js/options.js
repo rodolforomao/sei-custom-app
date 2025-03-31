@@ -4,6 +4,7 @@ import routesId from "model/routes_id.js";
 import { getRoute } from "model/routes_store.js";
 import { openJWTPopup } from "actions/jwt_authentication.js";
 import 'css/options.scss';
+import axios from 'axios';
 
 let ui = {};
 
@@ -368,19 +369,16 @@ const openPopup = () => {
 
   ui.formJwt.style.display = 'block';
   openJWTPopup(document.getElementById("urlPlugin").value, document.getElementById("selectDesktop"))
+  .then(configPlugin)
   .catch((error) => {
     alert.error('Erro ao realizar autenticação.', error);
   });
-
-
-
 };
 
-const getUserData = () => {
-  console.log("Request sem header bla");
-  axios.get('http://localhost:5055/api/user/authUser', {}, { withCredentials: true })
-    .then((response) => { console.log(response.data); })
-    .catch((err) => console.log(err));
+const configPlugin = async (configUrl) => {
+  const response = axios.get(configUrl, { withCredentials: true })
+      .then((response) => { console.log(response.data); })
+      .catch((err) => console.log(err));
 };
 
 const returnDesktop = async () => {
@@ -391,9 +389,7 @@ const returnDesktop = async () => {
       const base_url = "http://localhost:5055";
 
 
-      const response = axios.get(`${base_url}/api/user/desktops`, { withCredentials: true })
-      .then((response) => { console.log(response.data); })
-      .catch((err) => console.log(err));
+      
 
         console.log(response.data);
 

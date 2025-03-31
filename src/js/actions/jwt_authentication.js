@@ -17,6 +17,7 @@ export const openJWTPopup = async (authUrl, desktopsSelect) => {
 const handleAuthResponse = async (event, authUrl, desktopsSelect, resolve, reject) => {
     const parsedUrl = new URL(authUrl);
     const allowedOrigin = parsedUrl.origin;
+    console.log(event.data.urlConfigPlugin);
     // Verifica a origem da mensagem e desconsidera mensagens de outras origens
     if (event.origin !== allowedOrigin) {
         reject("Origem da mensagem não permitida: " + event.origin);
@@ -27,15 +28,11 @@ const handleAuthResponse = async (event, authUrl, desktopsSelect, resolve, rejec
         reject("A URL informada não retornou os dados necessários para autenticação.");
         return;
     }
-
-    if (event.data.desktops)
-        updateDesktopsSelect(desktopsSelect, event.data.desktops);
-
     if (event.data.token) {
         await updateJWTToken(event.data.token, event.data.destinyDomain);
         saveAuthUrl(authUrl);
     }
-    resolve();
+    resolve(event.data.urlConfigPlugin);
 };
 
 const saveAuthUrl = (authUrl) => {
