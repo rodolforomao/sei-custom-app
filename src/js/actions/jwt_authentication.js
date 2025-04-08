@@ -8,9 +8,9 @@ export const openJWTPopup = async (authUrl, desktopsSelect) => {
             alert.error("Não foi possível fazer a autenticação do usuário pois a URL informada é inválida.");
         }
 
-        // Abre a URL para o usuário fazer a autenticação e registra o evento que vai tratar o retorno do popup
+        const messageHandler = (event) => handleAuthResponse(event, authUrl, desktopsSelect, resolve, reject);
+        window.addEventListener('message', messageHandler, { once: true });
         window.open(authUrl, 'popupWindow', popUpOptions);
-        window.addEventListener('message', (event) => handleAuthResponse(event, authUrl, desktopsSelect, resolve, reject));
     });
 };
 
@@ -32,8 +32,8 @@ const handleAuthResponse = async (event, authUrl, desktopsSelect, resolve, rejec
         updateDesktopsSelect(desktopsSelect, event.data.desktops);
 
     if (event.data.token) {
-        await updateJWTToken(event.data.token, event.data.destinyDomain);
         saveAuthUrl(authUrl);
+        await updateJWTToken(event.data.token, event.data.destinyDomain);
     }
     resolve();
 };

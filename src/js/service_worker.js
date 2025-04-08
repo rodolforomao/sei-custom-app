@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         sameSite: "no_restriction"
       }, (cookie) => {
         if (!chrome.runtime.lastError) {
-          console.log("Cookie OK: %o", cookie);
+          //console.log("Cookie OK: %o", cookie);
           sendResponse({ success: true });
         } else {
           console.error("Erro ao tentar setar cookie: %o", chrome.runtime.lastError);
