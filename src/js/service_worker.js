@@ -1,5 +1,5 @@
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  console.log("Message received: %o", msg);
+  //console.log("Message received: %o", msg);
   if (msg.from === 'content' && msg.subject === 'showPageAction') {
     chrome.pageAction.show(sender.tab.id);
   }

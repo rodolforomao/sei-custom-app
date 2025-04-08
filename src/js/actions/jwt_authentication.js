@@ -1,7 +1,7 @@
 const popUpOptions = "width=700,height=600,resizable=yes,scrollbars=yes";
 
 export const openJWTPopup = async (authUrl, desktopsSelect) => {
-    console.log("Opening JWT Popup with URL: %o", authUrl);
+    //console.log("Opening JWT Popup with URL: %o", authUrl);
     return new Promise((resolve, reject) => {
         authUrl = sanitizeUrl(authUrl);
         if (!authUrl) {
@@ -56,10 +56,10 @@ const updateJWTToken = async (token, destinyDomain) => {
 
         chrome.runtime.sendMessage(data, (response) => {
             if (response.success) {
-                console.log("Response: %o", response);
+                //console.log("Response: %o", response);
                 resolve();
             } else {
-                console.log("Erro ao tentar enviar mensagem: %o", response.error);
+                //console.log("Erro ao tentar enviar mensagem: %o", response.error);
                 reject(response.error);
             }
         });
