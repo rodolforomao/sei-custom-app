@@ -79,3 +79,79 @@ Execute `npm run playground` e abra seu navegador em `http://localhost:8080/`.
 O projeto usa o `eslint` como linter e o `prettier` para formatação do código. As regras estão no arquivo `.eslintrc.js` e `.prettierrc.js`.
 
 Todo o código é escrito em inglês, para manter um padrão. Os termos em português do SEI foram traduzidos livremente.
+
+## Integração entre SEI e Trello
+
+Este projeto tem como objetivo demonstrar uma estrutura básica de integração entre o **Sistema Eletrônico de Informações (SEI)** e o **Trello**, permitindo o mapeamento e a conversão de dados entre os dois sistemas.
+
+Este código realiza a conversão de um objeto JSON usando um modelo de mapeamento definido pelo desenvolvedor. O principal objetivo é reorganizar ou renomear campos do objeto original para se adequar a um novo formato, um formato que será utilizado para integrar com outro sistema. 
+
+### Visão Geral 
+
+A ideia central é transformar objetos de dados do SEI para um formato compatível com a estrutura de cartões e listas do Trello, utilizando uma função personalizada de conversão de objetos.  
+
+### Como Funciona
+ 
+A conversão é feita com base em um **mapa de estrutura**, que define quais campos devem ser extraídos e renomeados. A função `getObjectData` faz essa leitura e retorna um novo objeto no formato desejado. 
+
+### Funcionalidades 
+
+- **Conversão de Dados**: Recebe informações em formato JSON provenientes do SEI e as converte em uma estrutura utilizável para interação com o Trello. 
+
+- **Mapeamento Flexível:** Permite definir uma estrutura personalizada para mapear os campos do SEI aos atributos do Trello (como nome do card, ID da lista, etc.).
+
+- **Modularidade:** O código é organizado em módulos, facilitando manutenção e expansão.
+
+### Objetivo da Integração
+
+Essa lógica pode ser utilizada para sincronizar registros do SEI com tarefas ou cartões em quadros do Trello, mantendo campos essenciais como:
+
+- ID do processo no SEI.
+
+- Nome ou título do documento. 
+
+- Nome da lista no Trello.
+
+- ID da lista no Trello.
+
+## Exemplo de Conversão
+
+Abaixo temos um exemplo prático de como a função `getObjectData` pode ser utilizada para transformar dados do SEI em uma estrutura compatível com o Trello:
+
+```js
+import { getObjectData } from './src/js/model/objectconversion.js';
+
+const estrutura = {
+    identity: "@{id}",
+    nome: "@{name}",
+    listname: "@{project.listname}",
+    listId: "@{project.listId}",
+};
+
+const dados = {
+    id: 1,
+    name: "Teste",
+    project: {
+        listname: "ENTRADA",
+        listId: 1
+    }
+};
+
+console.log("Teste");
+console.log(getObjectData(estrutura, dados));
+```
+### Saída esperada: 
+``` json
+{
+  "identity": 1,
+  "nome": "Teste",
+  "listname": "ENTRADA",
+  "listId": 1
+}
+```
+### Conclusão 
+- **Estrutura:** Define como os dados devem ser mapeados e renomeados. A sintaxe @{} indica qual valor será extraído.
+
+- **Dados:** Contém os dados originais (por exemplo, vindos do SEI).
+
+- **getObjectData:** Realiza a substituição dinâmica e devolve um novo objeto com os campos renomeados conforme o mapeamento definido.
