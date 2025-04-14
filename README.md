@@ -149,9 +149,9 @@ console.log(getObjectData(estrutura, dados));
   "listId": 1
 }
 ```
-### Conclusão 
+### Conclusão  
 - **Estrutura:** Define como os dados devem ser mapeados e renomeados. A sintaxe @{} indica qual valor será extraído.
 
 - **Dados:** Contém os dados originais (por exemplo, vindos do SEI).
 
-- **getObjectData:** Realiza a substituição dinâmica e devolve um novo objeto com os campos renomeados conforme o mapeamento definido.
+- **getObjectData:** Realiza a substituição dinâmica e devolve um novo objeto com os campos renomeados conforme o mapeamento definido. 

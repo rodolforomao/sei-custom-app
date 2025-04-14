@@ -16,7 +16,7 @@ const dados = {
     {
       id: 1,
       name: "Teste",
-      project: {
+      project: { 
         listname: "ENTRADA",
         listId: 101
       }
@@ -33,6 +33,8 @@ const dados = {
 };
 
 console.log(getObjectData(estrutura, dados));
+
+
 
 
 

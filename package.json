@@ -4,6 +4,7 @@
   "description": "Integração SEI e Trello",
   "main": "index.js",
   "browserslist": "defaults",
+  "type": "module",
   "scripts": {
     "webpack:dev": "cross-env NODE_ENV=development npx webpack --config webpack.config.js",
     "webpack:dev:watch": "NODE_ENV=development npx webpack --config webpack.config.dev.watch.js --watch",
