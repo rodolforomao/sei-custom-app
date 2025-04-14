@@ -154,4 +154,4 @@ console.log(getObjectData(estrutura, dados));
 
 - **Dados:** Contém os dados originais (por exemplo, vindos do SEI).
 
-- **getObjectData:** Realiza a substituição dinâmica e devolve um novo objeto com os campos renomeados conforme o mapeamento definido. 
+- **getObjectData:** Realiza a substituição dinâmica e devolve um novo objeto com os campos renomeados conforme o mapeamento definido!

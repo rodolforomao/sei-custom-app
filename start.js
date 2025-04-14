@@ -32,9 +32,4 @@ const dados = {
   ]
 };
 
-console.log(getObjectData(estrutura, dados));
-
-
-
-
-
+console.log(getObjectData(estrutura, dados)); 
