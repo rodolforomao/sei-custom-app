@@ -155,3 +155,69 @@ console.log(getObjectData(estrutura, dados));
 - **Dados:** Contém os dados originais (por exemplo, vindos do SEI).
 
 - **getObjectData:** Realiza a substituição dinâmica e devolve um novo objeto com os campos renomeados conforme o mapeamento definido!
+
+## Outro modo de utilização, com array:
+
+### Funcionalidade 
+
+**A função getObjectData recebe dois parâmetros:**
+
+Estrutura: Um objeto que define o formato desejado, contendo placeholders no formato @{caminho} que indicam onde os valores do objeto de dados devem ser inseridos.
+dados: O objeto que contém os valores reais a serem mapeados para a estrutura.
+A função percorre a estrutura, substitui os placeholders pelos valores correspondentes do objeto dados e retorna um novo objeto formatado. Suporta objetos aninhados e arrays, permitindo a extração de múltiplos valores de listas.
+
+### Exemplo de Uso
+
+**Abaixo está um exemplo de como utilizar a função getObjectData:**
+
+``` js
+import { getObjectData } from './src/js/model/objectConversion.js';
+
+// Definindo a estrutura com placeholders
+const estrutura = {
+  identity: "@{id}",
+  nome: "@{name}",
+  info: [
+    {
+      cidade: "@{info.city}",
+      idade: "@{info.age}",
+      rua: "@{info.street}"
+    },
+  ],
+  cidades: ["@{info.city}"],
+  idades: ["@{info.age}"],
+  ruas: ["@{info.street}"],
+};
+
+// Objeto de dados de entrada
+const dados = {
+  id: 1,
+  name: "Teste",
+  info: [
+    {
+      city: "Brasília",
+      age: 30,
+      street: "Rua Teste"
+    },
+    {
+      city: "Goiania",
+      age: 25,
+      street: "Rua Centro"
+    },
+    {
+      city: "São Paulo",
+      age: 35,
+      street: "Rua São Paulo"
+    }
+  ]
+};
+
+// Executando a conversão
+console.log("Dados:", getObjectData(estrutura, dados)); 
+
+```
+
+### Observações: 
+
+- Os placeholders na estrutura devem corresponder aos caminhos válidos no objeto dados. Caso um caminho não exista, o valor será substituído por undefined.
+- Arrays na estrutura são processados para mapear todos os elementos correspondentes no objeto dados, como visto no exemplo com cidades, idades e ruas.

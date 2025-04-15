@@ -1,35 +1,39 @@
-import { getObjectData } from './src/js/model/objectconversion.js';  
+import { getObjectData } from './src/js/model/objectConversion.js';
 
 const estrutura = {
-  usuarios: [
-    {
-      identity: "@{id}",
-      nome: "@{name}",
-      listname: "@{project.listname}",
-      listId: "@{project.listId}"
-    }
-  ]
+  identity: "@{id}",
+  nome: "@{name}",
+    info: [
+      {
+        cidade: "@{info.city}",
+        idade: "@{info.age}",
+        rua: "@{info.street}"
+      },
+    ],
+        cidades: ["@{info.city}"],
+        idades: ["@{info.age}"], 
+        ruas: ["@{info.street}"]
 };
 
 const dados = {
-  usuarios: [
-    {
-      id: 1,
-      name: "Teste",
-      project: { 
-        listname: "ENTRADA",
-        listId: 101
+  id: 1,
+  name: "Teste",
+    info: [
+      {
+        city: "Brasília",
+        age: 30,
+        street: "Rua Teste"
+      },
+      {
+        city: "Goiania",
+        age: 25,
+        street: "Rua Centro"
+      },
+      {
+        city: "São Paulo",
+        age: 35,
+        street: "Rua São Paulo"
       }
-    },
-    {
-      id: 2,
-      name: "Teste 2",
-      project: {
-        listname: "SAÍDA", 
-        listId: 102
-      }
-    },
-  ]
+    ]
 };
-
-console.log(getObjectData(estrutura, dados)); 
+console.log("Dados:", getObjectData(estrutura, dados)); 
