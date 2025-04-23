@@ -165,11 +165,11 @@ Todas as informações utilizadas dentro do Plugin podem ser acessadas por meio 
 
 _Obs: Esses placeholders permitem acessar diversas informações diferentes, porém, nem todas as informações podem estar disponíveis em uma determinada rota pois depende de como essas informações foram processadas dentro do Plugin._
 
-### Como mudar a estrutura do JSON mantendo os dados
+### Como transformar a estrutura do JSON mantendo os dados
 
 Abaixo está um simples exemplo de uma transformação. Observe que os dados da primeira coluna foram utilizados para preencher a estrutura definida na segunda coluna e o resultado é apresentado na terceira coluna.
 
-<table style="width: 100%">
+<table>
   <thead>
     <tr>
       <th>Dados originais</th>
@@ -181,14 +181,14 @@ Abaixo está um simples exemplo de uma transformação. Observe que os dados da 
     <tr>
       <td>
         {<br>
-          &nbsp;&nbsp; "<span style="color: green">identity</span>": 1,<br>
-          &nbsp;&nbsp; "<span style="color: orange">name</span>": "Teste"<br>
+          &nbsp;&nbsp; "identity": 1,<br>
+          &nbsp;&nbsp; "name": "Teste"<br>
         }
       </td>
       <td>
         {<br>
-          &nbsp;&nbsp; "id": "@{<span style="color: green">identity</span>}",<br>
-          &nbsp;&nbsp; "nome": "@{<span style="color: orange">name</span>}"<br>
+          &nbsp;&nbsp; "id": "@{identity}",<br>
+          &nbsp;&nbsp; "nome": "@{name}"<br>
         }
       </td>
       <td>
@@ -201,133 +201,361 @@ Abaixo está um simples exemplo de uma transformação. Observe que os dados da 
   </tbody>
 </table>
 
-Mais uma vez o plugin sabe que uma informação deve ser substituída por outra por meio dos caracteres `@{}`, e dentro das chaves deve-se informar o placeholder que contém a informação que será substituída. Neste
+Mais uma vez, o plugin sabe que uma informação deve ser substituída por outra por meio dos caracteres `@{}`, e dentro das chaves deve-se informar o placeholder que contém a informação que será substituída. Neste
 
+### Transformando a estrutura utilizando arrays
 
-### Funcionalidades 
+#### Quando o JSON começa com um array
 
-- **Conversão de Dados**: Recebe informações em formato JSON provenientes do SEI e as converte em uma estrutura utilizável para interação com o Trello. 
+Quando os dados originais são formados por um array na raiz do JSON utilizamos a palavra `this` como placeholder para indicar esta situação ao plugin, assim ele saberá que o JSON inicia com um array.
 
-- **Mapeamento Flexível:** Permite definir uma estrutura personalizada para mapear os campos do SEI aos atributos do Trello (como nome do card, ID da lista, etc.).
+<table>
+  <thead>
+    <tr>
+      <th>Dados originais</th>
+      <th>Nova estrutura</th>
+      <th>Resultado final</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        [<br>
+          &nbsp;&nbsp; {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; "identity": 1,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; "name": "First Card"<br>
+          &nbsp;&nbsp; },<br>
+          &nbsp;&nbsp; {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; "identity": 2,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; "name": "Second Card"<br>
+          &nbsp;&nbsp; },<br>
+          &nbsp;&nbsp; {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; "identity": 3,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; "name": "Third Card"<br>
+          &nbsp;&nbsp; }<br>
+        ]
+      </td>
+      <td>
+        [<br>
+          &nbsp;&nbsp; {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; "id": "@{this.identity}",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; "nome": "@{this.name}"<br>
+          &nbsp;&nbsp;&nbsp;&nbsp; }<br>
+        ]
+      </td>
+      <td>
+        [<br>
+          &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+            &nbsp;&nbsp; "id": 1,<br>
+            &nbsp;&nbsp; "nome": "First Card"<br>
+          &nbsp;&nbsp;&nbsp;&nbsp; },<br>
+          &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+            &nbsp;&nbsp; "id": 2,<br>
+            &nbsp;&nbsp; "nome": "Second Card"<br>
+          &nbsp;&nbsp;&nbsp;&nbsp; },<br>
+          &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+            &nbsp;&nbsp; "id": 3,<br>
+            &nbsp;&nbsp; "nome": "Third Card"<br>
+          &nbsp;&nbsp;&nbsp;&nbsp; }<br>
+        ]
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-- **Modularidade:** O código é organizado em módulos, facilitando manutenção e expansão.
+#### Transformando um array de objetos em outro array de objetos
 
-### Objetivo da Integração
+<table>
+  <thead>
+    <tr>
+      <th>Dados originais</th>
+      <th>Nova estrutura</th>
+      <th>Resultado final</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        {<br>
+          &nbsp;&nbsp; "listId": 123,<br>
+          &nbsp;&nbsp; "listName": "TODO",<br>
+          &nbsp;&nbsp; "cards": [<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "identity": 1,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name": "First Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; },<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "identity": 2,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name": "Second Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; },<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "identity": 3,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name": "Third Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; }<br>
+          &nbsp;&nbsp; ]<br>
+        }
+      </td>
+      <td>
+        {<br>
+          &nbsp;&nbsp; "lista": "@{listId}",<br>
+          &nbsp;&nbsp; "cartoes": [<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "id": "@{cards.identity}",<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "nome": "@{cards.name}"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+          &nbsp;&nbsp;]<br>
+        }
+      </td>
+      <td>
+        {<br>
+          &nbsp;&nbsp; "lista": 123,<br>
+          &nbsp;&nbsp; "cartoes": [<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "id": 1,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "nome": "First Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; },<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "id": 2,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "nome": "Second Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; },<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "id": 3,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "nome": "Third Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; }<br>
+          &nbsp;&nbsp; ]<br>
+        }
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-Essa lógica pode ser utilizada para sincronizar registros do SEI com tarefas ou cartões em quadros do Trello, mantendo campos essenciais como:
+#### Transformando um array de objetos em um array de tipos primitivos
 
-- ID do processo no SEI.
+<table>
+  <thead>
+    <tr>
+      <th>Dados originais</th>
+      <th>Nova estrutura</th>
+      <th>Resultado final</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        {<br>
+          &nbsp;&nbsp; "listId": 123,<br>
+          &nbsp;&nbsp; "listName": "TODO",<br>
+          &nbsp;&nbsp; "cards": [<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "identity": 1,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name": "First Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; },<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "identity": 2,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name": "Second Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; },<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "identity": 3,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "name": "Third Card"<br>
+            &nbsp;&nbsp;&nbsp;&nbsp; }<br>
+          &nbsp;&nbsp; ]<br>
+        }
+      </td>
+      <td>
+        {<br>
+          &nbsp;&nbsp; "lista": "@{listId}",<br>
+          &nbsp;&nbsp; "idCartoes": ["@{cards.identity}"]<br>
+        }
+      </td>
+      <td>
+        {<br>
+          &nbsp;&nbsp; "lista": 123,<br>
+          &nbsp;&nbsp; "cartoes": [1, 2, 3]<br>
+        }
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-- Nome ou título do documento. 
+## Configurando as rotas do backend
 
-- Nome da lista no Trello.
+Na página de configuração do plugin você poderá configurar as rotas para o backend com as seguintes informações:
 
-- ID da lista no Trello.
+- URL: A URL do backend que será feita a requisição
+- Verbo: Qual verbo será usado na requisição para a rota (GET, POST, ...)
+- Request Body: Define quais valores serão enviados para o backend ao fazer a requisição
+   - Atenção: Para o verbo GET os valores serão enviados na URL via query parameters, para os outros verbos, os valores serão enviados no body da requisição.
+- Response Data: Define como os valores que retornam do servidor serão transformados no formato aceito pelo plugin.
 
-## Exemplo de Conversão
+Veja abaixo um exemplo da configuração da rota que consulta quadros pelo nome
 
-Abaixo temos um exemplo prático de como a função `getObjectData` pode ser utilizada para transformar dados do SEI em uma estrutura compatível com o Trello:
+TODO: Adicionar aqui uma imagem com o exemplo da configuração da rota.
 
-```js
-import { getObjectData } from './src/js/model/objectconversion.js';
+### Configuração da URL
 
-const estrutura = {
-    identity: "@{id}",
-    nome: "@{name}",
-    listname: "@{project.listname}",
-    listId: "@{project.listId}",
-};
+Na página de configuração do plugin você encontrar uma lista de várias rotas que são utilizadas para o plugin funcionar corretamente. A configuração da URL é muito simples, basta adicionar no campo da URL o endereço da rota que exerce a função descrita na rota. Na página de configuração a rota tem um breve título que descreve a sua função, para mais detalhes sobre cada rota, leia os tópicos abaixo.
 
-const dados = {
-    id: 1,
-    name: "Teste",
-    project: {
-        listname: "ENTRADA",
-        listId: 1
-    }
-};
+Importante notar que é possível utilizar os placeholders na URL da rota, permitindo assim que o endereço da rota seja alterado dinamicamente pelo plugin. Por exemplo `https://meubackend.com.br/board/@{board.id}/lists`, o placeholder `board.id` será devidamente substituído pelo id do quadro que está sendo requisitado.
 
-console.log("Teste");
-console.log(getObjectData(estrutura, dados));
+### JSON de resposta do backend
+
+Segue abaixo todas as rotas que devem ser configuradas para que o plugin funcione corretamente e como ele espera que seja a resposta do backend.
+
+#### Rota 1 - Recuperar todos os quadros
+
+Esta rota lista todos os quadros que o usuário tem acesso. Um quadro é composto por várias listas e uma lista pode ter zero ou mais cartões.
+
 ```
-### Saída esperada: 
-``` json
 {
-  "identity": 1,
-  "nome": "Teste",
-  "listname": "ENTRADA",
-  "listId": 1
-}
-```
-### Conclusão  
-- **Estrutura:** Define como os dados devem ser mapeados e renomeados. A sintaxe @{} indica qual valor será extraído.
-
-- **Dados:** Contém os dados originais (por exemplo, vindos do SEI).
-
-- **getObjectData:** Realiza a substituição dinâmica e devolve um novo objeto com os campos renomeados conforme o mapeamento definido!
-
-## Outro modo de utilização, com array:
-
-### Funcionalidade 
-
-**A função getObjectData recebe dois parâmetros:**
-
-Estrutura: Um objeto que define o formato desejado, contendo placeholders no formato @{caminho} que indicam onde os valores do objeto de dados devem ser inseridos.
-dados: O objeto que contém os valores reais a serem mapeados para a estrutura.
-A função percorre a estrutura, substitui os placeholders pelos valores correspondentes do objeto dados e retorna um novo objeto formatado. Suporta objetos aninhados e arrays, permitindo a extração de múltiplos valores de listas.
-
-### Exemplo de Uso
-
-**Abaixo está um exemplo de como utilizar a função getObjectData:**
-
-``` js
-import { getObjectData } from './src/js/model/objectConversion.js';
-
-// Definindo a estrutura com placeholders
-const estrutura = {
-  identity: "@{id}",
-  nome: "@{name}",
-  info: [
+  "boards": [
     {
-      cidade: "@{info.city}",
-      idade: "@{info.age}",
-      rua: "@{info.street}"
-    },
-  ],
-  cidades: ["@{info.city}"],
-  idades: ["@{info.age}"],
-  ruas: ["@{info.street}"],
-};
-
-// Objeto de dados de entrada
-const dados = {
-  id: 1,
-  name: "Teste",
-  info: [
-    {
-      city: "Brasília",
-      age: 30,
-      street: "Rua Teste"
-    },
-    {
-      city: "Goiania",
-      age: 25,
-      street: "Rua Centro"
-    },
-    {
-      city: "São Paulo",
-      age: 35,
-      street: "Rua São Paulo"
+      "id": "@{}",
+      "name": "@{}"
     }
   ]
-};
+}
+```
 
-// Executando a conversão
-console.log("Dados:", getObjectData(estrutura, dados)); 
+#### Rota 2 - Consultar quadros por nome
+
+Esta rota recebe uma string como parâmetro e retorna todos os quadros que o usuário tem acesso e que contém a string indicada no nome do quadro.
+
+O placeholder que contém a string a ser pesquisada é `board.name`.
+
+```
+{
+  "boards":[
+    {
+      "id":"@{this.id}",
+      "name":"@{this.name}"
+    }
+  ]
+}
+```
+
+#### Rota 3 - Criar quadro
+
+TODO: Documentar
 
 ```
 
-### Observações: 
+```
 
-- Os placeholders na estrutura devem corresponder aos caminhos válidos no objeto dados. Caso um caminho não exista, o valor será substituído por undefined.
-- Arrays na estrutura são processados para mapear todos os elementos correspondentes no objeto dados, como visto no exemplo com cidades, idades e ruas.
+#### Rota 4 - Recuperar listas de um quadro
+
+Esta rota é responsável por retornar todas as listas dentro de um quadro, o quadro que está sendo requisitado pode ser acessado pelo placeholder `board.id` e pode ser informado na URL ou no Request Body, como ficar melhor na rota.
+
+```
+{
+  "lists":[
+    {
+      "id":"@{this.id}",
+      "name":"@{this.name}"
+    }
+  ]
+}
+```
+
+#### Rota 5 - Criar lista
+
+TODO: Documentar
+
+```
+
+```
+
+#### Rota 6 - Consultar cartões por nome
+
+Esta rota recebe uma string como parâmetro e retorna todos os cartões que o usuário tem acesso e que contém a string indicada no nome do quadro.
+
+O placeholder que contém a string a ser pesquisada é `card.desc`.
+
+```
+{
+  "cards":[
+    {
+      "id":"@{}",
+      "name":"@{}",
+      "desc":"@{}",
+      "labels":[
+        {
+          "id":"@{}",
+          "color":"@{}",
+          "name":"@{}"
+        }
+      ],
+      "due":"@{}",
+      "dueComplete":"@{}",
+      "shortUrl":"@{}",
+      "idChecklists":["@{}"],
+      "seiNumbers":["@{}"]
+    }
+  ]
+}
+```
+
+Atenção: O campo `seiNumber` deve contar uma lista com o número SEI dos processos associados a este cartão, desta maneira o plugin consegue identificar se um processo já está cadastrado no backend ou não.
+
+#### Rota 7 - Consultar cartões de um quadro
+
+Pesquisa todos os cartões de um quadro.
+
+```
+[
+  {
+    "name":"@{}",
+    "id":"@{}",
+    "board": {
+      "id":"@{}",
+      "name":"@{}"
+    },
+    "cards": [
+      {
+        "id":"@{}",
+        "name":"@{}",
+        "desc":"@{}",
+        "labels":[
+          {
+            "id":"@{}",
+            "color":"@{}",
+            "name":"@{}"
+          }
+        ],
+        "due":"@{}",
+        "dueComplete":"@{}",
+        "shortUrl":"@{}",
+        "idChecklists":["@{}"],
+        "seiNumbers":["@{}"]
+      }
+    ]
+  }
+]
+```
+
+Atenção: O campo `seiNumber` deve contar uma lista com o número SEI dos processos associados a este cartão, desta maneira o plugin consegue identificar se um processo já está cadastrado no backend ou não.
+
+#### Rota X - 
+
+AAA
+
+```
+
+```
+
+#### Rota X - 
+
+AAA
+
+```
+
+```
+
+#### Rota X - 
+
+AAA
+
+```
+
+```
+
+## Autenticação do backend
