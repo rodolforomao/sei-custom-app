@@ -169,7 +169,7 @@ _Obs: Esses placeholders permitem acessar diversas informações diferentes, por
 
 Abaixo está um simples exemplo de uma transformação. Observe que os dados da primeira coluna foram utilizados para preencher a estrutura definida na segunda coluna e o resultado é apresentado na terceira coluna.
 
-<table>
+<table style="width: 100%">
   <thead>
     <tr>
       <th>Dados originais</th>
