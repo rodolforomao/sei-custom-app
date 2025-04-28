@@ -44,48 +44,48 @@ class DataTransfer {
         return this.getCardChecklist().item;
     }
 
-    setBoardName(boardName) {
+    setBoardName(boardName) {//
         this.getBoard().name = boardName;
         return this;
     }
 
-    setBoardId(boardId) {
+    setBoardId(boardId) {//
         this.getBoard().id = boardId;
         return this;
     }
 
-    setListClosed(closed) {
-        this.getList().closed = closed;
+    setListId(id) {//
+        this.getList().id = id;
         return this;
     }
 
-    setListColor(color) {
+    setListName(name) {//
+        this.getList().name = name;
+        return this;
+    }
+
+    setListIdBoard(idBoard) {//
+        this.getList().idBoard = idBoard;
+        return this;
+    }
+
+    setListPos(pos) {//
+        this.getList().pos = pos;
+        return this;
+    }
+
+    setListColor(color) {//
         this.getList().color = color;
+        return this;
+    }
+
+    setListClosed(closed) {//
+        this.getList().closed = closed;
         return this;
     }
 
     setListDatasource(datasource) {
         this.getList().datasource = datasource;
-        return this;
-    }
-
-    setListId(id) {
-        this.getList().id = id;
-        return this;
-    }
-
-    setListIdBoard(idBoard) {
-        this.getList().idBoard = idBoard;
-        return this;
-    }
-
-    setListName(name) {
-        this.getList().name = name;
-        return this;
-    }
-
-    setListPos(pos) {
-        this.getList().pos = pos;
         return this;
     }
 
@@ -104,24 +104,39 @@ class DataTransfer {
         return this;
     }
 
-    setCardDesc(desc) {
+    setCardId(boardId) {//
+        this.getCard().id = boardId;
+        return this;
+    }
+
+    setCardName(name) {//
+        this.getCard().name = name;
+        return this;
+    }
+
+    setCardDesc(desc) {//
         this.getCard().desc = desc;
         return this;
     
     }
 
-    setCardDue(due) {
+    setCardList(list) {//
+        this.getCard().list = list;
+        return this;
+    }
+
+    setCardShortUrl(shortUrl) {//
+        this.getCard().shortUrl = shortUrl;
+        return this;
+    }
+
+    setCardDue(due) {//
         this.getCard().due = due;
         return this;
     }
 
-    setCardDueComplete(dueComplete) {
+    setCardDueComplete(dueComplete) {//
         this.getCard().dueComplete = dueComplete;
-        return this;
-    }
-
-    setCardId(boardId) {
-        this.getCard().id = boardId;
         return this;
     }
 
@@ -137,26 +152,6 @@ class DataTransfer {
 
     setCardLabels(labels) {
         this.getCard().labels = labels;
-        return this;
-    }
-
-    setCardList(list) {
-        this.getCard().list = list;
-        return this;
-    }
-
-    setCardName(name) {
-        this.getCard().name = name;
-        return this;
-    }
-
-    setCardProcessNumber(processNumber) {
-        this.getCard().processNumber = processNumber;
-        return this;
-    }
-
-    setCardShortUrl(shortUrl) {
-        this.getCard().shortUrl = shortUrl;
         return this;
     }
 
