@@ -29,6 +29,8 @@ const mapUI = () => {
   ui.formJwt = document.getElementById('form-jwt');
   ui.defaultDesktop = document.getElementById("selectDesktop");
   ui.checkCookies = document.getElementById("checkCookies"); 
+  ui.checkMove = document.getElementById("checkMove"); 
+  ui.checkCreateTitle = document.getElementById("checkCreateTitle"); 
  
 
   for (const btnSave of Array.prototype.slice.call(document.getElementsByClassName('btn-salvar-config'))) {
@@ -255,6 +257,10 @@ const save = async (e) => {
     defaultList: ui.defaultList.value,
     defaultDesktop: parseFloat(ui.defaultDesktop.value) || 0,
     defaultCheckCookies: ui.checkCookies.checked,
+    defaultCheckMove: ui.checkMove.checked,
+    defaultCheckCreateTitle: ui.checkCreateTitle.checked,
+
+ 
   });
 
   await clearRoutes();
