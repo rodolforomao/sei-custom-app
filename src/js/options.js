@@ -396,23 +396,6 @@ const openPopup = () => {
     }
     const data = event.data;
 
-    if(data && data.desktops){
-
-      const selectElement = document.getElementById("selectDesktop");
-
-  // Limpa as opções existentes
-      selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
-
-      // Adiciona as novas opções vindas do `data.desktops`
-      data.desktops.forEach(desktop => {
-        const option = document.createElement("option");
-        option.value = desktop.id;  // Supondo que tenha um ID
-        option.textContent = desktop.nameDesktop; // Supondo que tenha um nome
-        selectElement.appendChild(option);
-  });
-
-    }
-
     if (data && data.token) { 
 
       const encodedToken = JSON.stringify({ token: data.token });
@@ -430,12 +413,39 @@ const openPopup = () => {
         sameSite: "no_restriction" 
       });
 
+      returnDesktop();
+
     } else {
       console.error('Token inválido ou ausente no evento:', data);
     }
   });
 };
 
+const returnDesktop = () => {
+
+  const base_url = "https://sistemas.dnit.gov.br/sima-back";
+  // const base_url = "http://localhost:5055";
+
+  axios.get(`${base_url}/api/pluginSei/returnDesktop`, { withCredentials: true })
+  .then(response => {
+    const desktops = response.data; 
+
+    const selectElement = document.getElementById("selectDesktop");
+
+    // Limpa as opções existentes
+    selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
+
+    // Adiciona as novas opções
+    desktops.forEach(desktop => {
+      const option = document.createElement("option");
+      option.value = desktop.id;
+      option.textContent = desktop.nameDesktop;
+      selectElement.appendChild(option);
+    });
+  })
+  .catch((err) => console.log(err));
+
+}
 const getUserData = () => {
   console.log("Request sem header bla");
   axios.get('http://localhost:5055/api/user/authUser', {}, { withCredentials: true })
