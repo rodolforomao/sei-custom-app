@@ -3,7 +3,6 @@ import auth from './auth.js';
 import * as alert from 'view/alert.js';
 import { getRoute } from 'model/routes_store.js';
 import { getObjectData, getArrayData } from 'model/objectconversion.js';
-import { openJWTPopup } from "../actions/jwt_authentication.js";
 
 /**
  * Se estivermos no ambiente teste (e2e ou playground),
@@ -66,33 +65,31 @@ const sendRequest = async (url, method, params, data, withCredentials, shouldRet
     if (e.response.status === 401 && shouldRetry) {
       if (!confirm("Sua sessão expirou. Deseja fazer login novamente?"))
         return null;
-      const authUrl = await getAuthURL();
-      await openJWTPopup(authUrl, null);
-      return await sendRequest(url, method, params, data, withCredentials, false);
+      
+      console.log("Sending message to do authentication...");
+      const authPromise = new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({ from: "content", action: "doAuthentication" }, (response) => {
+          if (!response) {
+            console.error("Erro ao tentar autenticar: %o", chrome.runtime.lastError);
+            reject(chrome.runtime.lastError);
+          } else {
+            resolve(response);
+          }
+        });
+      });
+      try {
+        console.log("Aguardando autenticação...");
+        const authResponse = await authPromise;
+        console.log("Deveria ter aguardado a autenticação!");
+        console.log("Resultado do login: %o", authResponse);
+        return await sendRequest(url, method, params, data, withCredentials, false);
+      } catch (e) {
+        console.error("Erro ao tentar autenticar: %o", e);
+        return null;
+      }
     }
     console.log("Erro ao tentar enviar requisição: %o", e);
     return null;
-  }
-};
-
-const getAuthURL = async () => {
-  let authUrl = '';
-  try {
-    authUrl = await new Promise((resolve, reject) => {
-      chrome.storage.sync.get({ authUrl: '' }, (items) => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          console.log("Items 2: %o", items);
-          resolve(items.authUrl);
-        }
-      });
-    });
-    console.log("Auth URL is %o", authUrl);
-    return authUrl;
-  } catch (e) {
-    console.log("Propagando o erro %o", e);
-    throw e;
   }
 };
 
