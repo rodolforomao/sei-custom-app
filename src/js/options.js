@@ -446,10 +446,10 @@ const returnDesktop = () => {
   .catch((err) => console.log(err));
 
 }
-const getUserData = () => {
-  console.log("Request sem header bla");
-  axios.get('http://localhost:5055/api/user/authUser', {}, { withCredentials: true })
-    .then((response) => { console.log(response.data); })
-    .catch((err) => console.log(err));
-};
+// const getUserData = () => {
+//   console.log("Request sem header bla");
+//   axios.get('http://localhost:5055/api/user/authUser', {}, { withCredentials: true })
+//     .then((response) => { console.log(response.data); })
+//     .catch((err) => console.log(err));
+// };
 
