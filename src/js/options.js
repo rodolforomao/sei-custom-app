@@ -259,8 +259,6 @@ const save = async (e) => {
     defaultCheckCookies: ui.checkCookies.checked,
     defaultCheckMove: ui.checkMove.checked,
     defaultCheckCreateTitle: ui.checkCreateTitle.checked,
-
- 
   });
 
   await clearRoutes();
