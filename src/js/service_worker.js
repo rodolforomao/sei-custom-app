@@ -25,7 +25,7 @@ chrome.runtime.onMessage.addListener(handleNewMessage);
  * será executada para mandar uma menagem de volta para o remetente.
  */
 function handleNewMessage(msg, sender, sendResponse) {
-  console.log("Message received: %o", msg);
+  console.log(`[Message received] Context: ${msg.from} - Action: ${msg.action}`);
   // Função responsável por salvar o cookie no navegador.
   if (msg.from === pluginContexts.options && msg.action === pluginActions.setCookie) {
     handleSetCookie(msg, sendResponse);

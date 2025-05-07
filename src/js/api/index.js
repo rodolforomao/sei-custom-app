@@ -40,10 +40,10 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const params = verb === "get" ? obj : {};
   // Monta as variáveis que serão enviadas no corpo (body) da requisição
   const data = verb !== "get" ? obj : {};
-
+  let originalResponse;
   try {
     // console.log(`[REQUEST CONFIG] Verb: ${verb} / Credentials: ${sendCookie} / URL Params: ${Object.keys(params).length > 0} / Body Data: ${Object.keys(data).length > 0}`);
-    let originalResponse = await sendRequest(url, verb, params, data, sendCookie, true);
+    originalResponse = await sendRequest(url, verb, params, data, sendCookie, true);
     // console.log("Resposta original da rota %d: %o", routeId, originalResponse);
     // Faz a transformação da resposta de acordo com a configuração da rota
     let responseStruct = JSON.parse(route.response);
@@ -112,14 +112,14 @@ const reAuthenticateOAuth = async () => {
       let backgroundMsg = mountMessage(pluginActions.getOAuthCodes, {});
       chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
     });
-    console.log("[REAUTH] Códigos de autenticação: %o", oauthCodes);
+    console.log("[REAUTH] Códigos de recuperados.");
     // Pega o Token de autenticação
     const responseToken = await new Promise((resolve, reject) => {
       Object.assign(oauthCodes, { url: 'http://localhost:5055/auth/oauth/gettoken/' });
       let backgroundMsg = mountMessage(pluginActions.getOAuthToken, oauthCodes);
       chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
     });
-    console.log("[REAUTH] Token de autenticação: %o", responseToken);
+    console.log("[REAUTH] Token de autenticação recuperado.");
     // Salva o token de autenticação nos cookies
     await new Promise((resolve, reject) => {
       const encodedToken = JSON.stringify({ token: responseToken.token });

@@ -17,7 +17,6 @@ export const getOAuthCodes = async (authUrl) => {
         fullAuthUrl.searchParams.set("client_id", "chrome_extension");
         fullAuthUrl.searchParams.set("code_challenge", codeChallenge);
         fullAuthUrl.searchParams.set("code_challenge_method", "S256");
-        console.log("Opening JWT Popup with URL: %o", fullAuthUrl.toString());
         // Faz a configuração da janela de autenticação
         const authWindowConfig = {
             url: fullAuthUrl.toString(),
