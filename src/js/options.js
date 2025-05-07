@@ -2,7 +2,7 @@ import * as alert from 'view/alert.js';
 import { loadTrelloRoutes, loadSimaRoutes, listRoutes, clearRoutes } from "model/routes_store.js";
 import routesId from "model/routes_id.js";
 import { getRoute } from "model/routes_store.js";
-import { openJWTPopup } from "actions/jwt_authentication.js";
+//import { openJWTPopup } from "actions/jwt_authentication.js";
 import 'css/options.scss';
 
 let ui = {};
@@ -363,10 +363,11 @@ buttons.forEach(button => {
 
 
 const openPopup = () => {
-  event.preventDefault(); 
-  ui.formJwt.style.display = 'block';
-  openJWTPopup(document.getElementById("urlPlugin").value, document.getElementById("selectDesktop"))
-  .catch((error) => {
-    alert.error('Erro ao realizar autenticação.', error);
-  });
+  // event.preventDefault(); 
+  // ui.formJwt.style.display = 'block';
+  // openJWTPopup(document.getElementById("urlPlugin").value, document.getElementById("selectDesktop"))
+  // .catch((error) => {
+  //   alert.error('Erro ao realizar autenticação.', error);
+  // });
+  console.error("openPopup não implementado ainda.");
 };

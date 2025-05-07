@@ -2,7 +2,7 @@
 
 import 'css/common.scss';
 
-chrome.runtime.sendMessage(null, {
+/*chrome.runtime.sendMessage(null, {
   from: 'content',
   subject: 'showPageAction',
 });
@@ -14,4 +14,4 @@ document.addEventListener('click', (el) => {
       subject: 'showOptionsPage',
     });
   }
-});
+});*/

@@ -1,80 +1,225 @@
-import { openJWTPopup } from "./actions/jwt_authentication.js";
+import { getOAuthCodes, getOauthToken } from "./actions/oauth_util.js";
+import { pluginContexts, pluginActions } from "./constants.js";
 
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+/**
+ * Adiciona novo ouvinte de mensagens para tratar as mensagens vindas de outros contextos do plugin.
+ */
+chrome.runtime.onMessage.addListener(handleNewMessage);
+
+/**
+ * Handler para mensagens recebidas do conteúdo ou da página de opções ou
+ * do content script (scripts que o plugin injetou na página do SEI).
+ * 
+ * Como o plugin funciona com contextos diferentes (background, content e options),
+ * algumas funcionalidades não estão disponíveis em todos os contextos, essas funcionalidades
+ * são acessadas através de mensagens entre os contextos.
+ * 
+ * Esta função receberá uma mensagem e executará uma ação dependendo do conteúdo da mensagem.
+ * 
+ * @function addListener
+ * @param {Object} msg - Mensagem recebida com as orientações de qual ação executar.
+ * @param {string} msg.from - Origem da mensagem geralmente content ou options.
+ * @param {string} msg.action - Identifica a ação a ser executada.
+ * @param {Object} sender - Informações sobre o remetente da mensagem.
+ * @param {function} sendResponse - Função que foi passada como argumento e que
+ * será executada para mandar uma menagem de volta para o remetente.
+ */
+function handleNewMessage(msg, sender, sendResponse) {
   console.log("Message received: %o", msg);
-  if (msg.from === 'content' && msg.subject === 'showPageAction') {
-    chrome.pageAction.show(sender.tab.id);
+  // Função responsável por salvar o cookie no navegador.
+  if (msg.from === pluginContexts.options && msg.action === pluginActions.setCookie) {
+    handleSetCookie(msg, sendResponse);
+    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
+    return true;
   }
-  if (msg.from === 'content' && msg.subject === 'showOptionsPage') {
-    chrome.runtime.openOptionsPage();
+  // Função responsável por recuperar o cookie armazenado no navegador.
+  if (msg.from === pluginContexts.options && msg.action === pluginActions.getCookie) {
+    handleGetCookie(msg, sendResponse);
+    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
+    return true;
   }
-  
-  if (['content', 'options'].includes(msg.from)) {
-    if (msg.action == "setCookie") {
-      setCookie(msg, sendResponse);
-      return true;
-    }
-    
-    if (msg.action == "doAuthentication") {
-      console.log("Fazendo autenticação...");
-      doAuthentication()
-      .then((result) => {
-        sendResponse(result);
-      })
-      .catch((e) => { sendResponse(false); });
-      console.log("Returning true");
-      return true;
-    }
+  // Função responsável por salvar a URL de autenticação no storage do navegador.
+  if (msg.from === pluginContexts.options && msg.action === pluginActions.saveAuthUrl) {
+    // Tenta salvar a URL de autenticação no storage do navegador
+    saveAuthUrl(msg)
+    // Avisa que conseguiu salvar a URL de autenticação no storage do navegador
+    .then(() => { sendResponse({ success: true, data: "OK" }); })
+    // Avisa que não conseguiu salvar a URL de autenticação no storage do navegador
+    .catch((e) => { sendResponse({ success: false, data: e }); });
+    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
+    return true;
   }
-});
-
-async function doAuthentication() {
-  const authUrl = await getAuthURL();
-  try {
-    return await openJWTPopup(authUrl, null);
-  } catch (e) {
-    console.error("Erro ao abrir popup de autenticação: %o", e);
-    return false;
+  // Função responsável por fazer a autenticação do usuário usando OAuth 2.0.
+  if (msg.from === pluginContexts.content && msg.action === pluginActions.getOAuthCodes) {
+    handleGetOAuthCodes(sendResponse);
+    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
+    return true;
+  }
+  // Função responsável por fazer a autenticação do usuário usando OAuth 2.0.
+  if (msg.from === pluginContexts.content && msg.action === pluginActions.getOAuthToken) {
+    handleGetOAuthToken(msg.url, msg.code, msg.codeVerifier, sendResponse);
+    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
+    return true;
+  }
+  if (msg.from === pluginContexts.content && msg.action === pluginActions.saveOAuthToken) {
+    handleSetCookie(msg, sendResponse);
+    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
+    return true;
   }
 }
 
+/**
+ * Função chamada quando o plugin necessita fazer a autenticação do usuário usando OAuth 2.0. Como
+ * a autenticação via OAuth utiliza a API 'chrome.identity.launchWebAuthFlow()' que só está disponível
+ * no background context, então essa função é chamada pelo content script quando necessita de autenticação.
+ * 
+ * Essa função realiza apenas a primeira parte da autenticação OAuth 2.0 que é a geração do código de autorização,
+ * depois é necessário fazer uma requisição para o backend solicitando o Token JWT.
+ * 
+ * @function handleGetOAuthCodes
+ * @param {function} sendResponse - Função utilizada para mandar a resposta de volta para o plugin após a autenticação.
+ * A resposta para o plugin será um objeto contendo um campo 'success' que indica se a autenticação foi realizada com sucesso ou não
+ * e um campo 'data' que contém os dados retornados pelo backend ou o erro caso a autenticação tenha falhado.
+ * 
+ */
+function handleGetOAuthCodes(sendResponse) {
+  console.log("Solicitando os códigos de autenticação do backend.");
+  // Recupera a URL de autenticação do backend configurado no plugin.
+  getAuthURL()
+    .then((authUrl) => {
+      // Se conseguiu recuperar a URL com sucesso então chama a função openJWTPopup que irá abrir o popup de autenticação.
+      getOAuthCodes(authUrl)
+        .then((oauthCodes) => {
+          // Neste ponto sabemos que a autenticação ocorreu com sucesso, salva a URL para ser utilizada posteriormente.
+          saveAuthUrl(authUrl, () => {});
+          // Retorna os códigos para o plugin.
+          sendResponse({ success: true, data: oauthCodes });
+        })
+        // Se o popup foi fechado ou ocorreu algum erro ao tentar autenticar, então retorna o erro para o plugin.
+        .catch((e) => { sendResponse({ success: false, data: e }); });
 
-function setCookie(msg, sendResponse) {
-  chrome.cookies.set({
-    url: msg.destinyDomain,
-    name: "SIMA",
-    value: msg.encodedToken,
+    })
+    // Se não conseguiu recuperar a URL de autenticação então retorna o erro para o plugin.
+    .catch((e) => { sendResponse({ success: false, data: e }); });
+}
+
+/**
+ * 
+ * Função responsável por fazer a requisição para o backend solicitando o Token JWT.
+ * 
+ * @param {string} url URL que será usada para obter o token JWT.
+ * @param {string} code Código de autorização retornado pelo backend após a autenticação do usuário.
+ * @param {string} codeVerifier Verificador de código que é usado para validar o código de autorização e recuperar o token JWT.
+ * @param {function} sendResponse Função que será chamada para enviar a resposta de volta para o plugin.
+ * 
+ */
+async function handleGetOAuthToken(url, code, codeVerifier, sendResponse) {
+  console.log("Solicitando o Token JWT do backend.");
+  getOauthToken(url, code, codeVerifier)
+  .then((oauthToken) => { sendResponse(oauthToken); })
+  .catch((e) => { sendResponse(e); });
+}
+
+/**
+ * 
+ * Função responsável por recuperar a URL de autenticação do backend configurada no plugin.
+ * 
+ * @returns {Promise} Uma Promise que será resolvida com a URL de autenticação do backend configurada no plugin
+ * ou rejeitada com o erro ocorrido ao tentar recuperar a URL.
+ * 
+ */
+function getAuthURL() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get({ authUrl: '' }, (items) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(items.authUrl);
+      }
+    });
+  });
+};
+
+/**
+ * 
+ * Função responsável por armazenar o cookie no navegador.
+ * 
+ * @param {Object} msg Objeto com os dados que serão usados para recuperar o Cookie
+ * @param {function} sendResponse Função que será chamada para enviar a resposta de volta para o plugin.
+ * A resposta para o plugin será um objeto contendo um campo 'success' que indica se a autenticação foi realizada com sucesso ou não
+ * e um campo 'data' que contém a string "OK" em caso de sucesso ou o erro ocorrido.
+ * 
+ */
+function handleSetCookie(msg, sendResponse) {
+  // Configuração do cookie que será armazenado
+  const cookieConfig = {
+    url: msg.domain,
+    name: msg.name,
+    value: encodeURIComponent(msg.value),
     expirationDate: msg.exp,
     secure: true,
     sameSite: "no_restriction"
-  }, (cookie) => {
+  };
+  // Armazena o cookie e manda a resposta para o plugin
+  chrome.cookies.set(cookieConfig, (cookie) => {
     if (!chrome.runtime.lastError) {
-      //console.log("Cookie OK: %o", cookie);
-      sendResponse({ success: true });
+      sendResponse({ success: true, data: "OK" });
     } else {
-      console.error("Erro ao tentar setar cookie: %o", chrome.runtime.lastError);
-      sendResponse({ success: false, error: chrome.runtime.lastError });
+      sendResponse({ success: false, data: chrome.runtime.lastError });
     }
   });
 }
 
-async function getAuthURL () {
-  let authUrl = '';
-  try {
-    authUrl = await new Promise((resolve, reject) => {
-      chrome.storage.sync.get({ authUrl: '' }, (items) => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          console.log("Items 2: %o", items);
-          resolve(items.authUrl);
-        }
-      });
-    });
-    console.log("Auth URL is %o", authUrl);
-    return authUrl;
-  } catch (e) {
-    console.log("Propagando o erro %o", e);
-    throw e;
-  }
+/**
+ * 
+ * Função responsável por recuperar o cookie armazenado no navegador.
+ * 
+ * @param {object} msg Objeto com os dados que serão usados para recuperar o Cookie
+ * @param {function} sendResponse Função que será chamada para enviar a resposta de volta para o plugin.
+ * A resposta para o plugin será um objeto contendo um campo 'success' que indica se a autenticação foi realizada com sucesso ou não
+ * e um campo 'data' que contém o cookie ou o erro ocorrido.
+ * 
+ */
+function handleGetCookie(msg, sendResponse) {
+  chrome.cookies.get({ url: msg.domain, name: msg.name }, (cookie) => {
+    if (!chrome.runtime.lastError) {
+      sendResponse({ success: true, data: cookie });
+    } else {
+      sendResponse({ success: false, data: chrome.runtime.lastError });
+    }
+  });
+}
+
+/**
+ * 
+ * Função que armazena a URL utilizada para fazer o request para o backend e solicitar
+ * os códigos de validação OAuth 2.0.
+ * 
+ * Importante, os seguintes parâmetros NÃO devem estar presesentes na URL pois são adicionados dinicamente:
+ * - client_id
+ * - response_type
+ * - code_challenge
+ * - code_challenge_method
+ * 
+ * @param {string} authUrl URL para recuperar os códigos da autenticação OAuth 2.0. 
+ * 
+ */
+const saveAuthUrl = (authUrl) => {
+  // Tenta salvar a URL de autenticação no storage do navegador
+  return chrome.storage.sync.set({ authUrl: sanitizeUrl(authUrl) });
 };
+
+/**
+ * 
+ * Faz a sanitização da URL com as seguintes ações:
+ * - Remover espaços em branco no início e no final da URL.
+ * - Remove a barra (/) do final da URL caso exista.
+ * 
+ * @param {string} url URL a ser sanitizada.
+ * @returns Remove espaços em branco no início e no final da URL e remove a barra (/) do final da URL caso exista.
+ * 
+ */
+const sanitizeUrl = (url) => {
+  url = url.trim();
+  return url.endsWith("/") ? url.slice(0, -1) : url;
+}
