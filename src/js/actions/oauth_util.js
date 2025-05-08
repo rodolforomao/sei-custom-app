@@ -1,3 +1,7 @@
+import { pluginContexts, pluginActions } from '../constants.js';
+
+const SIMA_TOKEN_NAME = "SIMA";
+
 /**
  * 
  * Função responsável por abrir uma janela de autenticação para o usuário, utilizando o fluxo de autenticação OAuth 2.0 e retornar os códigos de autenticação.
@@ -153,3 +157,78 @@ async function generateCodeChallenge(codeVerifier) {
         throw e;
     }
 }
+
+/**
+ * 
+ * Função responsável por fazer a reautenticação do usuário, pegando os códigos de autenticação e o token JWT.
+ * Esta função é chamada quando o usuário tenta fazer uma requisição e recebe um erro 401 (não autorizado).
+ * 
+ */
+export const reAuthenticateOAuth = async () => {
+    try {
+      // Envia uma mensagem para o background pedindo os códigos de autenticação
+      const oauthCodes = await new Promise((resolve, reject) => {
+        let backgroundMsg = mountMessage(pluginActions.getOAuthCodes, {});
+        chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
+      });
+      console.log("[REAUTH] Códigos de recuperados.");
+      // Pega o Token de autenticação
+      const responseToken = await new Promise((resolve, reject) => {
+        Object.assign(oauthCodes, { url: 'http://localhost:5055/auth/oauth/gettoken/' });
+        // Object.assign(oauthCodes, { url: 'https://sistemas.dnit.gov.br/sima/auth/oauth/gettoken/' });
+        let backgroundMsg = mountMessage(pluginActions.getOAuthToken, oauthCodes);
+        chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
+      });
+      console.log("[REAUTH] Token de autenticação recuperado.");
+      // Salva o token de autenticação nos cookies
+      await new Promise((resolve, reject) => {
+        const encodedToken = JSON.stringify({ token: responseToken.token });
+        const exp = JSON.parse(atob(responseToken.token.split('.')[1])).exp;
+        const fieldsToAdd = {
+          name: SIMA_TOKEN_NAME,
+          value: encodedToken,
+          exp: exp
+        }
+        Object.assign(responseToken, fieldsToAdd);
+        let backgroundMsg = mountMessage(pluginActions.saveOAuthToken, responseToken);
+        chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
+      });
+      console.log("[REAUTH] ReAuth concluído com sucesso.");
+    } catch (e) {
+      // console.error("[REAUTH] Erro ao tentar autenticar: %o", e);
+      throw e;
+    }
+  };
+  
+  /**
+   * 
+   * Função genérica criada apenas para tratar a resposta das Promises geradas no método reAuthenticateOAuth.
+   * 
+   * @param {Object} responseData Objeto com a resposta do Promise.
+   * @param {function} resolve function para resolver a Promise.
+   * @param {function} reject function para rejeitar a Promise.
+   * 
+   */
+  const genericResponseHandler = (responseData, resolve, reject) => {
+    if (!responseData.success) {
+      reject(responseData.error);
+      return;
+    }
+    resolve(responseData.data);
+  };
+
+  /**
+ * 
+ * Função que padroniza a forma como as mensagens são enviadas para o background worker.
+ * 
+ * @param {string} action String indicando a ação que será realizada pelo background worker.
+ * @param {Object} data Dados que serão anexados aos campos padrões da mensagem que será enviada para o background worker.
+ * @returns {Object} Retorna um objeto com os dados que serão enviados para o background worker.
+ * 
+ */
+const mountMessage = (action, data) => {
+    return Object.assign(data, {
+      from: pluginContexts.content,
+      action: action
+    });
+  };
