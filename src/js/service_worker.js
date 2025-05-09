@@ -41,7 +41,7 @@ function handleNewMessage(msg, sender, sendResponse) {
   // Função responsável por salvar a URL de autenticação no storage do navegador.
   if (msg.from === pluginContexts.options && msg.action === pluginActions.saveAuthUrl) {
     // Tenta salvar a URL de autenticação no storage do navegador
-    saveAuthUrl(msg)
+    saveAuthUrl(msg.url)
     // Avisa que conseguiu salvar a URL de autenticação no storage do navegador
     .then(() => { sendResponse({ success: true, data: "OK" }); })
     // Avisa que não conseguiu salvar a URL de autenticação no storage do navegador
@@ -90,9 +90,7 @@ function handleGetOAuthCodes(sendResponse) {
       // Se conseguiu recuperar a URL com sucesso então chama a função openJWTPopup que irá abrir o popup de autenticação.
       getOAuthCodes(authUrl)
         .then((oauthCodes) => {
-          // Neste ponto sabemos que a autenticação ocorreu com sucesso, salva a URL para ser utilizada posteriormente.
-          saveAuthUrl(authUrl, () => {});
-          // Retorna os códigos para o plugin.
+          // Neste ponto sabemos que a autenticação ocorreu com sucesso. Retorna os códigos para o plugin.
           sendResponse({ success: true, data: oauthCodes });
         })
         // Se o popup foi fechado ou ocorreu algum erro ao tentar autenticar, então retorna o erro para o plugin.
@@ -158,7 +156,8 @@ function handleSetCookie(msg, sendResponse) {
     value: encodeURIComponent(msg.value),
     expirationDate: msg.exp,
     secure: true,
-    sameSite: "no_restriction"
+    sameSite: "no_restriction",
+    httpOnly: true
   };
   // Armazena o cookie e manda a resposta para o plugin
   chrome.cookies.set(cookieConfig, (cookie) => {

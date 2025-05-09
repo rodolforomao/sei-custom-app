@@ -174,8 +174,8 @@ export const reAuthenticateOAuth = async () => {
       console.log("[REAUTH] Códigos de recuperados.");
       // Pega o Token de autenticação
       const responseToken = await new Promise((resolve, reject) => {
-        Object.assign(oauthCodes, { url: 'http://localhost:5055/auth/oauth/gettoken/' });
-        // Object.assign(oauthCodes, { url: 'https://sistemas.dnit.gov.br/sima/auth/oauth/gettoken/' });
+        // Object.assign(oauthCodes, { url: 'http://localhost:5055/auth/oauth/gettoken/' });
+        Object.assign(oauthCodes, { url: 'https://sistemas.dnit.gov.br/sima-back/auth/oauth/gettoken/' });
         let backgroundMsg = mountMessage(pluginActions.getOAuthToken, oauthCodes);
         chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
       });

@@ -3,6 +3,7 @@ import { loadTrelloRoutes, loadSimaRoutes, listRoutes, clearRoutes } from "model
 import routesId from "model/routes_id.js";
 import { getRoute } from "model/routes_store.js";
 import { reAuthenticateOAuth } from './actions/oauth_util.js';
+import { pluginActions, pluginContexts } from './constants.js';
 //import { openJWTPopup } from "actions/jwt_authentication.js";
 import 'css/options.scss';
 
@@ -54,8 +55,8 @@ const mapUI = () => {
 
 const openFormTrello = () => {
 
-  ui.formJwt.style.display = 'none'; 
-  ui.formTrello.style.display = 'block'; 
+  ui.formJwt.style.display = 'none';
+  ui.formTrello.style.display = 'block';
 }
 
 const openFormJWT = () => {
@@ -79,15 +80,15 @@ const toggleFormDisplay = async () => {
   const buttonSaveConfiguration = document.getElementById("btnSalvarConfig");
   const btnCarregarRotas = document.getElementById('btn-trello-routes');
   const btnLimparRotas = document.getElementById('btn-clear-routes');
-  
+
 
   if (!form) return;
 
   const isValid = await validationRoute();
   form.style.display = isValid ? "block" : "none";
   buttonSaveConfiguration.style.display = isValid ? "block" : "none";
-  btnCarregarRotas.style.display = isValid? "none" : "block";
-  btnLimparRotas.style.display =isValid ? "block" : "none";
+  btnCarregarRotas.style.display = isValid ? "none" : "block";
+  btnLimparRotas.style.display = isValid ? "block" : "none";
 
 
 };
@@ -97,7 +98,7 @@ toggleFormDisplay();
 
 
 const loadRoutesForm = () => {
-  
+
   document.forms['form-routes'].innerHTML = '';
   const routes = Object.values(routesId);
   routes.forEach(async (route) => {
@@ -276,16 +277,16 @@ const save = async (e) => {
 };
 
 const clearConfiguredRoutes = async (event) => {
- 
+
   const formRoutes = document.getElementById('form-routes');
   if (formRoutes) {
     formRoutes.reset(); // Reseta os campos do formulário
   }
-    
-    const btnLimparRotas = document.getElementById('btn-clear-routes');
-    if (btnLimparRotas) {
-      btnLimparRotas.style.display = 'none'; // Esconde o formulário
-    }
+
+  const btnLimparRotas = document.getElementById('btn-clear-routes');
+  if (btnLimparRotas) {
+    btnLimparRotas.style.display = 'none'; // Esconde o formulário
+  }
 
   const btnCarregarRotas = document.getElementById('btn-trello-routes');
   if (btnCarregarRotas) {
@@ -312,13 +313,13 @@ const loadDefaultRoutes = async (event) => {
   if (confirm('Deseja realmente carregar as configurações do Trello? Esta ação não pode ser desfeita.')) {
     await loadSimaRoutes();
     loadRoutesForm();
-    
+
     toggleElementDisplay('btnSalvarConfig', 'block');
 
     alert.success('Rotas do Trello carregadas com sucesso.');
   } else {
     console.log('Rotas do Trello canceladas.');
-    
+
     toggleElementDisplay('btn-clear-routes', 'none');
     toggleElementDisplay('btn-trello-routes', 'block');
   }
@@ -353,10 +354,10 @@ const buttons = document.querySelectorAll('.nav-item button');
 
 // Função para destacar o botão clicado
 buttons.forEach(button => {
-  button.addEventListener('click', function() {
+  button.addEventListener('click', function () {
     // Remove a classe "highlighted" de todos os botões
     buttons.forEach(btn => btn.classList.remove('highlighted'));
-    
+
     // Adiciona a classe "highlighted" ao botão clicado
     this.classList.add('highlighted');
   });
@@ -364,7 +365,31 @@ buttons.forEach(button => {
 
 
 const openPopup = async (event) => {
-  event.preventDefault(); 
+  event.preventDefault();
   ui.formJwt.style.display = 'block';
-  await reAuthenticateOAuth();
+  // Cria a mensagem que será enviada para o background worker para salvar a URL de autenticação
+  const msgBackground = {
+    from: pluginContexts.options,
+    action: pluginActions.saveAuthUrl,
+    url: document.getElementById("urlPlugin").value.trim()
+  };
+  // Tenta salvar a URL de autenticação no storage do browser e realizar a autenticação
+  try {
+    // Aguarda a resposta do background worker para salvar a URL
+    await new Promise((resolve, reject) => {
+      chrome.runtime.sendMessage(msgBackground, (response) => {
+        if (response && response.success) {
+          console.log('URL saved successfully:', response.url);
+          resolve();
+        } else {
+          reject(new Error('Failed to send message to background script'));
+        }
+      })
+    });
+    // Executa a autenticação
+    await reAuthenticateOAuth();
+  } catch (error) {
+    console.error('Error during authentication:', error);
+    return;
+  }
 };
