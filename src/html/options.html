@@ -86,14 +86,31 @@
       <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nesta lista.</small>
     </div>
 
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="" id="checkCookies">
-      <label class="form-check-label" for="flexCheckChecked">
-        Usar autenticação por Cookies
-      </label>
-      <small class="form-text text-muted">A autenticação com o backend deve ser feita enviando os dados de autenticação
-        por Cookies?</small>
+    <div>
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="" id="checkCookies">
+        <label class="form-check-label" for="checkCookies">
+          Usar autenticação por Cookies
+        </label>
+        <small class="form-text text-muted">A autenticação com o backend deve ser feita enviando os dados de autenticação por Cookies?</small>
+      </div>
+    
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="" id="checkMove">
+        <label class="form-check-label" for="checkMove">
+          Mover cartão
+        </label>
+        <small class="form-text text-muted">Habilitar movimentação entre projetos</small>
+      </div>
+    
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="" id="checkCreateTitle">
+        <label class="form-check-label" for="checkCreateTitle">
+          Criar cartão com o número SEI no título
+        </label>
+      </div>
     </div>
+    
 
     <div class="d-flex justify-content-center mb-2 mt-4">
       <button type="submit" class="btn btn-primary btn-salvar-config btn-sm ">Salvar configurações

@@ -30,8 +30,10 @@ const mapUI = () => {
   ui.formTrello = document.getElementById('form-trello');
   ui.formJwt = document.getElementById('form-jwt');
   ui.defaultDesktop = document.getElementById("selectDesktop");
-  ui.checkCookies = document.getElementById("checkCookies");
-
+  ui.checkCookies = document.getElementById("checkCookies"); 
+  ui.checkMove = document.getElementById("checkMove"); 
+  ui.checkCreateTitle = document.getElementById("checkCreateTitle"); 
+ 
 
   for (const btnSave of Array.prototype.slice.call(document.getElementsByClassName('btn-salvar-config'))) {
     btnSave.addEventListener('click', save);
@@ -257,6 +259,8 @@ const save = async (e) => {
     defaultList: ui.defaultList.value,
     defaultDesktop: parseFloat(ui.defaultDesktop.value) || 0,
     defaultCheckCookies: ui.checkCookies.checked,
+    defaultCheckMove: ui.checkMove.checked,
+    defaultCheckCreateTitle: ui.checkCreateTitle.checked,
   });
 
   await clearRoutes();
@@ -388,8 +392,35 @@ const openPopup = async (event) => {
     });
     // Executa a autenticação
     await reAuthenticateOAuth();
+    returnDesktop();
   } catch (error) {
     console.error('Error during authentication:', error);
     return;
   }
 };
+
+const returnDesktop = () => {
+
+  const base_url = "https://servicos.dnit.gov.br/sima-back";
+  // const base_url = "http://localhost:5055";
+
+  axios.get(`${base_url}/api/pluginSei/returnDesktop`, { withCredentials: true })
+  .then(response => {
+    const desktops = response.data; 
+
+    const selectElement = document.getElementById("selectDesktop");
+
+    // Limpa as opções existentes
+    selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
+
+    // Adiciona as novas opções
+    desktops.forEach(desktop => {
+      const option = document.createElement("option");
+      option.value = desktop.id;
+      option.textContent = desktop.nameDesktop;
+      selectElement.appendChild(option);
+    });
+  })
+  .catch((err) => console.log(err));
+
+}
