@@ -405,6 +405,8 @@ Segue abaixo todas as rotas que devem ser configuradas para que o plugin funcion
 
 Esta rota lista todos os quadros que o usuário tem acesso. Um quadro é composto por várias listas e uma lista pode ter zero ou mais cartões.
 
+Estrutura do Response Data:
+
 ```
 {
   "boards": [
@@ -420,7 +422,10 @@ Esta rota lista todos os quadros que o usuário tem acesso. Um quadro é compost
 
 Esta rota recebe uma string como parâmetro e retorna todos os quadros que o usuário tem acesso e que contém a string indicada no nome do quadro.
 
-O placeholder que contém a string a ser pesquisada é `board.name`.
+Placeholders do plugin com informação disponível:
+- board.name
+
+Estrutura do Response Data:
 
 ```
 {
@@ -437,6 +442,8 @@ O placeholder que contém a string a ser pesquisada é `board.name`.
 
 TODO: Documentar
 
+Estrutura do Response Data:
+
 ```
 
 ```
@@ -444,6 +451,11 @@ TODO: Documentar
 #### Rota 4 - Recuperar listas de um quadro
 
 Esta rota é responsável por retornar todas as listas dentro de um quadro, o quadro que está sendo requisitado pode ser acessado pelo placeholder `board.id` e pode ser informado na URL ou no Request Body, como ficar melhor na rota.
+
+Placeholders do plugin com informação disponível:
+- board.id
+
+Estrutura do Response Data:
 
 ```
 {
@@ -468,7 +480,10 @@ TODO: Documentar
 
 Esta rota recebe uma string como parâmetro e retorna todos os cartões que o usuário tem acesso e que contém a string indicada no nome do quadro.
 
-O placeholder que contém a string a ser pesquisada é `card.desc`.
+Placeholders do plugin com informação disponível:
+- card.desc
+
+Estrutura do Response Data:
 
 ```
 {
@@ -499,6 +514,8 @@ Atenção: O campo `seiNumber` deve contar uma lista com o número SEI dos proce
 #### Rota 7 - Consultar cartões de um quadro
 
 Pesquisa todos os cartões de um quadro.
+
+Estrutura do Response Data:
 
 ```
 [
@@ -534,28 +551,210 @@ Pesquisa todos os cartões de um quadro.
 
 Atenção: O campo `seiNumber` deve contar uma lista com o número SEI dos processos associados a este cartão, desta maneira o plugin consegue identificar se um processo já está cadastrado no backend ou não.
 
+#### Rota 8 - Recuperar dados de um cartão
+
+Recupera as informações de um cartão.
+
+Placeholders do plugin com informação disponível:
+- card.id
+
+Estrutura do Response Data:
+
+```
+{
+  "id":"@{}",
+  "name":"@{}",
+  "desc":"@{}",
+  "labels":[
+    {
+      "id":"@{}",
+      "color":"@{}",
+      "name":"@{}"
+    }
+  ],
+  "due":"@{}",
+  "dueComplete":"@{}",
+  "shortUrl":"@{}",
+  "idChecklists":["@{}"],
+  "seiNumbers":"@{}",
+  "board":{
+    "id":"@{}",
+    "name":"@{}"
+  },
+  "list":{
+    "id":"@{}",
+    "name":"@{}"
+  }
+}
+```
+
+#### Rota 9 - Criar cartão
+
+Rota responsável por criar um novo cartão no backend.
+
+Placeholders do plugin com informação disponível:
+- board.id
+- card.list.id
+- card.name
+- card.desc
+
+Estrutura do Response Data:
+
+```
+{
+  "id":"@{}",
+  "name":"@{}",
+  "desc":"@{}",
+  "labels":[],
+  "due":"@{}",
+  "dueComplete":"@{}",
+  "shortUrl":"","idChecklists":[],
+  "seiNumbers":"@{}"
+}
+```
+
+#### Rota 10 - Atualizar cartão
+
+Rota responsável por atualizar os dados de um novo cartão no backend.
+
+Placeholders do plugin com informação disponível:
+- board.id
+- card.list.id
+- card.name
+- card.desc
+- card.due
+- card.dueComplete
+
+Estrutura do Response Data:
+
+```
+{}
+```
+
+<!--
+#### Rota 11 - Deletar cartão
+
+TODO: Documentar
+
+Estrutura do Response Data:
+
+```
+
+```
+
+#### Rota 12 - Recuperar dados do checklist de um cartão
+
+TODO: Documentar
+
+Estrutura do Response Data:
+
+```
+
+```
+
+#### Rota 13 - Criar checklist
+
+TODO: Documentar
+
+Estrutura do Response Data:
+
+```
+
+```
+
+#### Rota 14 - Criar item de checklist
+
+TODO: Documentar
+
+Estrutura do Response Data:
+
+```
+
+```
+
+#### Rota 15 - Atualizar item do checklist
+
+TODO: Documentar
+
+Estrutura do Response Data:
+
+```
+
+```
+
+#### Rota 16 - Atualizar posição de item do checklist
+
+TODO: Documentar
+
+Estrutura do Response Data:
+
+```
+
+```
+
+#### Rota 17 - Deletar item de checklist
+
+TODO: Documentar
+
+Estrutura do Response Data:
+
+```
+
+```
+
+#### Rota 18 - Deletar checklist
+
+TODO: Documentar
+
+Estrutura do Response Data:
+
+```
+
+```
+
+<!--
 #### Rota X - 
 
-AAA
+TODO: Documentar
+
+Estrutura do Response Data:
 
 ```
 
 ```
 
-#### Rota X - 
-
-AAA
-
-```
-
-```
-
-#### Rota X - 
-
-AAA
-
-```
-
-```
+-->
 
 ## Autenticação do backend
+
+<!--
+###  Autenticação do Trello
+
+TODO: Documentar
+
+-->
+
+### Autenticação usando OAuth 2.0
+
+Este plugin está preparado para utilizar o padrão de autenticação OAuth2.0 + PKCE para isso é preciso que:
+
+- Na página de opções (configuração) do plugin seja selecionada a opção OAuth 2.0 na seção "Configurações de autenticação"
+- Ao clicar nesta opção aparecerão dois campos para:
+  - Inserir a URL de autenticação (página que será aberta para o usuário fazer o login no sistema desejado);
+  - Inserir a URL de recuperação do Token JWT após a autenticação do usuário
+
+Ao inserir a URL de autenticação os seguintes parâmetros serão automaticamente adicionados à URL:
+- `response_type` com valor 'code'
+- `client_id` com valor 'chrome_extension'
+- `redirect_uri` com o valor 'https://Finmniboeooddjgipkkodoageimggnbka.chromiumapp.org/'
+- `code_challenge` com valor gerado pelo próprio plugin
+- `code_challenge_method` com valor 'SHA256'
+
+Atenção: Qualquer outro parâmetro necessário para a autenticação do usuário deve ser informado na URL.
+
+Ao inserir a URL para recuperar o Token JWT os seguintes parâmetros serão automaticamente adicionados à URL:
+- `code` com o código gerado após a autenticação do usuário
+- `grant_type` com o valor 'token'
+- `code_verifier` com a string aleatória (criada pelo plugin) usada para gerar o code_challenge na etapa de autenticação
+
+Importante: Após recuperar o Token JWT ele será armazenado para uso posterior na requisições feitas ao backend. O Token será enviado por meio de cookie caso a opção "Usar autenticação por Cookies" esteja selecionada, caso contrário o Token será enviado no header da requisição no formato "Authorization: Bearer <token>".
