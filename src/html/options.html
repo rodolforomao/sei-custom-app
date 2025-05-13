@@ -31,13 +31,13 @@
       <li class="nav-item">
         <button style="background-color: #35323221; margin-left: 1.5rem; padding: 0.18rem 0.2rem;" class="btn mb-4"
           id="btn-jwt">
-          <a class="nav-link" href="#" id="btn-link-jwt" style="padding: 0.3rem 0.5rem; font-size: 14px;">JWT</a>
+          <a class="nav-link" href="#" id="btn-link-jwt" style="padding: 0.3rem 0.5rem; font-size: 14px;">OAuth 2.0</a>
         </button>
       </li>
     </ul>
 
     <section id="form-trello" class="form-container" style="display: none;">
-      <form>
+      <!-- <form> -->
         <div class="form-group">
           <label for="txt-app-key">Trello APP-KEY:</label>
           <input type="text" class="form-control" id="txt-app-key" placeholder="APP-KEY..." />
@@ -51,27 +51,35 @@
           <input type="text" class="form-control" id="txt-app-token" placeholder="APP-TOKEN..." />
           <small class="form-text text-muted">Já o token pode ser obtido acessando a seguinte URL.</small>
         </div>
-      </form>
+      <!-- </form> -->
     </section>
 
     <section id="form-jwt" class="form-container" style="display: none;">
-      <form class="form-inline d-flex align-items-center">
-        <div class="form-group mb-2" style="width: 60%;">
-          <label for="urlPluginSei" class="sr-only">URL</label>
-          <input type="text" class="form-control w-100" id="urlPlugin" placeholder="URL" />
-        </div>
-        <button style="margin-left: 10px;" type="submit" id="btn-auth-req" class="btn btn-secondary mb-2 btn-sm">
-          Login
-        </button>
-      </form>
+      <div class="form-group">
+        <label for="urlPluginSei">URL de autenticação:</label>
+        <input type="text" class="form-control w-100" id="urlPlugin" placeholder="URL de autenticação" />
+        <small class="form-text text-muted">URL que será utilizada para o usuário fazer o login (autenticação).</small>
+      </div>
 
       <div class="form-group">
-        <label for="selectDesktop">Área de trabalho</label>
-        <select class="form-control" id="selectDesktop">
-          <option></option>
-        </select>
+        <label for="urlToken">URL para recuperar Token:</label>
+        <input type="text" class="form-control w-100" id="urlToken" placeholder="URL para recuperar Token JWT" />
+        <small class="form-text text-muted">URL que será utilizada para recuperar o Token JWT após autenticação do usuário.</small>
       </div>
+
+      <button style="margin-left: 10px; margin-bottom: 20px;" type="submit" id="btn-auth-req" class="btn btn-secondary mb-5 btn-sm">
+        Login
+      </button>
     </section>
+
+    <h4 style="padding-bottom: 15px;">Configurações de área de trabalho, quadro e lista.</h4>
+
+    <div class="form-group">
+      <label for="selectDesktop">Área de trabalho</label>
+      <select class="form-control" id="selectDesktop">
+        <option></option>
+      </select>
+    </div>
 
     <div class="form-group">
       <label for="txt-default-board">Quadro padrão:</label>
