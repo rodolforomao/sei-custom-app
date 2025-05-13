@@ -13,7 +13,8 @@ export const pluginContexts = {
 export const pluginActions = {
     getOAuthCodes: "getOAuthCodes",
     getOAuthToken: "getOAuthToken",
-    saveOAuthToken: "saveOAuthToken",
+    saveDataOnStorage: "saveDataOnStorage",
+    saveCookie: "saveCookie",
     getCookie: "getCookie",
     setCookie: "setCookie",
     saveAuthUrl: "saveAuthUrl"

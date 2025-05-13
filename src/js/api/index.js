@@ -32,8 +32,10 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const obj = JSON.parse(dataTransfer.transformString(route.body));
   // Monta as outras variáveis que serão usadas na requisição
   const verb = route.verb.toLowerCase();
-  const sendCookie = url.indexOf("api.trello.com") < 0;
+  let headers = {};
+  const sendCookie = await shouldSendCookie;
   if (!sendCookie) { Object.assign(obj, auth.getCredentials()); }
+  else { headers = { Authorization: `Bearer ${await getToken()}` }; }
   // Monta as variáveis que serão enviadas pela URL
   const params = verb === "get" ? obj : {};
   // Monta as variáveis que serão enviadas no corpo (body) da requisição
@@ -41,7 +43,7 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   let originalResponse;
   try {
     // console.log(`[REQUEST CONFIG] Verb: ${verb} / Credentials: ${sendCookie} / URL Params: ${Object.keys(params).length > 0} / Body Data: ${Object.keys(data).length > 0}`);
-    originalResponse = await sendRequest(url, verb, params, data, sendCookie, true);
+    originalResponse = await sendRequest(url, verb, params, data, headers, sendCookie, true);
     // console.log("Resposta original da rota %d: %o", routeId, originalResponse);
     // Faz a transformação da resposta de acordo com a configuração da rota
     let responseStruct = JSON.parse(route.response);
@@ -59,18 +61,58 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
 
 /**
  * 
+ * Função para recuperar a configuração de envio de cookies.
+ * 
+ * @returns {Promise} Retorna uma Promise que resolve para true se o cookie deve ser enviado, false caso contrário.
+ * 
+ */
+async function shouldSendCookie() {
+  return new Promise((resolve) => {
+    chrome.storage.sync.get(
+      {
+        defaultCheckCookies: true
+      },
+      (items) => {
+        resolve(items.defaultCheckCookies);
+      }
+    );
+  });
+}
+
+/**
+ * Função utilizada para recuperar o token de autorização do usuário.
+ * 
+ * @returns {Promise} Retorna uma Promise que resolve para o token de autorização do usuário.
+ * 
+ */
+async function getToken() {
+  return new Promise((resolve) => {
+    chrome.storage.sync.get(
+      {
+        appOauthToken: ''
+      },
+      (items) => {
+        resolve(items.appOauthToken);
+      }
+    );
+  });
+}
+
+/**
+ * 
  * Função que de fato faz a requisição para o backend, utilizando o axios.
  * 
  * @param {string} url URL que será utilizada para fazer a requisição. 
  * @param {string} method Indicação de qual método HTTP será utilizado na requisição. 
  * @param {Object} params Objeto com os parâmetros que serão enviados na URL da requisição.
  * @param {Object} data Objeto com os dados que serão enviados no corpo (body) da requisição.
+ * @param {Object} headers Objeto com os cabeçalhos (headers) que serão enviados na requisição.
  * @param {boolean} withCredentials True se a requisição deve ser feita com os cookies, false caso contrário.
  * @param {boolean} shouldRetry True caso queira tentar novamente a requisição em caso de erro 401 (não autorizado), false caso contrário.
  * @returns {Object} Retorna um objeto com os dados da requisição e a resposta do servidor.
  * 
  */
-const sendRequest = async (url, method, params, data, withCredentials, shouldRetry = false) => {
+const sendRequest = async (url, method, params, data, headers, withCredentials, shouldRetry = false) => {
   try {
     // Tenta fazer a requisição para o backend com os dados passados
     const httpResponse = await axios({
@@ -78,6 +120,7 @@ const sendRequest = async (url, method, params, data, withCredentials, shouldRet
       method: method,
       params: params,
       data: data,
+      headers: headers,
       withCredentials: withCredentials
     });
     return httpResponse;
@@ -89,7 +132,7 @@ const sendRequest = async (url, method, params, data, withCredentials, shouldRet
         return null;
       // Faz a autenticação novamente e refaz a requisição
       await reAuthenticateOAuth();
-      return await sendRequest(url, method, params, data, withCredentials, false);
+      return await sendRequest(url, method, params, data, headers, withCredentials, false);
     }
     // Se não for 401, ou se não quis fazer login novamente, retorna o erro
     console.log("Erro ao tentar enviar requisição: %o", e);

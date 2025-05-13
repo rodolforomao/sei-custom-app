@@ -61,7 +61,14 @@ function handleNewMessage(msg, sender, sendResponse) {
     // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
     return true;
   }
-  if (msg.from === pluginContexts.content && msg.action === pluginActions.saveOAuthToken) {
+  // Função responsável por salvar o token no local storage do navegador.
+  if (msg.from === pluginContexts.content && msg.action === pluginActions.saveDataOnStorage) {
+    handleSaveData(msg.data, sendResponse);
+    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
+    return true;
+  }
+  // Função responsável por salvar o cookie no navegador.
+  if (msg.from === pluginContexts.content && msg.action === pluginActions.saveCookie) {
     handleSetCookie(msg, sendResponse);
     // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
     return true;
@@ -137,6 +144,18 @@ function getAuthURL() {
     });
   });
 };
+
+/**
+ * 
+ * Função responsável por armazenar os dados no local storage do navegador.
+ * 
+ * @param {Object} data Objeto com os dados que serão armazenados no local storage do navegador.
+ * @param {function} sendResponse Função que será chamada para enviar a resposta de volta para o plugin.
+ * 
+ */
+function handleSaveData(data, sendResponse) {
+  chrome.storage.sync.set(data).then(() => { sendResponse({ success: true, data: "OK" }); })
+}
 
 /**
  * 
