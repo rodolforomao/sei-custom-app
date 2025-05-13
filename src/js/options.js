@@ -276,8 +276,12 @@ const save = async (e) => {
   }
 
   Object.assign(dataToSave, { routes: newRoutes });
-  chrome.storage.sync.set(dataToSave);
-  alert.success('As configurações foram salvas com sucesso.');
+  const msgBackground = {
+    from: pluginContexts.options,
+    action: pluginActions.saveDataOnStorage,
+    data: dataToSave
+  };
+  await chrome.runtime.sendMessage(msgBackground, (response) => {});
 };
 
 const clearConfiguredRoutes = async (event) => {
@@ -392,7 +396,7 @@ const openPopup = async (event) => {
     });
     // Executa a autenticação
     await reAuthenticateOAuth();
-    returnDesktop();
+    //returnDesktop();
   } catch (error) {
     console.error('Error during authentication:', error);
     return;
