@@ -315,6 +315,7 @@ class TrelloCard extends React.Component {
           em{' '}
           <CardLocationSelector
             type="board"
+            canChangeBoard={this.props.canChangeBoard}
             showSelector={this.state.isHovering}
             onChange={this.onChangeLocation.bind(this)}
             selected={this.props.location.board}

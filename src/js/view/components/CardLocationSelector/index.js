@@ -86,7 +86,7 @@ class CardLocationSelector extends React.Component {
   }
 
   render() {
-    const renderCaret = this.props.type === 'board' ? false : true;
+    const renderCaret = (this.props.type === 'board' && !this.props.canChangeBoard) ? false : true;
     return (
       <div className={classNames(styles.wrapper, 'btn-menu-trigger')}>
         

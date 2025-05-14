@@ -13,6 +13,7 @@ let initialData = {
   },
   currentLabels: [],
   currentLocations: [],
+  canChangeBoard: false
 };
 
 let data = Object.assign({}, initialData);
@@ -119,5 +120,12 @@ export const updateFilter = (newFilter) => {
     /* prevent infinite loop */
     data.filter = newFilter;
     triggerEvent('onDataChanged');
+  }
+};
+
+export const setCanChangeBoard = (canChangeBoard, triggerEvent = false) => {
+  if (data.canChangeBoard !== canChangeBoard) {
+    data.canChangeBoard = canChangeBoard;
+    if (triggerEvent) triggerEvent('onDataChanged');
   }
 };

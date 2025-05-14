@@ -62,7 +62,7 @@ function handleNewMessage(msg, sender, sendResponse) {
     return true;
   }
   // Função responsável por salvar o token no local storage do navegador.
-  if (msg.from === pluginContexts.content && msg.action === pluginActions.saveDataOnStorage) {
+  if ([pluginContexts.content, pluginContexts.options].includes(msg.from) && msg.action === pluginActions.saveDataOnStorage) {
     handleSaveData(msg.data, sendResponse);
     // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
     return true;
@@ -83,7 +83,6 @@ function handleNewMessage(msg, sender, sendResponse) {
  * Essa função realiza apenas a primeira parte da autenticação OAuth 2.0 que é a geração do código de autorização,
  * depois é necessário fazer uma requisição para o backend solicitando o Token JWT.
  * 
- * @function handleGetOAuthCodes
  * @param {function} sendResponse - Função utilizada para mandar a resposta de volta para o plugin após a autenticação.
  * A resposta para o plugin será um objeto contendo um campo 'success' que indica se a autenticação foi realizada com sucesso ou não
  * e um campo 'data' que contém os dados retornados pelo backend ou o erro caso a autenticação tenha falhado.

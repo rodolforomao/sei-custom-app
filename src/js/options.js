@@ -259,7 +259,7 @@ const save = async (e) => {
     defaultList: ui.defaultList.value,
     defaultDesktop: parseFloat(ui.defaultDesktop.value) || 0,
     defaultCheckCookies: ui.checkCookies.checked,
-    defaultCheckMove: ui.checkMove.checked,
+    defaultCheckMoveBoard: ui.checkMove.checked,
     defaultCheckCreateTitle: ui.checkCreateTitle.checked,
   });
 
