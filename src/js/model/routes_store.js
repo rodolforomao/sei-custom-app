@@ -363,7 +363,7 @@ export const loadSimaRoutes = async () => {
         idChecklists: [],
         seiNumbers: "@{seiNumbers}"
     };
-    routes.push({id: routesId.createCard.id, url: base_url + "/api/issue/create/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [{"type": 1, "numberDocument": "@{card.desc}"}],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
+    routes.push({id: routesId.createCard.id, url: base_url + "/api/issue/create/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [{"type": 1, "numberDocument": "@{card.processNumber}"}],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
     // 10
     response = {};
     routes.push({id: routesId.updateCard.id, url: base_url + "/api/issue/@{card.id}/batchUpdate/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","endDate":"@{card.due}","isIssueCompleted":"@{card.dueComplete}","listId":"@{list.id}","projectId": "@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
