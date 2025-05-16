@@ -30,7 +30,7 @@ export const getOAuthCodes = async (authUrl) => {
         // Faz a chamada para abrir a janela de autenticação
         chrome.identity.launchWebAuthFlow(authWindowConfig,
             // Ao concluir a autenticação com sucesso, passa a URL para o handler tratar
-            (redirectUrl) => { handleOAuthCodeResponse(redirectUrl, codeVerifier, resolve, reject) }
+            (redirectUrl) => { handleOAuthCodeResponse(redirectUrl, codeVerifier, resolve, reject); }
         );
     });
 };
@@ -172,7 +172,7 @@ export const reAuthenticateOAuth = async () => {
             let backgroundMsg = mountMessage(pluginActions.getOAuthCodes, {});
             chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
         });
-        console.log("[REAUTH] Códigos de recuperados.");
+        //console.log("[REAUTH] Códigos de recuperados.");
         // Pega o Token de autenticação
         const responseToken = await new Promise((resolve, reject) => {
             // Object.assign(oauthCodes, { url: 'http://localhost:5055/auth/oauth/gettoken/' });
@@ -180,10 +180,10 @@ export const reAuthenticateOAuth = async () => {
             let backgroundMsg = mountMessage(pluginActions.getOAuthToken, oauthCodes);
             chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
         });
-        console.log("[REAUTH] Token de autenticação recuperado.");
+        //console.log("[REAUTH] Token de autenticação recuperado.");
         // Salva o token de autenticação no localStorage
         await new Promise((resolve, reject) => {
-            let backgroundMsg = mountMessage(pluginActions.saveDataOnStorage, { appOauthToken: responseToken.token });
+            let backgroundMsg = mountMessage(pluginActions.saveDataOnStorage, { data: { appOauthToken: responseToken.token } });
             chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
         });
         // Salva o token de autenticação nos cookies
@@ -199,7 +199,7 @@ export const reAuthenticateOAuth = async () => {
             let backgroundMsg = mountMessage(pluginActions.saveCookie, responseToken);
             chrome.runtime.sendMessage(backgroundMsg, (responseData) => { genericResponseHandler(responseData, resolve, reject); });
         });
-        console.log("[REAUTH] ReAuth concluído com sucesso.");
+        //console.log("[REAUTH] ReAuth concluído com sucesso.");
     } catch (e) {
         // console.error("[REAUTH] Erro ao tentar autenticar: %o", e);
         throw e;

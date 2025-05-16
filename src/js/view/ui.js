@@ -32,7 +32,7 @@ const renderFilterButton = (placeholder, data) => {
   );
 };
 
-const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, canChangeBoard) => {
+const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, canChangeBoard, appendNumberOnTitle) => {
   const fullWidth = placeholder.hasAttribute('data-full-width');
 
   ReactDOM.render(
@@ -41,7 +41,7 @@ const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, can
       refreshCard={(cardID) => actions.refreshCardData(cardID)}
       deleteCard={(cardID) => actions.deleteCard(cardID)}
       onChangeName={(cardID, newName, boardData) => actions.updateCardData(cardID, { name: newName, board: boardData })}
-      onChangeDescription={(cardID, newDescription, boardData) => actions.updateCardData(cardID, { description: newDescription, board: boardData })}
+      onChangeDescription={(cardID, newDescription, boardData) => actions.updateCardData(cardID, { description: newDescription, board: boardData, appendNumberOnTitle: appendNumberOnTitle })}
       onChangeLocation={(cardID, type, newLocation, boardData) => {
           if (type === 'board') {
             actions.updateCardData(cardID, { [type]: newLocation })
@@ -65,7 +65,7 @@ const renderCreateTrelloCardButton = (placeholder, processNumber, data, newCardD
     <CreateTrelloCardButton
       isAdding={data.isAddingCardFor && processNumber === data.isAddingCardFor}
       processNumber={processNumber}
-      onClick={(processNumber) => actions.addCardFor(processNumber, newCardData)}
+      onClick={(processNumber) => actions.addCardFor(processNumber, newCardData, data.appendNumberOnTitle)}
     ></CreateTrelloCardButton>,
     placeholder
   );
@@ -97,7 +97,7 @@ const renderTrelloBox = (box, data) => {
     /* render trello card */
     if (processAnchor) processAnchor.classList.add('hide');
     cardPlaceholder.classList.remove('hide');
-    renderTrelloCard(cardPlaceholder, cardToConsider, cardsForThisProcess.length > 1, processAnchor, data.canChangeBoard);
+    renderTrelloCard(cardPlaceholder, cardToConsider, cardsForThisProcess.length > 1, processAnchor, data.canChangeBoard, data.appendNumberOnTitle);
 
     /* remove create card button */
     createCardPlaceholder.classList.add('hide');

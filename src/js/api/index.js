@@ -70,10 +70,10 @@ async function shouldSendCookie() {
   return new Promise((resolve) => {
     chrome.storage.sync.get(
       {
-        defaultCheckCookies: true
+        saveTokenOnCookies: true
       },
       (items) => {
-        resolve(items.defaultCheckCookies);
+        resolve(items.saveTokenOnCookies);
       }
     );
   });

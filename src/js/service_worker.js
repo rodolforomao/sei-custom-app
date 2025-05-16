@@ -25,7 +25,7 @@ chrome.runtime.onMessage.addListener(handleNewMessage);
  * será executada para mandar uma menagem de volta para o remetente.
  */
 function handleNewMessage(msg, sender, sendResponse) {
-  console.log(`[Message received] Context: ${msg.from} - Action: ${msg.action}`);
+  //console.log(`[Message received] Context: ${msg.from} - Action: ${msg.action}`);
   // Função responsável por salvar o cookie no navegador.
   if (msg.from === pluginContexts.options && msg.action === pluginActions.setCookie) {
     handleSetCookie(msg, sendResponse);
@@ -89,7 +89,7 @@ function handleNewMessage(msg, sender, sendResponse) {
  * 
  */
 function handleGetOAuthCodes(sendResponse) {
-  console.log("Solicitando os códigos de autenticação do backend.");
+  //console.log("[WORKER-CODES] Solicitando os códigos de autenticação do backend.");
   // Recupera a URL de autenticação do backend configurado no plugin.
   getAuthURL()
     .then((authUrl) => {
@@ -118,7 +118,7 @@ function handleGetOAuthCodes(sendResponse) {
  * 
  */
 async function handleGetOAuthToken(url, code, codeVerifier, sendResponse) {
-  console.log("Solicitando o Token JWT do backend.");
+  //console.log("[WORKER-TOKEN] Solicitando o Token JWT do backend.");
   getOauthToken(url, code, codeVerifier)
   .then((oauthToken) => { sendResponse(oauthToken); })
   .catch((e) => { sendResponse(e); });
@@ -153,7 +153,9 @@ function getAuthURL() {
  * 
  */
 function handleSaveData(data, sendResponse) {
-  chrome.storage.sync.set(data).then(() => { sendResponse({ success: true, data: "OK" }); })
+  chrome.storage.sync.set(data)
+  .then(() => { sendResponse({ success: true, data: "OK" }); })
+  .catch((e) => { sendResponse({ success: false, data: e }); });
 }
 
 /**

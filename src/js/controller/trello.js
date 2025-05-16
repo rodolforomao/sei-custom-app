@@ -8,13 +8,15 @@ export const load = (opts) => {
     {
       appKey: '',
       appToken: '',
-      defaultCheckMoveBoard: false
+      canMoveBoard: false,
+      appendNumberOnTitle: false
     },
     (items) => {
       api.setCredentials(items.appKey, items.appToken);
 
       store.onDataChanged(() => ui.render());
-      store.setCanChangeBoard(items.defaultCheckMoveBoard, false);
+      store.setCanChangeBoard(items.canMoveBoard, false);
+      store.setAppendNumberOnTitle(items.appendNumberOnTitle, false);
 
       if (opts && 'processNumber' in opts) {
         actions.refreshCards(opts['processNumber']);

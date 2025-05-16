@@ -13,7 +13,8 @@ let initialData = {
   },
   currentLabels: [],
   currentLocations: [],
-  canChangeBoard: false
+  canChangeBoard: false,
+  appendNumberOnTitle: false
 };
 
 let data = Object.assign({}, initialData);
@@ -126,6 +127,13 @@ export const updateFilter = (newFilter) => {
 export const setCanChangeBoard = (canChangeBoard, triggerEvent = false) => {
   if (data.canChangeBoard !== canChangeBoard) {
     data.canChangeBoard = canChangeBoard;
+    if (triggerEvent) triggerEvent('onDataChanged');
+  }
+};
+
+export const setAppendNumberOnTitle = (appendNumberOnTitle, triggerEvent = false) => {
+  if (data.appendNumberOnTitle !== appendNumberOnTitle) {
+    data.appendNumberOnTitle = appendNumberOnTitle;
     if (triggerEvent) triggerEvent('onDataChanged');
   }
 };

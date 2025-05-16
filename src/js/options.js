@@ -258,9 +258,9 @@ const save = async (e) => {
     defaultBoard: ui.defaultBoard.value,
     defaultList: ui.defaultList.value,
     defaultDesktop: parseFloat(ui.defaultDesktop.value) || 0,
-    defaultCheckCookies: ui.checkCookies.checked,
-    defaultCheckMoveBoard: ui.checkMove.checked,
-    defaultCheckCreateTitle: ui.checkCreateTitle.checked,
+    saveTokenOnCookies: ui.checkCookies.checked,
+    canMoveBoard: ui.checkMove.checked,
+    appendNumberOnTitle: ui.checkCreateTitle.checked,
   });
 
   await clearRoutes();
@@ -387,7 +387,7 @@ const openPopup = async (event) => {
     await new Promise((resolve, reject) => {
       chrome.runtime.sendMessage(msgBackground, (response) => {
         if (response && response.success) {
-          console.log('URL saved successfully:', response.url);
+          //console.log('URL saved successfully:', response.url);
           resolve();
         } else {
           reject(new Error('Failed to send message to background script'));

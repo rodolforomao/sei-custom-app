@@ -117,7 +117,11 @@ class DataTransfer {
     setCardDesc(desc) {//
         this.getCard().desc = desc;
         return this;
+    }
     
+    setCardProcessNumber(processNumber) {
+        this.getCard().processNumber = processNumber;
+        return this;
     }
 
     setCardList(list) {//

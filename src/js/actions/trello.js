@@ -145,16 +145,18 @@ export const refreshCards = (processNumber) => {
 export const updateCardData = (cardID, newCardData) => {
   Object.assign(newCardData, { isLoading: true });
   store.updateCardsData(cardID, newCardData);
-
   const trelloData = {};
 
   /* adicionar os processos na descrição nova */
   if ('description' in newCardData) {
-    // Monta um array com o número dos processos que não estão presentes na nova descrição
-    let processNumbers = store.getAllProcesssFromCardID(cardID).filter((processNumber) => !newCardData['description'].includes(processNumber)).map((processNumber) => 'SEI ' + processNumber);
-    // TODO: Adicionar aqui o controle para saber se o número do processo deve ser adicionado na descrição
-    if (processNumbers.length > 0 && false) {
-      trelloData['desc'] = processNumbers.join('\n') + '\n' + newCardData['description'];
+    if ((newCardData.appendNumberOnTitle == undefined) || (newCardData.appendNumberOnTitle === true)) {
+      // Monta um array com o número dos processos que não estão presentes na nova descrição
+      let processNumbers = store.getAllProcesssFromCardID(cardID).filter((processNumber) => !newCardData['description'].includes(processNumber)).map((processNumber) => 'SEI ' + processNumber);
+      if (processNumbers.length > 0) {
+        trelloData['desc'] = processNumbers.join('\n') + '\n' + newCardData['description'];
+      } else {
+        trelloData['desc'] = newCardData['description'];
+      }
     } else {
       trelloData['desc'] = newCardData['description'];
     }
@@ -178,19 +180,21 @@ export const updateCardData = (cardID, newCardData) => {
     });
 };
 
-export const addCardFor = (processNumber, newCardData) => {
+export const addCardFor = (processNumber, newCardData, appendNumberOnTitle) => {
   const isAdding = store.getData().isAddingCardFor;
   const isLoading = store.getData().isLoading;
   if (isAdding || isLoading) return;
   store.setIsAddingFor(processNumber);
   let options = {
     name: processNumber,
-    desc: 'SEI ' + processNumber,
+    desc: '',
     processNumber: processNumber
   };
+  if (appendNumberOnTitle) options.desc = 'SEI ' + processNumber;
   if ('name' in newCardData) options['name'] = newCardData['name'];
-  //TODO: Adicionar controle na configuração do plugin para saber se deve adicionar o número do processo no cartão
-  if ('description' in newCardData) options['desc'] += '\n' + newCardData['description'];
+  if ('description' in newCardData) {
+    options['desc'] += '\n' + newCardData['description'];
+  }
 
   getDefaultBoardAndList()
     .then((response) => {
