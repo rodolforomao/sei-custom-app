@@ -26,12 +26,6 @@ chrome.runtime.onMessage.addListener(handleNewMessage);
  */
 function handleNewMessage(msg, sender, sendResponse) {
   //console.log(`[Message received] Context: ${msg.from} - Action: ${msg.action}`);
-  // Função responsável por salvar o cookie no navegador.
-  if (msg.from === pluginContexts.options && msg.action === pluginActions.setCookie) {
-    handleSetCookie(msg, sendResponse);
-    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
-    return true;
-  }
   // Função responsável por recuperar o cookie armazenado no navegador.
   if (msg.from === pluginContexts.options && msg.action === pluginActions.getCookie) {
     handleGetCookie(msg, sendResponse);
@@ -39,16 +33,6 @@ function handleNewMessage(msg, sender, sendResponse) {
     return true;
   }
   // Função responsável por salvar a URL de autenticação no storage do navegador.
-  if (msg.from === pluginContexts.options && msg.action === pluginActions.saveAuthUrl) {
-    // Tenta salvar a URL de autenticação no storage do navegador
-    saveAuthUrl(msg.url)
-    // Avisa que conseguiu salvar a URL de autenticação no storage do navegador
-    .then(() => { sendResponse({ success: true, data: "OK" }); })
-    // Avisa que não conseguiu salvar a URL de autenticação no storage do navegador
-    .catch((e) => { sendResponse({ success: false, data: e }); });
-    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
-    return true;
-  }
   // Função responsável por fazer a autenticação do usuário usando OAuth 2.0.
   if (msg.from === pluginContexts.content && msg.action === pluginActions.getOAuthCodes) {
     handleGetOAuthCodes(sendResponse);
@@ -57,13 +41,19 @@ function handleNewMessage(msg, sender, sendResponse) {
   }
   // Função responsável por fazer a autenticação do usuário usando OAuth 2.0.
   if (msg.from === pluginContexts.content && msg.action === pluginActions.getOAuthToken) {
-    handleGetOAuthToken(msg.url, msg.code, msg.codeVerifier, sendResponse);
+    handleGetOAuthToken(msg.code, msg.codeVerifier, sendResponse);
     // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
     return true;
   }
-  // Função responsável por salvar o token no local storage do navegador.
+  // Função responsável por salvar dados no local storage do navegador.
   if ([pluginContexts.content, pluginContexts.options].includes(msg.from) && msg.action === pluginActions.saveDataOnStorage) {
     handleSaveData(msg.data, sendResponse);
+    // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
+    return true;
+  }
+  // Função responsável por recuperar dados do local storage do navegador.
+  if ([pluginContexts.content, pluginContexts.options].includes(msg.from) && msg.action === pluginActions.getDataOnStorage) {
+    handleGetData(msg.data, sendResponse);
     // Retorno obrigatório para manter a comunicação aberta com o plugin até terminar o processamento
     return true;
   }
@@ -117,11 +107,18 @@ function handleGetOAuthCodes(sendResponse) {
  * @param {function} sendResponse Função que será chamada para enviar a resposta de volta para o plugin.
  * 
  */
-async function handleGetOAuthToken(url, code, codeVerifier, sendResponse) {
-  //console.log("[WORKER-TOKEN] Solicitando o Token JWT do backend.");
-  getOauthToken(url, code, codeVerifier)
-  .then((oauthToken) => { sendResponse(oauthToken); })
-  .catch((e) => { sendResponse(e); });
+async function handleGetOAuthToken(code, codeVerifier, sendResponse) {
+  getTokenURL()
+  .then((tokenUrl) => {
+    // Se conseguiu recuperar a URL com sucesso então chama a função getOauthToken que irá abrir o popup de autenticação.
+    getOauthToken(tokenUrl, code, codeVerifier)
+      .then((oauthToken) => {
+        // Neste ponto sabemos que a autenticação ocorreu com sucesso. Retorna os códigos para o plugin.
+        sendResponse({ success: true, data: oauthToken });
+      })
+      // Se o popup foi fechado ou ocorreu algum erro ao tentar autenticar, então retorna o erro para o plugin.
+      .catch((e) => { sendResponse({ success: false, data: e }); });
+  });
 }
 
 /**
@@ -146,6 +143,26 @@ function getAuthURL() {
 
 /**
  * 
+ * Função responsável por recuperar a URL para pegar o Token JWT.
+ * 
+ * @returns {Promise} Uma Promise que será resolvida com a URL de autenticação do backend configurada no plugin
+ * ou rejeitada com o erro ocorrido ao tentar recuperar a URL.
+ * 
+ */
+function getTokenURL() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get({ tokenUrl: '' }, (items) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(items.tokenUrl);
+      }
+    });
+  });
+};
+
+/**
+ * 
  * Função responsável por armazenar os dados no local storage do navegador.
  * 
  * @param {Object} data Objeto com os dados que serão armazenados no local storage do navegador.
@@ -153,9 +170,31 @@ function getAuthURL() {
  * 
  */
 function handleSaveData(data, sendResponse) {
-  chrome.storage.sync.set(data)
-  .then(() => { sendResponse({ success: true, data: "OK" }); })
-  .catch((e) => { sendResponse({ success: false, data: e }); });
+  chrome.storage.sync.set(data, () =>{
+    if (chrome.runtime.lastError) {
+      sendResponse({ success: false, data: chrome.runtime.lastError });
+      return;
+    }
+    sendResponse({ success: true, data: "OK" });
+  });
+}
+
+/**
+ * 
+ * Função responsável por recuperar os dados no local storage do navegador.
+ * 
+ * @param {Object} data Objeto com os dados que serão recuperados no local storage do navegador. Já deve ter o valor default caso a chave não seja encontrada no local storage.
+ * @param {function} sendResponse Função que será chamada para enviar a resposta de volta para o plugin.
+ * 
+ */
+function handleGetData(data, sendResponse) {
+  chrome.storage.sync.get(data, (items) => {
+    if (chrome.runtime.lastError) {
+      sendResponse({ success: false, data: chrome.runtime.lastError });
+      return;
+    }
+    sendResponse({ success: true, data: items });
+  });
 }
 
 /**

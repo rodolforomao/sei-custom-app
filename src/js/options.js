@@ -15,12 +15,14 @@ const defaultTokenUrl =
 const mapUI = () => {
   ui.appKey = document.getElementById('txt-app-key');
   ui.appToken = document.getElementById('txt-app-token');
+  ui.authUrl = document.getElementById('authUrl');
+  ui.tokenUrl = document.getElementById('tokenUrl');
   // ui.anchorTokenUrl = document.getElementById('anchor-token-url');
-  //ui.lblTokenUrl = document.getElementById('lbl-token-url');
-  //ui.lblNoAppKeyInfo = document.getElementById('lbl-no-app-key-info');
+  // ui.lblTokenUrl = document.getElementById('lbl-token-url');
+  // ui.lblNoAppKeyInfo = document.getElementById('lbl-no-app-key-info');
   ui.defaultBoard = document.getElementById('txt-default-board');
   ui.defaultList = document.getElementById('txt-default-list');
-  //ui.btnSave = document.getElementsByClassName('btn-salvar-config');
+  // ui.btnSave = document.getElementsByClassName('btn-salvar-config');
   ui.btnTrelloRoutes = document.getElementById('btn-trello-routes');
   ui.btnClearRoutes = document.getElementById('btn-clear-routes');
   ui.btnAuthReq = document.getElementById('btn-auth-req');
@@ -255,6 +257,8 @@ const save = async (e) => {
   const dataToSave = Object.assign({}, {
     appKey: ui.appKey.value,
     appToken: ui.appToken.value,
+    authUrl: ui.authUrl.value.trim(),
+    tokenUrl: ui.tokenUrl.value.trim(),
     defaultBoard: ui.defaultBoard.value,
     defaultList: ui.defaultList.value,
     defaultDesktop: parseFloat(ui.defaultDesktop.value) || 0,
@@ -335,18 +339,28 @@ const loadDefaultRoutes = async (event) => {
 const restore = () => {
   chrome.storage.sync.get(
     {
+      authUrl: '',
+      tokenUrl: '',
       appKey: '',
       appToken: '',
       defaultBoard: '',
       defaultList: '',
       defaultDesktop: '',
+      saveTokenOnCookies: true,
+      canMoveBoard: false,
+      appendNumberOnTitle: false
     },
     (items) => {
+      ui.authUrl.value = items.authUrl;
+      ui.tokenUrl.value = items.tokenUrl;
       ui.appKey.value = items.appKey;
       ui.appToken.value = items.appToken;
       ui.defaultBoard.value = items.defaultBoard;
       ui.defaultList.value = items.defaultList;
       ui.defaultDesktop.value = items.defaultDesktop;
+      ui.checkCookies.checked = items.saveTokenOnCookies;
+      ui.checkMove.checked = items.canMoveBoard;
+      ui.checkCreateTitle.checked = items.appendNumberOnTitle;
       updateTokenUrl();
     }
   );
@@ -375,16 +389,33 @@ buttons.forEach(button => {
 const openPopup = async (event) => {
   event.preventDefault();
   ui.formJwt.style.display = 'block';
-  // Cria a mensagem que será enviada para o background worker para salvar a URL de autenticação
+  let currentUrlData = {};
+  try {
+    // Faz o backup os dados atuais
+    currentUrlData = await backpUrlData();
+    // Salva as novas URLs
+    await saveUrlData(ui.authUrl.value.trim(), ui.tokenUrl.value.trim());
+    // Faz a autenticação
+    await reAuthenticateOAuth();
+    //returnDesktop();
+  } catch (error) {
+    console.error('Error during authentication:', error);
+  } finally {
+    // Restaura os dados antigos
+    saveUrlData(currentUrlData.authUrl, currentUrlData.tokenUrl);
+  }
+};
+
+const saveUrlData = async (authUrl, tokenUrl) => {
   const msgBackground = {
     from: pluginContexts.options,
-    action: pluginActions.saveAuthUrl,
-    url: document.getElementById("urlPlugin").value.trim()
+    action: pluginActions.saveDataOnStorage,
+    data: {
+      authUrl: authUrl,
+      tokenUrl: tokenUrl
+    }
   };
-  // Tenta salvar a URL de autenticação no storage do browser e realizar a autenticação
-  try {
-    // Aguarda a resposta do background worker para salvar a URL
-    await new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
       chrome.runtime.sendMessage(msgBackground, (response) => {
         if (response && response.success) {
           //console.log('URL saved successfully:', response.url);
@@ -394,19 +425,32 @@ const openPopup = async (event) => {
         }
       })
     });
-    // Executa a autenticação
-    await reAuthenticateOAuth();
-    //returnDesktop();
-  } catch (error) {
-    console.error('Error during authentication:', error);
-    return;
-  }
+};
+
+const backpUrlData = async () => {
+  const msgBackground = {
+    from: pluginContexts.options,
+    action: pluginActions.getDataOnStorage,
+    data: {
+      authUrl: '',
+      tokenUrl: ''
+    }
+  };
+  return await new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(msgBackground, (response) => {
+      if (response && response.success) {
+        resolve(response.data);
+      } else {
+        reject(new Error('Failed to send message to background script'));
+      }
+    })
+  });
 };
 
 const returnDesktop = () => {
 
-  const base_url = "https://servicos.dnit.gov.br/sima-back";
-  // const base_url = "http://localhost:5055";
+  // const base_url = "https://servicos.dnit.gov.br/sima-back";
+  const base_url = "http://localhost:5055";
 
   axios.get(`${base_url}/api/pluginSei/returnDesktop`, { withCredentials: true })
   .then(response => {

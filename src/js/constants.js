@@ -14,8 +14,7 @@ export const pluginActions = {
     getOAuthCodes: "getOAuthCodes",
     getOAuthToken: "getOAuthToken",
     saveDataOnStorage: "saveDataOnStorage",
+    getDataOnStorage: "getDataOnStorage",
     saveCookie: "saveCookie",
-    getCookie: "getCookie",
-    setCookie: "setCookie",
-    saveAuthUrl: "saveAuthUrl"
+    getCookie: "getCookie"
 };
