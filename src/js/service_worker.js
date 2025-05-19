@@ -16,7 +16,6 @@ chrome.runtime.onMessage.addListener(handleNewMessage);
  * 
  * Esta função receberá uma mensagem e executará uma ação dependendo do conteúdo da mensagem.
  * 
- * @function addListener
  * @param {Object} msg - Mensagem recebida com as orientações de qual ação executar.
  * @param {string} msg.from - Origem da mensagem geralmente content ou options.
  * @param {string} msg.action - Identifica a ação a ser executada.

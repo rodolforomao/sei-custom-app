@@ -1,5 +1,6 @@
 import axios from 'axios';
 import auth from './auth.js';
+import { pluginContexts, pluginActions } from '../constants.js';
 import { getRoute } from 'model/routes_store.js';
 import { getObjectData, getArrayData } from 'model/objectconversion.js';
 import { reAuthenticateOAuth } from '../actions/oauth_util.js';
@@ -28,20 +29,21 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const route = await getRoute(routeId);
   // Monta a URL e o objeto de requisição já trocando os placeholders pelos valores corretos
   const url = dataTransfer.transformString(route.url);
-  console.log("[INICIO] Rota %o - %o", routeId, url);
+  // console.log("[INICIO] Rota %o - %o", routeId, url);
   const obj = JSON.parse(dataTransfer.transformString(route.body));
   // Monta as outras variáveis que serão usadas na requisição
   const verb = route.verb.toLowerCase();
   let headers = {};
-  const sendCookie = await shouldSendCookie;
-  if (!sendCookie) { Object.assign(obj, auth.getCredentials()); }
-  else { headers = { Authorization: `Bearer ${await getToken()}` }; }
-  // Monta as variáveis que serão enviadas pela URL
-  const params = verb === "get" ? obj : {};
-  // Monta as variáveis que serão enviadas no corpo (body) da requisição
-  const data = verb !== "get" ? obj : {};
   let originalResponse;
   try {
+    const sendCookie = await shouldSendCookie();
+    if (sendCookie) { Object.assign(obj, auth.getCredentials()); }
+    else { headers = { Authorization: `Bearer ${await getToken()}` }; }
+    console.log("Headers: %o", headers);
+    // Monta as variáveis que serão enviadas pela URL
+    const params = verb === "get" ? obj : {};
+    // Monta as variáveis que serão enviadas no corpo (body) da requisição
+    const data = verb !== "get" ? obj : {};
     // console.log(`[REQUEST CONFIG] Verb: ${verb} / Credentials: ${sendCookie} / URL Params: ${Object.keys(params).length > 0} / Body Data: ${Object.keys(data).length > 0}`);
     originalResponse = await sendRequest(url, verb, params, data, headers, sendCookie, true);
     // console.log("Resposta original da rota %d: %o", routeId, originalResponse);
@@ -55,7 +57,7 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
     console.log("Ocorreu um erro ao tentar fazer a requisição para o servidor na rota %d: %o", routeId, e);
     return null;
   }
-  console.log("[FIM] Rota %o - %o", routeId, url);
+  // console.log("[FIM] Rota %o - %o", routeId, url);
   return originalResponse;
 };
 
@@ -67,15 +69,18 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
  * 
  */
 async function shouldSendCookie() {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get(
-      {
-        saveTokenOnCookies: true
-      },
-      (items) => {
-        resolve(items.saveTokenOnCookies);
+  return new Promise((resolve, reject) => {
+    console.log("Verificando cookies");
+    const msgBackground = getBackgroundMessage({ saveTokenOnCookies: true }, pluginActions.getDataOnStorage);
+    chrome.runtime.sendMessage(msgBackground, (response) => {
+      if (response && response.success) {
+        console.log("Cookies resolved: %o", response.data.saveTokenOnCookies);
+        resolve(response.data.saveTokenOnCookies);
+      } else {
+        console.log("Cookies rejected");
+        reject(new Error('Failed to send message to background script'));
       }
-    );
+    })
   });
 }
 
@@ -86,16 +91,37 @@ async function shouldSendCookie() {
  * 
  */
 async function getToken() {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get(
-      {
-        appOauthToken: ''
-      },
-      (items) => {
-        resolve(items.appOauthToken);
+  return new Promise((resolve, reject) => {
+    console.log("Recuperando token de autenticação do usuário");
+    const msgBackground = getBackgroundMessage({ appOauthToken: '' }, pluginActions.getDataOnStorage);
+    chrome.runtime.sendMessage(msgBackground, (response) => {
+      if (response && response.success) {
+        console.log("Token de autenticação recuperado: %o", response.data.appOauthToken);
+        resolve(response.data.appOauthToken);
+      } else {
+        console.log("Token de autenticação não recuperado");
+        reject(new Error('Failed to send message to background script'));
       }
-    );
+    })
   });
+}
+
+
+/**
+ * 
+ * Função que padroniza a criação da mensagem que será enviada para o background.
+ *  
+ * @param {Object} data Dados que serão enviados na mensagem.
+ * @param {string} action Ação que será executada no background.
+ * @return {Object} Retorna um objeto com os dados da mensagem.
+ * 
+ */
+function getBackgroundMessage(data, action) {
+  return {
+    from: pluginContexts.options,
+    action: action,
+    data: data
+  };
 }
 
 /**

@@ -4,7 +4,7 @@ import routesId from "model/routes_id.js";
 import { getRoute } from "model/routes_store.js";
 import { reAuthenticateOAuth } from './actions/oauth_util.js';
 import { pluginActions, pluginContexts } from './constants.js';
-//import { openJWTPopup } from "actions/jwt_authentication.js";
+import axios from 'axios';
 import 'css/options.scss';
 
 let ui = {};
@@ -285,7 +285,13 @@ const save = async (e) => {
     action: pluginActions.saveDataOnStorage,
     data: dataToSave
   };
-  await chrome.runtime.sendMessage(msgBackground, (response) => {});
+  await chrome.runtime.sendMessage(msgBackground, (response) => {
+    if (response && response.success) {
+      alert.success('Configurações salvas com sucesso.');
+    } else {
+      alert.error('Erro ao salvar as configurações.');
+    }
+  });
 };
 
 const clearConfiguredRoutes = async (event) => {
@@ -397,9 +403,11 @@ const openPopup = async (event) => {
     await saveUrlData(ui.authUrl.value.trim(), ui.tokenUrl.value.trim());
     // Faz a autenticação
     await reAuthenticateOAuth();
-    //returnDesktop();
+    returnDesktop();
+    alert.success('Autenticação realizada com sucesso.');
   } catch (error) {
     console.error('Error during authentication:', error);
+    alert.error('Erro ao realizar a autenticação. Verifique os dados informados.');
   } finally {
     // Restaura os dados antigos
     saveUrlData(currentUrlData.authUrl, currentUrlData.tokenUrl);
@@ -449,8 +457,8 @@ const backpUrlData = async () => {
 
 const returnDesktop = () => {
 
-  // const base_url = "https://servicos.dnit.gov.br/sima-back";
-  const base_url = "http://localhost:5055";
+  const base_url = "https://servicos.dnit.gov.br/sima-back";
+  //const base_url = "http://localhost:5055";
 
   axios.get(`${base_url}/api/pluginSei/returnDesktop`, { withCredentials: true })
   .then(response => {
