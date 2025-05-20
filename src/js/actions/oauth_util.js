@@ -1,6 +1,8 @@
 import { pluginContexts, pluginActions } from '../constants.js';
 
 const SIMA_TOKEN_NAME = "SIMA";
+const EXTENSION_ID = "idgpfcigpineakeljpkhfbeilhagjgfa";
+
 
 /**
  * 
@@ -19,7 +21,7 @@ export const getOAuthCodes = async (authUrl) => {
         const fullAuthUrl = new URL(authUrl);
         fullAuthUrl.searchParams.set("response_type", "code");
         fullAuthUrl.searchParams.set("client_id", "chrome_extension");
-        fullAuthUrl.searchParams.set("redirect_uri", "https%3A%2F%2Finmniboeooddjgipkkodoageimggnbka.chromiumapp.org%2F");
+        fullAuthUrl.searchParams.set("redirect_uri", `https%3A%2F%2F${EXTENSION_ID}.chromiumapp.org%2F`);
         fullAuthUrl.searchParams.set("code_challenge", codeChallenge);
         fullAuthUrl.searchParams.set("code_challenge_method", "S256");
         // Faz a configuração da janela de autenticação
