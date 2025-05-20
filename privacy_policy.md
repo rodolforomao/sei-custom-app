@@ -48,6 +48,6 @@ Podemos atualizar esta política de privacidade periodicamente para refletir mud
 
 ## 8. Contato
 
-Se você tiver dúvidas ou preocupações sobre esta política de privacidade, entre em contato conosco através do e-mail: [seu_email@exemplo.com]
+Se você tiver dúvidas ou preocupações sobre esta política de privacidade, entre em contato conosco através do e-mail: [supra.dnit@gmail.com]
 
 Ao utilizar nossa extensão, você concorda com esta Política de Privacidade.
