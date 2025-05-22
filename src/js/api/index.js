@@ -39,7 +39,6 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
     const sendCookie = await shouldSendCookie();
     if (sendCookie) { Object.assign(obj, auth.getCredentials()); }
     else { headers = { Authorization: `Bearer ${await getToken()}` }; }
-    console.log("Headers: %o", headers);
     // Monta as variáveis que serão enviadas pela URL
     const params = verb === "get" ? obj : {};
     // Monta as variáveis que serão enviadas no corpo (body) da requisição
@@ -70,14 +69,13 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
  */
 async function shouldSendCookie() {
   return new Promise((resolve, reject) => {
-    console.log("Verificando cookies");
     const msgBackground = getBackgroundMessage({ saveTokenOnCookies: true }, pluginActions.getDataOnStorage);
     chrome.runtime.sendMessage(msgBackground, (response) => {
       if (response && response.success) {
-        console.log("Cookies resolved: %o", response.data.saveTokenOnCookies);
+        // console.log("Cookies resolved: %o", response.data.saveTokenOnCookies);
         resolve(response.data.saveTokenOnCookies);
       } else {
-        console.log("Cookies rejected");
+        // console.log("Cookies rejected");
         reject(new Error('Failed to send message to background script'));
       }
     })
