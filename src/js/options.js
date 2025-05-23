@@ -18,7 +18,7 @@ const mapUI = () => {
   ui.authType = document.getElementById('authType');
   ui.authUrl = document.getElementById('authUrl');
   ui.tokenUrl = document.getElementById('tokenUrl');
-  // ui.anchorTokenUrl = document.getElementById('anchor-token-url');
+  ui.anchorTokenUrl = document.getElementById('anchor-token-url');
   // ui.lblTokenUrl = document.getElementById('lbl-token-url');
   // ui.lblNoAppKeyInfo = document.getElementById('lbl-no-app-key-info');
   ui.defaultBoard = document.getElementById('txt-default-board');
@@ -242,12 +242,14 @@ const updateTokenUrl = () => {
     //ui.lblNoAppKeyInfo.style.display = 'initial';
     const tokenUrl = defaultTokenUrl + '&key=<APP KEY>';
     // ui.lblTokenUrl.textContent = tokenUrl;
-    // ui.anchorTokenUrl.removeAttribute('href');
+    ui.anchorTokenUrl.removeAttribute('href');
+    ui.anchorTokenUrl.innerHTML = '';
   } else {
     //ui.lblNoAppKeyInfo.style.display = 'none';
     const tokenUrl = defaultTokenUrl + '&key=' + appKey;
     // ui.lblTokenUrl.textContent = tokenUrl;
-    // ui.anchorTokenUrl.setAttribute('href', tokenUrl);
+    ui.anchorTokenUrl.setAttribute('href', tokenUrl);
+    ui.anchorTokenUrl.innerHTML = tokenUrl;
   }
 };
 
@@ -328,17 +330,21 @@ const loadDefaultRoutes = async (event) => {
   toggleElementDisplay('btn-clear-routes', 'block');
   toggleElementDisplay('btn-trello-routes', 'none');
 
-  if (confirm('Deseja realmente carregar as configurações do Trello? Esta ação não pode ser desfeita.')) {
-    // await loadSimaRoutes();
-    await loadTrelloRoutes();
+  if (confirm('Deseja realmente carregar as configurações padrão? Esta ação não pode ser desfeita.')) {
+    if (ui.authType.value === 'jwt') {
+      await loadSimaRoutes();
+    } else if (ui.authType.value === 'trello') {
+      await loadTrelloRoutes();
+    } else {
+      alert.error('Tipo de autenticação inválido.');
+      return;
+    }
     loadRoutesForm();
 
     toggleElementDisplay('btnSalvarConfig', 'block');
 
-    alert.success('Rotas do Trello carregadas com sucesso.');
+    alert.success('Rotas do carregadas com sucesso.');
   } else {
-    console.log('Rotas do Trello canceladas.');
-
     toggleElementDisplay('btn-clear-routes', 'none');
     toggleElementDisplay('btn-trello-routes', 'block');
   }
