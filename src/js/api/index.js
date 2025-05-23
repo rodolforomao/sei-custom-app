@@ -6,6 +6,21 @@ import { getObjectData, getArrayData } from 'model/objectconversion.js';
 import { reAuthenticateOAuth } from '../actions/oauth_util.js';
 
 /**
+ * Variável que indica qual é o tipo de autenticação que será utilizada.
+ */
+let authType = '';
+
+/**
+ * Função para mudar o tipo de autenticação que será utilizada.
+ * 
+ * @param {string} type Tipo de autenticação que será utilizada. Pode ser 'jwt' ou 'trello'.
+ * 
+ */
+export const setAuthType = (type) => {
+  authType = type;
+};
+
+/**
  * Se estivermos no ambiente teste (e2e ou playground),
  * as requisições não alcançarão os servidores do Trello,
  * mas sim serão gerenciadas pelo MockedTrelloApi.
@@ -35,10 +50,21 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const verb = route.verb.toLowerCase();
   let headers = {};
   let originalResponse;
+  const sendCookie = await shouldSendCookie();
   try {
-    const sendCookie = await shouldSendCookie();
-    if (sendCookie) { Object.assign(obj, auth.getCredentials()); }
-    else { headers = { Authorization: `Bearer ${await getToken()}` }; }
+    // Ajusta o request para autenticação usando JWT
+    if (authType === 'jwt') {
+      if (!sendCookie) { headers = { Authorization: `Bearer ${await getToken()}` }; }
+    }
+    // Ajusta o request para autenticação usando Trello
+    else if (authType === 'trello') {
+      Object.assign(obj, auth.getCredentials());
+    }
+    // Se não foi identificada a autenticação
+    else {
+      console.log("Tipo de autenticação não reconhecido: %o", authType);
+      return null;
+    }
     // Monta as variáveis que serão enviadas pela URL
     const params = verb === "get" ? obj : {};
     // Monta as variáveis que serão enviadas no corpo (body) da requisição

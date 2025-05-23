@@ -15,6 +15,7 @@ const defaultTokenUrl =
 const mapUI = () => {
   ui.appKey = document.getElementById('txt-app-key');
   ui.appToken = document.getElementById('txt-app-token');
+  ui.authType = document.getElementById('authType');
   ui.authUrl = document.getElementById('authUrl');
   ui.tokenUrl = document.getElementById('tokenUrl');
   // ui.anchorTokenUrl = document.getElementById('anchor-token-url');
@@ -32,10 +33,10 @@ const mapUI = () => {
   ui.formTrello = document.getElementById('form-trello');
   ui.formJwt = document.getElementById('form-jwt');
   ui.defaultDesktop = document.getElementById("selectDesktop");
-  ui.checkCookies = document.getElementById("checkCookies"); 
-  ui.checkMove = document.getElementById("checkMove"); 
-  ui.checkCreateTitle = document.getElementById("checkCreateTitle"); 
- 
+  ui.checkCookies = document.getElementById("checkCookies");
+  ui.checkMove = document.getElementById("checkMove");
+  ui.checkCreateTitle = document.getElementById("checkCreateTitle");
+
 
   for (const btnSave of Array.prototype.slice.call(document.getElementsByClassName('btn-salvar-config'))) {
     btnSave.addEventListener('click', save);
@@ -45,8 +46,6 @@ const mapUI = () => {
   ui.btnAuthReq.addEventListener('click', openPopup);
   ui.btnTrello.addEventListener('click', openFormTrello);
   ui.btnJwt.addEventListener('click', openFormJWT);
-
-  // ui.btnUserData.addEventListener('click', getUserData);
 
   ui.appKey.addEventListener('input', () => {
     updateTokenUrl();
@@ -58,14 +57,15 @@ const mapUI = () => {
 };
 
 const openFormTrello = () => {
-
   ui.formJwt.style.display = 'none';
   ui.formTrello.style.display = 'block';
+  ui.authType.value = 'trello';
 }
 
 const openFormJWT = () => {
   ui.formTrello.style.display = 'none';
   ui.formJwt.style.display = 'block';
+  ui.authType.value = 'jwt';
 }
 
 const validationRoute = async () => {
@@ -102,7 +102,6 @@ toggleFormDisplay();
 
 
 const loadRoutesForm = () => {
-
   document.forms['form-routes'].innerHTML = '';
   const routes = Object.values(routesId);
   routes.forEach(async (route) => {
@@ -257,6 +256,7 @@ const save = async (e) => {
   const dataToSave = Object.assign({}, {
     appKey: ui.appKey.value,
     appToken: ui.appToken.value,
+    authType: ui.authType.value,
     authUrl: ui.authUrl.value.trim(),
     tokenUrl: ui.tokenUrl.value.trim(),
     defaultBoard: ui.defaultBoard.value,
@@ -329,7 +329,8 @@ const loadDefaultRoutes = async (event) => {
   toggleElementDisplay('btn-trello-routes', 'none');
 
   if (confirm('Deseja realmente carregar as configurações do Trello? Esta ação não pode ser desfeita.')) {
-    await loadSimaRoutes();
+    // await loadSimaRoutes();
+    await loadTrelloRoutes();
     loadRoutesForm();
 
     toggleElementDisplay('btnSalvarConfig', 'block');
@@ -347,6 +348,7 @@ const restore = () => {
     {
       authUrl: '',
       tokenUrl: '',
+      authType: '',
       appKey: '',
       appToken: '',
       defaultBoard: '',
@@ -359,6 +361,7 @@ const restore = () => {
     (items) => {
       ui.authUrl.value = items.authUrl;
       ui.tokenUrl.value = items.tokenUrl;
+      ui.authType.value = items.authType;
       ui.appKey.value = items.appKey;
       ui.appToken.value = items.appToken;
       ui.defaultBoard.value = items.defaultBoard;
@@ -367,6 +370,11 @@ const restore = () => {
       ui.checkCookies.checked = items.saveTokenOnCookies;
       ui.checkMove.checked = items.canMoveBoard;
       ui.checkCreateTitle.checked = items.appendNumberOnTitle;
+      if (ui.authType.value === 'jwt') {
+        openFormJWT();
+      } else if (ui.authType.value === 'trello') {
+        openFormTrello();
+      }
       updateTokenUrl();
     }
   );
@@ -424,15 +432,15 @@ const saveUrlData = async (authUrl, tokenUrl) => {
     }
   };
   await new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage(msgBackground, (response) => {
-        if (response && response.success) {
-          //console.log('URL saved successfully:', response.url);
-          resolve();
-        } else {
-          reject(new Error('Failed to send message to background script'));
-        }
-      })
-    });
+    chrome.runtime.sendMessage(msgBackground, (response) => {
+      if (response && response.success) {
+        //console.log('URL saved successfully:', response.url);
+        resolve();
+      } else {
+        reject(new Error('Failed to send message to background script'));
+      }
+    })
+  });
 };
 
 const backpUrlData = async () => {
@@ -461,22 +469,22 @@ const returnDesktop = () => {
   //const base_url = "http://localhost:5055";
 
   axios.get(`${base_url}/api/pluginSei/returnDesktop`, { withCredentials: true })
-  .then(response => {
-    const desktops = response.data; 
+    .then(response => {
+      const desktops = response.data;
 
-    const selectElement = document.getElementById("selectDesktop");
+      const selectElement = document.getElementById("selectDesktop");
 
-    // Limpa as opções existentes
-    selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
+      // Limpa as opções existentes
+      selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
 
-    // Adiciona as novas opções
-    desktops.forEach(desktop => {
-      const option = document.createElement("option");
-      option.value = desktop.id;
-      option.textContent = desktop.nameDesktop;
-      selectElement.appendChild(option);
-    });
-  })
-  .catch((err) => console.log(err));
+      // Adiciona as novas opções
+      desktops.forEach(desktop => {
+        const option = document.createElement("option");
+        option.value = desktop.id;
+        option.textContent = desktop.nameDesktop;
+        selectElement.appendChild(option);
+      });
+    })
+    .catch((err) => console.log(err));
 
 }

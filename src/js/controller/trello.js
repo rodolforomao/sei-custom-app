@@ -8,11 +8,13 @@ export const load = (opts) => {
     {
       appKey: '',
       appToken: '',
+      authType: '',
       canMoveBoard: false,
       appendNumberOnTitle: false
     },
     (items) => {
       api.setCredentials(items.appKey, items.appToken);
+      api.setAuthType(items.authType);
 
       store.onDataChanged(() => ui.render());
       store.setCanChangeBoard(items.canMoveBoard, false);
