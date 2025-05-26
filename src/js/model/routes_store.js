@@ -286,8 +286,8 @@ export const loadSimaRoutes = async () => {
     response = {
         cards: [{
             id: "@{this.issueId}",
-            name: "@{this.descr}",
-            desc: "@{this.summary}",
+            name: "@{this.summary}",
+            desc: "@{this.descr}",
             labels: [{
                 id: "@{this.badge.id}",
                 color: "@{this.badge.color}",
@@ -311,8 +311,8 @@ export const loadSimaRoutes = async () => {
         },
         cards: [{
             id: "@{this.issues.id}",
-            name: "@{this.issues.descr}",
-            desc: "@{this.issues.summary}",
+            name: "@{this.issues.summary}",
+            desc: "@{this.issues.descr}",
             labels: [{
                 id: "@{this.issues.badge.id}",
                 color: "@{this.issues.badge.color}",
@@ -329,8 +329,8 @@ export const loadSimaRoutes = async () => {
     // 8
     response = {
         id: "@{id}",
-        name: "@{descr}",
-        desc: "@{summary}",
+        name: "@{summary}",
+        desc: "@{descr}",
         labels: [{
             id: "@{badge.id}",
             color: "@{badge.color}",
@@ -354,8 +354,8 @@ export const loadSimaRoutes = async () => {
     // 9
     response = {
         id: "@{id}",
-        name: "@{descr}",
-        desc: "@{summary}",
+        name: "@{summary}",
+        desc: "@{descr}",
         labels: [],
         due: "@{endDate}",
         dueComplete: "@{isIssueCompleted}",
@@ -363,10 +363,10 @@ export const loadSimaRoutes = async () => {
         idChecklists: [],
         seiNumbers: "@{seiNumbers}"
     };
-    routes.push({id: routesId.createCard.id, url: base_url + "/api/issue/create/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [{"type": 1, "numberDocument": "@{card.processNumber}"}],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
+    routes.push({id: routesId.createCard.id, url: base_url + "/api/issue/create/", body: `{"descr":"@{card.desc}","summary":"@{card.name}","listId":"@{card.list.id}","priority": 0,"projectId": "@{board.id}","type": 0,"documents": [{"type": 1, "numberDocument": "@{card.processNumber}"}],"assignees": []}`, verb: "POST", response: JSON.stringify(response)});
     // 10
     response = {};
-    routes.push({id: routesId.updateCard.id, url: base_url + "/api/issue/@{card.id}/batchUpdate/", body: `{"descr":"@{card.name}","summary":"@{card.desc}","endDate":"@{card.due}","isIssueCompleted":"@{card.dueComplete}","listId":"@{list.id}","projectId": "@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
+    routes.push({id: routesId.updateCard.id, url: base_url + "/api/issue/@{card.id}/batchUpdate/", body: `{"descr":"@{card.desc}","summary":"@{card.name}","endDate":"@{card.due}","isIssueCompleted":"@{card.dueComplete}","listId":"@{list.id}","projectId": "@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
     // 11
     response = {};
     routes.push({id: routesId.deleteCard.id, url: "", body: ``, verb: "DELETE", response: JSON.stringify(response)});
