@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const ZipPlugin = require('zip-webpack-plugin');
 const { merge } = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
 const common = require('./webpack.config.js');
@@ -21,6 +22,10 @@ module.exports = merge(common, {
       'process.env.MOCKED_API': JSON.stringify('false'),
       'process.env.API_BACKEND': JSON.stringify('https://servicos.dnit.gov.br/sima-back'),
       'process.env.EXTENSION_ID': JSON.stringify('idgpfcigpineakeljpkhfbeilhagjgfa')
+    }),
+    new ZipPlugin({
+      path: '../', // Output zip in the project root
+      filename: 'sei-trello-dist.zip'
     }),
   ],
 });
