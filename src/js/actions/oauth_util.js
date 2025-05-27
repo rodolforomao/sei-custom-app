@@ -1,8 +1,7 @@
 import { pluginContexts, pluginActions } from '../constants.js';
 
 const SIMA_TOKEN_NAME = "SIMA";
-// const EXTENSION_ID = "inmniboeooddjgipkkodoageimggnbka"; // ID local
-const EXTENSION_ID = "idgpfcigpineakeljpkhfbeilhagjgfa"; // ID da store
+const EXTENSION_ID = process.env.EXTENSION_ID;
 
 
 /**

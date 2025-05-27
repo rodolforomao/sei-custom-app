@@ -471,8 +471,7 @@ const backpUrlData = async () => {
 
 const returnDesktop = () => {
 
-  const base_url = "https://servicos.dnit.gov.br/sima-back";
-  //const base_url = "http://localhost:5055";
+  const base_url = process.env.API_BACKEND;
 
   axios.get(`${base_url}/api/pluginSei/returnDesktop`, { withCredentials: true })
     .then(response => {

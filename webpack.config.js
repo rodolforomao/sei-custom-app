@@ -53,7 +53,18 @@ module.exports = {
       {
         test: /\.scss$/,
         include: [path.resolve(__dirname, 'src/css')],
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              api: 'modern',
+              sassOptions: {},
+            }
+          }
+        ],
       },
 
       /* estilos dos componentes não serão exportados para arquivo */
@@ -70,7 +81,13 @@ module.exports = {
             },
           },
           'postcss-loader',
-          'sass-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              api: 'modern',
+              sassOptions: {},
+            }
+          },
         ],
       },
 
@@ -78,7 +95,17 @@ module.exports = {
       {
         test: /\.(scss|css)$/,
         include: [path.resolve(__dirname, 'node_modules')],
-        use: ['style-loader', 'css-loader?importLoaders=1', 'sass-loader'],
+        use: [
+          'style-loader',
+          'css-loader?importLoaders=1',
+          {
+            loader: 'sass-loader',
+            options: {
+              api: 'modern',
+              sassOptions: {},
+            }
+          }
+        ],
       },
 
       /* transforma os js */
@@ -120,10 +147,6 @@ module.exports = {
         { from: 'src/icons', to: outputPath + '/icons' },
         { from: 'src/html', to: outputPath + '/html' },
       ],
-    }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      'process.env.MOCKED_API': JSON.stringify('false'),
-    }),
+    })
   ],
 };

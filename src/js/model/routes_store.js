@@ -248,9 +248,7 @@ export const loadTrelloRoutes = async () => {
  * @returns {void}
  */
 export const loadSimaRoutes = async () => {
-    const base_url = "https://servicos.dnit.gov.br/sima-back";
-    // const base_url = "https://sistemas.dnit.gov.br/sima-back";
-    // const base_url = "http://localhost:5055";
+    const base_url = process.env.API_BACKEND
     let routes = [];
     // 1
     let response = {

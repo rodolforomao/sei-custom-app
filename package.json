@@ -5,11 +5,11 @@
   "main": "index.js",
   "browserslist": "defaults",
   "scripts": {
-    "webpack:dev": "cross-env NODE_ENV=development npx webpack --config webpack.config.js",
-    "webpack:dev:watch": "NODE_ENV=development npx webpack --config webpack.config.dev.watch.js --watch",
-    "webpack:prod": "NODE_ENV=production npx webpack --config webpack.config.prod.js",
-    "webpack:test": "NODE_ENV=test npx webpack --config webpack.config.js",
-    "webpack:test:watch": "NODE_ENV=test npx webpack --config webpack.config.js --watch",
+    "webpack:dev": "npx webpack --config webpack.config.dev.js",
+    "webpack:dev:watch": "npx webpack --config webpack.config.dev.watch.js --watch",
+    "webpack:prod": "npx webpack --config webpack.config.prod.js",
+    "webpack:test": "npx webpack --config webpack.config.dev.js",
+    "webpack:test:watch": "npx webpack --config webpack.config.dev.watch.js --watch",
     "lint": "npx eslint .",
     "test": "npx jest",
     "test:e2e": "npx jest --selectProjects 'E2E Tests'",
@@ -82,7 +82,6 @@
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@testing-library/react": "^12.1.5",
-    "cross-env": "^7.0.3",
     "react-refresh": "^0.11.0"
   }
 }
