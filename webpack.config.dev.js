@@ -3,6 +3,8 @@ const { merge } = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
 const common = require('./webpack.config.js');
 
+process.env.NODE_ENV = 'development';
+
 module.exports = merge(common, {
   mode: 'development',
   devtool: 'cheap-module-source-map',

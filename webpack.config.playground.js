@@ -36,6 +36,8 @@ common.plugins = [
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify('development'),
     'process.env.MOCKED_API': JSON.stringify('true'),
+    'process.env.API_BACKEND': JSON.stringify('http://localhost:5055'),
+    'process.env.EXTENSION_ID': JSON.stringify('inmniboeooddjgipkkodoageimggnbka')
   }),
   new webpack.HotModuleReplacementPlugin(),
   new ReactRefreshWebpackPlugin(),
