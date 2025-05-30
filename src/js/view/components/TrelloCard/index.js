@@ -223,7 +223,7 @@ class TrelloCard extends React.Component {
       .filter((className) => className.startsWith('processo'));
 
     return (
-      <li>
+      <li className={styles.iconExpand}>
         <FooterIcon icon={faAlignLeft} />
         <a
           className={classNames(relevantClasses)}
@@ -355,14 +355,12 @@ class TrelloCard extends React.Component {
         {/* Footer sempre visível */}
         <div className={styles.footer}>
           <ul className={!this.state.isExpanded ? styles.processExpand : ''}>
-            <li className={styles.iconExpand}>
               {this.renderProcessAnchor()}
               {!this.state.isExpanded && (
                 <a data-tooltip="Mostrar cartão"  onClick={() => this.setState({ isExpanded: true })}>
                   <i className='far fa-plus-square'></i>
                 </a>
               )}
-            </li>
             {this.state.isExpanded && (
               <li style={{}}>{this.renderDue()}</li>
             )}
