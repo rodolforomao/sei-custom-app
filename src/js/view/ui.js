@@ -71,6 +71,10 @@ const renderCreateTrelloCardButton = (placeholder, processNumber, data, newCardD
   );
 };
 
+const removeSpecialChars = (text) => {
+  return text.replace(/[^0-9]/g, '').trim();
+};
+
 const renderTrelloBox = (box, data) => {
   const processNumber = box.getAttribute('data-trello-process-number');
   const processAnchor = box.querySelector('[data-trello-process-anchor]');
@@ -79,7 +83,7 @@ const renderTrelloBox = (box, data) => {
 
   if (!processNumber || !cardPlaceholder || !createCardPlaceholder) return;
 
-  const cardsForThisProcess = data.cards.filter((card) => card.processNumber === processNumber);
+  const cardsForThisProcess = data.cards.filter((card) => card.processNumber === processNumber || card.processNumber === removeSpecialChars(processNumber));
 
   const hasTrelloCard = cardsForThisProcess.length > 0;
 
