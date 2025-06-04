@@ -65,8 +65,18 @@ export const saveRoute = async (routeId, routeURL, routeBody, routeVerb, respons
  * @returns {{id: String, url: String, body: String}} Retorna um objeto representando a rota.
  */
 export const getRoute = async (routeId) => {
-    const routes = await chrome.storage.sync.get([values.routes]);
-    return routes.routes.find((route) => route.id === routeId);
+    return await new Promise((resolve, reject) => {
+        chrome.storage.sync.get([values.routes],
+            (items) => {
+                if (chrome.runtime.lastError) {
+                    console.error("Erro ao recuperar as rotas do armazenamento: ", chrome.runtime.lastError);
+                    reject(chrome.runtime.lastError);
+                } else {
+                    resolve(items.routes.find((route) => route.id === routeId));
+                }
+            }
+        );
+    });
 };
 
 /**

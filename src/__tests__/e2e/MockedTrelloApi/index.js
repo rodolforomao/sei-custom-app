@@ -15,13 +15,11 @@ const Api = () => {
   let delay = 0;
 
   const setup = () => {
-    console.log('MockedTrelloApi setup');
     const mock = new MockAdapter(axios, { onNoMatch: 'passthrough' });
-    const regex = /.*/; // Match any URL for debugging
+    const regex = /http:\/\/teste.mock\/(.*)/;
     mock.onAny(regex).reply(async (config) => {
-      console.log('Intercepted by mock:', config.url);
       const { method, url, params, data } = config;
-      const path = url;
+      const path = url.match(regex)[1];
       const response = handleRequests(method, path, params, data ? JSON.parse(data) : {});
       return new Promise((resolve) => setTimeout(() => resolve([200, response]), delay));
     });
@@ -205,7 +203,6 @@ const Api = () => {
 
   const handleRequests = (method, path, params = {}, data = {}) => {
     let match = null;
-    console.log(`MockedTrelloApi: ${method.toUpperCase()} ${path}`, params, data);
     /* searchCards */
     if (method === 'get' && path.match(/^search$/) && params.modelTypes === 'cards') {
       return { cards: cards };

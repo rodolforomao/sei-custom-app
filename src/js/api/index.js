@@ -10,6 +10,8 @@ import { reAuthenticateOAuth } from '../actions/oauth_util.js';
  */
 let authType = '';
 
+const TEST_AUTH = 'localtest';
+
 /**
  * Função para mudar o tipo de autenticação que será utilizada.
  * 
@@ -26,6 +28,7 @@ export const setAuthType = (type) => {
  * mas sim serão gerenciadas pelo MockedTrelloApi.
  */
 if (process.env.NODE_ENV === 'test' || process.env.MOCKED_API === 'true') {
+  authType = TEST_AUTH;
   const MockedApi = require('tests/e2e/MockedTrelloApi').default;
   window.MockedTrelloApi = MockedApi;
   MockedApi.setup();
@@ -61,7 +64,7 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
       Object.assign(obj, auth.getCredentials());
     }
     // Se não foi identificada a autenticação
-    else {
+    else if (authType !== TEST_AUTH) {
       console.log("Tipo de autenticação não reconhecido: %o", authType);
       return null;
     }
@@ -74,9 +77,13 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
     // console.log("Resposta original da rota %d: %o", routeId, originalResponse);
     // Faz a transformação da resposta de acordo com a configuração da rota
     let responseStruct = JSON.parse(route.response);
-    let newResponse = Array.isArray(responseStruct) ? getArrayData(responseStruct, originalResponse.data) : getObjectData(responseStruct, originalResponse.data);
-    // Troca o objeto 'data' da resposta original pelo novo objeto transformado
-    originalResponse.data = newResponse;
+    // Verifica se a estrutura de resposta é um objeto com valor válido
+    if (typeof responseStruct === 'object' && responseStruct !== null && !Array.isArray(responseStruct) && Object.keys(responseStruct).length > 0) {
+      // Se for um objeto, transforma os dados da resposta original de acordo com a estrutura definida
+      let newResponse = Array.isArray(responseStruct) ? getArrayData(responseStruct, originalResponse.data) : getObjectData(responseStruct, originalResponse.data);
+      // Troca o objeto 'data' da resposta original pelo novo objeto transformado
+      originalResponse.data = newResponse;
+    }
     // console.log("Resposta transformada da rota %d: %o", routeId, newResponse);
   } catch (e) {
     console.log("Ocorreu um erro ao tentar fazer a requisição para o servidor na rota %d: %o", routeId, e);
