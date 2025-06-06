@@ -9,6 +9,8 @@ export const OptionIcon = styled(FontAwesomeIcon).attrs((props) => ({
 }))`
   color: ${(props) => (props.$highlight ? '#61bd4f' : '#aaa')};
   font-size: 12px;
+  margin-top: ${(props) => (props.$margin ? props.$margin : 'unset')};
+  margin-left: ${(props) => (props.$margin ? props.$margin : 'unset')};
 `;
 
 export const FooterIcon = styled(FontAwesomeIcon).attrs((props) => ({

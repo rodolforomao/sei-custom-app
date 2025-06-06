@@ -15,7 +15,7 @@ import * as alert from 'view/alert.js';
 import { OptionIcon, FooterIcon, HasAnotherCardIndicator } from './styles.js';
 
 import { faCalendarAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faSyncAlt, faExternalLinkAlt, faCheckSquare, faAlignLeft, faTags, faMinusSquare } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt, faExternalLinkAlt, faCheckSquare, faAlignLeft, faTags, faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 
 class TrelloCard extends React.Component {
   constructor(props) {
@@ -215,8 +215,8 @@ class TrelloCard extends React.Component {
   }
 
   renderProcessAnchor() {
-    if (!this.props.originalAnchor) return null;
-
+  // Se originalAnchor existir, renderiza normalmente
+  if (this.props.originalAnchor) {
     const relevantClasses = this.props.originalAnchor
       .getAttribute('class')
       .split(' ')
@@ -237,6 +237,19 @@ class TrelloCard extends React.Component {
       </li>
     );
   }
+
+  // Se originalAnchor for null, mas tiver processNumber
+  if (!this.props.originalAnchor && this.props.processNumber) {
+    return (
+      <li className={styles.iconExpand}>
+        <FooterIcon icon={faAlignLeft} />
+         <span className={styles.processoNumber}>{this.props.processNumber}</span>
+      </li>
+    );
+  }
+
+  return null;
+}
 
   render() {
     const isDescriptionEmpty = !(typeof this.props.description === 'string' && this.props.description.length > 0);
@@ -358,7 +371,7 @@ class TrelloCard extends React.Component {
               {this.renderProcessAnchor()}
               {!this.state.isExpanded && (
                 <a data-tooltip="Mostrar cartão"  onClick={() => this.setState({ isExpanded: true })}>
-                  <i className='far fa-plus-square'></i>
+                  <OptionIcon icon={faPlusSquare} $margin="5px" />
                 </a>
               )}
             {this.state.isExpanded && (
