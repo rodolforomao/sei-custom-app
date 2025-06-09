@@ -92,6 +92,10 @@ test('createCard', async () => {
       id: 'list1',
       name: 'Lista 1',
     },
+    defaultBoard: {
+      id: 'board1',
+      name: 'Quadro 1',
+    },
   });
   const result = await api.getCardData('card1');
 
