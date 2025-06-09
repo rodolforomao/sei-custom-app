@@ -5,6 +5,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const path = require('path');
+
+// Set NODE_ENV before requiring the common config
+process.env.NODE_ENV = 'development';
+
 const common = require('./webpack.config.js');
 
 const outputPath = path.resolve(__dirname, 'playground/output');

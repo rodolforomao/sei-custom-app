@@ -4,6 +4,8 @@ module.exports = {
     headless: process.env.HEADLESS !== 'false',
     args: ['--disable-web-security'],
   },
-  browser: 'chromium',
+  launch: {
+    product: 'chrome'
+  },
   browserContext: 'default',
 };
