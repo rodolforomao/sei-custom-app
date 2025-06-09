@@ -64,7 +64,7 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
       Object.assign(obj, auth.getCredentials());
     }
     // Se não foi identificada a autenticação
-    else if (authType !== TEST_AUTH) {
+    else if (process.env.NODE_ENV !== 'test') {
       console.log("Tipo de autenticação não reconhecido: %o", authType);
       return null;
     }
