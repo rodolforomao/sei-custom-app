@@ -77,14 +77,14 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
     // console.log("Resposta original da rota %d: %o", routeId, originalResponse);
     // Faz a transformação da resposta de acordo com a configuração da rota
     let responseStruct = JSON.parse(route.response);
-    // Verifica se a estrutura de resposta é um objeto com valor válido
-    if (typeof responseStruct === 'object' && responseStruct !== null && !Array.isArray(responseStruct) && Object.keys(responseStruct).length > 0) {
+    // Verifica se a estrutura de resposta é um objeto com valor válido para fazer a conversão dos dados
+    if (typeof responseStruct === 'object' && responseStruct !== null && Object.keys(responseStruct).length > 0) {
       // Se for um objeto, transforma os dados da resposta original de acordo com a estrutura definida
       let newResponse = Array.isArray(responseStruct) ? getArrayData(responseStruct, originalResponse.data) : getObjectData(responseStruct, originalResponse.data);
       // Troca o objeto 'data' da resposta original pelo novo objeto transformado
       originalResponse.data = newResponse;
+      //console.log("Resposta transformada da rota %d: %o", routeId, newResponse);
     }
-    // console.log("Resposta transformada da rota %d: %o", routeId, newResponse);
   } catch (e) {
     console.log("Ocorreu um erro ao tentar fazer a requisição para o servidor na rota %d: %o", routeId, e);
     return null;
