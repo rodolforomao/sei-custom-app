@@ -2,32 +2,6 @@ import routesId from '../../../js/model/routes_id';
 
 /**
  * 
- * Faz o Mock da API do Chrome de armazenamento e runtime para fins de testes.
- * No ambiente de testes estas APIs não estão disponíveis, então criamos uma simulação.
- * 
- */
-window.chrome = {
-  storage: {
-    sync: {
-      get: (data, fn) => {
-        fn({
-          appKey: 'key',
-          appToken: 'token',
-          defaultBoard: 'Quadro 1',
-          defaultList: 'Lista 1',
-          routes: getMockingRoutes(),
-        })
-      },
-    },
-  },
-  runtime: {
-    getManifest: () => ({ name: 'sei+trello' }),
-    sendMessage: (data, fn) => { fn({ success: true, data: data.data }) },
-  },
-};
-
-/**
- * 
  * Cria as rotas que serão utilizadas para simular as chamadas à API.
  * @returns {Array} Retorna um array de rotas mockadas para a API.
  * 
@@ -45,7 +19,7 @@ const getMockingRoutes = () => {
   routes.push({ id: routesId.getCardData.id, url: "http://teste.mock/cards/@{card.id}", body: `{"fields":"name,desc,labels,id,due,dueComplete,shortUrl,idChecklists","board":"true","list":"true"}`, verb: "GET", response: JSON.stringify(response) });
   routes.push({ id: routesId.createCard.id, url: "http://teste.mock/cards", body: `{"name":"@{card.name}","desc":"@{card.desc}","pos":"bottom","idList":"@{card.list.id}"}`, verb: "POST", response: JSON.stringify(response) });
   routes.push({ id: routesId.updateCard.id, url: "http://teste.mock/cards/@{card.id}", body: `{"name":"@{card.name}","desc":"@{card.desc}","pos":"bottom","due":"@{card.due}","dueComplete":"@{card.dueComplete}","idList":"@{list.id}","board":"@{board.id}"}`, verb: "PUT", response: JSON.stringify(response) });
-  routes.push({ id: routesId.deleteCard.id, url: "http://teste.mock/cards/@{card.id}", body: `{"desc":"@{card.desc}","name":"@{card.name}","due":"@{card.due},"dueComplete":"@{card.dueComplete}","list":"@{list.id}","board":"@{board.id}"}`, verb: "DELETE", response: JSON.stringify(response) });
+  routes.push({ id: routesId.deleteCard.id, url: "http://teste.mock/cards/@{card.id}", body: `{"desc":"@{card.desc}","name":"@{card.name}","due":"@{card.due}","dueComplete":"@{card.dueComplete}","list":"@{list.id}","board":"@{board.id}"}`, verb: "DELETE", response: JSON.stringify(response) });
   routes.push({ id: routesId.getCardChecklistData.id, url: "http://teste.mock/cards/@{card.id}/checklists", body: `{"checkItems":"all","checkItem_fields":"name,pos,state"}`, verb: "GET", response: JSON.stringify(response) });
   routes.push({ id: routesId.createCardChecklist.id, url: "http://teste.mock/checklists", body: `{"idCard":"@{card.id}","name":"@{card.checklist.name}"}`, verb: "POST", response: JSON.stringify(response) });
   routes.push({ id: routesId.createCardChecklistItem.id, url: "http://teste.mock/checklists/@{card.checklist.id}/checkItems", body: `{"name":"@{card.checlist.item.name}","state":"@{card.checklist.item.state}","position":"bottom"}`, verb: "POST", response: JSON.stringify(response) });
@@ -53,5 +27,46 @@ const getMockingRoutes = () => {
   routes.push({ id: routesId.updateCardChecklistItemPosition.id, url: "http://teste.mock/cards/@{card.id}/checkItem/@{card.checklist.item.id}", body: `{"pos":"@{card.checklist.item.position}"}`, verb: "PUT", response: JSON.stringify(response) });
   routes.push({ id: routesId.deleteCardChecklistItem.id, url: "http://teste.mock/checklists/@{card.checklist.id}/checkItems/@{card.checklist.item.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response) });
   routes.push({ id: routesId.deleteCardChecklist.id, url: "http://teste.mock/checklists/@{card.checklist.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response) });
+  //routes.push({ id: routesId..id, url: "http://teste.mock/boards/${board.id}/labels", body: `{}`, verb: "GET", response: JSON.stringify(response) });
+  
   return routes;
+};
+
+/**
+ * Cria a configuração do mock do Chrome API
+ * @returns {Object} Configuração do mock do Chrome
+ */
+const createChromeMock = () => ({
+  storage: {
+    sync: {
+      get: (data, fn) => {
+        fn({
+          appKey: 'key',
+          appToken: 'token',
+          defaultBoard: 'Quadro 1',
+          defaultList: 'Lista 1',
+          canMoveBoard: true,
+          appendNumberOnTitle: true,
+          routes: getMockingRoutes(),
+        })
+      },
+    },
+  },
+  runtime: {
+    getManifest: () => ({ name: 'sei+trello' }),
+    sendMessage: (data, callback) => { callback({ success: true, data: data.data }); },
+    lastError: null
+  },
+});
+
+/**
+ * 
+ * Faz o Mock da API do Chrome de armazenamento e runtime para fins de testes E2E.
+ * No ambiente de testes estas APIs não estão disponíveis, então criamos uma simulação.
+ * 
+ */
+window.chrome = createChromeMock();
+
+window.infraTooltipMostrar = function () {
+  console.log('infraTooltipMostrar');
 };

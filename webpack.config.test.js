@@ -11,7 +11,7 @@ module.exports = merge(common, {
   entry: {
     ...common.entry,
     /* test mocks */
-    //mock: './src/__tests__/e2e/html/mock.js',
+    mock: './src/__tests__/e2e/html/mock.js',
   },  plugins: [
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('test'),
