@@ -18,8 +18,10 @@ html.sei-v3015 {
 
     > #header {
       position: static;
-      overflow: hidden;
+      overflow: visible;
     }
+
+    > #header > #topmenu { height: 30px; }
 
     > #container {
       position: static;
