@@ -308,7 +308,7 @@ export const loadSimaRoutes = async () => {
             seiNumbers: ["@{this.processes.descrNumberDocument}"]
         }]
     };
-    routes.push({id: routesId.searchCards.id, url: base_url + "/api/project/sei/", body: `{"numberSei":"@{card.desc}"}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.searchCards.id, url: base_url + "/api/project/sei/", body: `{"numberSei":"@{card.desc}", "filterDesktops": true}`, verb: "GET", response: JSON.stringify(response)});
     // 7
     response = [{
         name: "@{this.name}",
@@ -377,7 +377,7 @@ export const loadSimaRoutes = async () => {
     routes.push({id: routesId.updateCard.id, url: base_url + "/api/issue/@{card.id}/batchUpdate/", body: `{"descr":"@{card.desc}","summary":"@{card.name}","endDate":"@{card.due}","isIssueCompleted":"@{card.dueComplete}","listId":"@{list.id}","projectId": "@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
     // 11
     response = {};
-    routes.push({id: routesId.deleteCard.id, url: "", body: ``, verb: "DELETE", response: JSON.stringify(response)});
+    routes.push({id: routesId.deleteCard.id, url: base_url + "api/issue/@{card.id}/delete/?issueId=@{card.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
     // 12
     response = [];
     routes.push({id: routesId.getCardChecklistData.id, url: "", body: ``, verb: "GET", response: JSON.stringify(response)});
