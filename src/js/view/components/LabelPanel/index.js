@@ -84,7 +84,7 @@ const LabelPanelContainer = ({ boardID, cardID, cardLabels, onClose }) => {
   const fetchLabels = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await api.getBoardLabels(boardID);
+      const response = await api.getBoardLabels(boardID, cardID);
       if ('data' in response && response.data.length > 0) {
         let updatedBoardLabels = [...response.data];
         setBoardLabels(updatedBoardLabels);

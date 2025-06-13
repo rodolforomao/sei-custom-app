@@ -1,16 +1,13 @@
 import axios from 'axios';
 import auth from './auth.js';
+import DataTransfer from '../model/datatransfer.js';
+import routesId from '../model/routes_id.js';
+import { doRequestAPI } from './index.js';
 
 /* obter labels de um quadro */
-export const getBoardLabels = (boardID) => {
-  // const url = `https://api.trello.com/1/boards/${boardID}/labels`;
-  const url = `http://teste.mock/boards/${boardID}/labels`;
-
-  let params = Object.assign({}, auth.getCredentials(), {
-    limit: 1000,
-  });
-
-  return axios.get(url, { params: params });
+export const getBoardLabels = (boardID, cardID) => {
+  console.log("[API] Obtendo labels do quadro:", boardID);
+  return doRequestAPI(routesId.getBoardLabels.id, new DataTransfer().setCardId(cardID).setBoardId(boardID));
 };
 
 /* adicionar label a um cartão  */

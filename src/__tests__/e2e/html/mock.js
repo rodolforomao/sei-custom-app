@@ -27,8 +27,7 @@ const getMockingRoutes = () => {
   routes.push({ id: routesId.updateCardChecklistItemPosition.id, url: "http://teste.mock/cards/@{card.id}/checkItem/@{card.checklist.item.id}", body: `{"pos":"@{card.checklist.item.position}"}`, verb: "PUT", response: JSON.stringify(response) });
   routes.push({ id: routesId.deleteCardChecklistItem.id, url: "http://teste.mock/checklists/@{card.checklist.id}/checkItems/@{card.checklist.item.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response) });
   routes.push({ id: routesId.deleteCardChecklist.id, url: "http://teste.mock/checklists/@{card.checklist.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response) });
-  //routes.push({ id: routesId..id, url: "http://teste.mock/boards/${board.id}/labels", body: `{}`, verb: "GET", response: JSON.stringify(response) });
-  
+  routes.push({ id: routesId.getBoardLabels.id, url: "http://teste.mock/boards/${board.id}/labels", body: `{}`, verb: "GET", response: JSON.stringify(response) });
   return routes;
 };
 

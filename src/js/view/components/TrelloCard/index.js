@@ -296,10 +296,10 @@ class TrelloCard extends React.Component {
             )}
 
             <div className={styles.options}>
-              {/*<a data-tooltip="Etiquetas" target="#" onClick={this.openLabelPanel.bind(this)}>
+              <a data-tooltip="Etiquetas" target="#" onClick={this.openLabelPanel.bind(this)}>
                 <OptionIcon icon={faTags} $highlight={this.props.labels.length > 0} />
               </a>
-              <a data-tooltip="Checklist" target="#" onClick={this.openChecklistPanel.bind(this)}>
+              {/*<a data-tooltip="Checklist" target="#" onClick={this.openChecklistPanel.bind(this)}>
                 <OptionIcon icon={faCheckSquare} $highlight={this.props.hasChecklist} />
               </a>*/}
               <a data-tooltip="Especificar data de entrega" target="#" onClick={this.openDuePanel.bind(this)}>
