@@ -26,6 +26,7 @@ class TrelloCard extends React.Component {
       isEditingDue: false,
       isEditingChecklist: false,
       isEditingLabel: false,
+      isExpanded: false,
       processTooltip: {
         show: false,
         x: 0,
@@ -37,6 +38,24 @@ class TrelloCard extends React.Component {
     this.closeChecklistPanel = this.closeChecklistPanel.bind(this);
     this.closeLabelPanel = this.closeLabelPanel.bind(this);
   }
+
+   componentDidMount() {
+    window.addEventListener('expandAllCards', this.expandCard);
+    window.addEventListener('collapseAllCards', this.collapseCard);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('expandAllCards', this.expandCard);
+    window.removeEventListener('collapseAllCards', this.collapseCard);
+  }
+
+  expandCard = () => {
+    this.setState({ isExpanded: true });
+  };
+
+  collapseCard = () => {
+    this.setState({ isExpanded: false });
+  };
 
   showTooltip(e) {
     this.setState({
