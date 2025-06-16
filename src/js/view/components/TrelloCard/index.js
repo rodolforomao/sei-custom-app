@@ -177,13 +177,13 @@ class TrelloCard extends React.Component {
     if (!this.props.due) return null;
     const due = dueFormatter(this.props.due, this.props.dueComplete);
     return (
-      <li>
+      <>
         <FooterIcon icon={faCalendarAlt} />
         <span>
           {due.date}{' '}
           <span className={classNames(styles['due-message'], styles['due-' + due.class])}>{due.message}</span>
         </span>
-      </li>
+      </>
     );
   }
 
