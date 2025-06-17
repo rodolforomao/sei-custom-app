@@ -234,13 +234,11 @@ export const loadTrelloRoutes = async () => {
     }];
     routes.push({id: routesId.getBoardLabels.id, url: "https://api.trello.com/1/boards/@{board.id}/labels", body: `{"limit": 1000}`, verb: "GET", response: JSON.stringify(response)});
     // 20
-    response = {
-    };
+    response = {};
     routes.push({id: routesId.addLabelToCard.id, url: "https://api.trello.com/1/cards/@{card.id}/idLabels", body: `{"value": "@{card.label.id}"}`, verb: "POST", response: JSON.stringify(response)});
-    // // 21
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/cards/@{card.id}/idLabels/@{card.label.id}", body: `{}`, verb: "", response: JSON.stringify(response)});
+    // 21
+    response = {};
+    routes.push({id: routesId.removeLabelFromCard.id, url: "https://api.trello.com/1/cards/@{card.id}/idLabels/@{label.id}", body: `{}`, verb: "", response: JSON.stringify(response)});
     // // 22
     // response = {
     // };
@@ -411,6 +409,12 @@ export const loadSimaRoutes = async () => {
         color: "@{this.color}"
     }];
     routes.push({id: routesId.getBoardLabels.id, url: base_url + "/api/project/@{board.id}/projectBadge/", body: `{"issueId":"@{card.id}"}`, verb: "GET", response: JSON.stringify(response)});
+    // 20
+    response = {};
+    routes.push({id: routesId.addLabelToCard.id, url: base_url + "/api/badge/create/issue/", body: `{"issueId":"@{card.id}", "id":"@{label.id}"}`, verb: "POST", response: JSON.stringify(response)});
+    // 21
+    response = {};
+    routes.push({id: routesId.removeLabelFromCard.id, url: base_url + "/api/badge/@{label.id}/delete/issue/", body: `{"issueId":"@{card.id}"}`, verb: "DELETE", response: JSON.stringify(response)});
 
     await chrome.storage.sync.set({[values.routes]: routes});
 };

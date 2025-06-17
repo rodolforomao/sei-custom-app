@@ -28,6 +28,8 @@ const getMockingRoutes = () => {
   routes.push({ id: routesId.deleteCardChecklistItem.id, url: "http://teste.mock/checklists/@{card.checklist.id}/checkItems/@{card.checklist.item.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response) });
   routes.push({ id: routesId.deleteCardChecklist.id, url: "http://teste.mock/checklists/@{card.checklist.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response) });
   routes.push({ id: routesId.getBoardLabels.id, url: "http://teste.mock/boards/${board.id}/labels", body: `{}`, verb: "GET", response: JSON.stringify(response) });
+  routes.push({ id: routesId.addLabelToCard.id, url: "http://teste.mock/cards/${cardID}/idLabels", body: `{}`, verb: "POST", response: JSON.stringify(response) });
+  routes.push({ id: routesId.removeLabelFromCard.id, url: "http://teste.mock/cards/${cardID}/idLabels/${labelID}", body: `{}`, verb: "DELETE", response: JSON.stringify(response) });
   return routes;
 };
 

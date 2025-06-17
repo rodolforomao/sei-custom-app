@@ -108,6 +108,11 @@ const routesId = {
         shortdesc: "Adicionar label a um cartão",
         longdesc: "Rota utilizada para adicionar um label a um cartão."
     },
+    removeLabelFromCard: {
+        id: 21,
+        shortdesc: "Remover label de um cartão",
+        longdesc: "Rota utilizada para remover um label de um cartão."
+    },
 }
 
 export default routesId;

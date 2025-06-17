@@ -6,30 +6,28 @@ import { doRequestAPI } from './index.js';
 
 /* obter labels de um quadro */
 export const getBoardLabels = (boardID, cardID) => {
-  console.log("[API] Obtendo labels do quadro:", boardID);
   return doRequestAPI(routesId.getBoardLabels.id, new DataTransfer().setCardId(cardID).setBoardId(boardID));
 };
 
 /* adicionar label a um cartão  */
 export const addLabelToCard = (cardID, labelID) => {
-  // const url = `https://api.trello.com/1/cards/${cardID}/idLabels`;
-  const url = `http://teste.mock/cards/${cardID}/idLabels`;
-  let params = Object.assign({}, auth.getCredentials(), {
-    value: labelID,
-  });
-  return axios.post(url, params);
+  console.log("Running addLabelToCard, cardID:", cardID, "labelID:", labelID);
+  return doRequestAPI(routesId.addLabelToCard.id, new DataTransfer().setCardId(cardID).setLabelId(labelID));
 };
 
 /* remover um label de um cartão  */
 export const removeLabelFromCard = (cardID, labelID) => {
+  console.log("Running removeLabelFromCard");
   // const url = `https://api.trello.com/1/cards/${cardID}/idLabels/${labelID}`;
-  const url = `http://teste.mock/cards/${cardID}/idLabels/${labelID}`;
-  let params = Object.assign({}, auth.getCredentials());
-  return axios.delete(url, { params: params });
+  // const url = `http://teste.mock/cards/${cardID}/idLabels/${labelID}`;
+  // let params = Object.assign({}, auth.getCredentials());
+  // return axios.delete(url, { params: params });
+  return doRequestAPI(routesId.removeLabelFromCard.id, new DataTransfer().setCardId(cardID).setLabelId(labelID));
 };
 
 /* criar um label vinculado a um quadro  */
 export const createLabel = (boardID, opts) => {
+  console.log("Running createLabel");
   if (opts.color === null) opts.color = 'null';
   // const url = `https://api.trello.com/1/labels`;
   const url = `http://teste.mock/labels`;
@@ -43,6 +41,7 @@ export const createLabel = (boardID, opts) => {
 
 /* editar um label */
 export const updateLabel = (labelID, opts) => {
+  console.log("Running updateLabel");
   if (opts.color === null) opts.color = 'null';
   // const url = `https://api.trello.com/1/labels/${labelID}`;
   const url = `http://teste.mock/labels/${labelID}`;
@@ -52,6 +51,7 @@ export const updateLabel = (labelID, opts) => {
 
 /* deletar um label */
 export const deleteLabel = (labelID) => {
+  console.log("Running deleteLabel");
   // const url = `https://api.trello.com/1/labels/${labelID}`;
   const url = `http://teste.mock/labels/${labelID}`;
   let params = Object.assign({}, auth.getCredentials());
