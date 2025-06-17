@@ -11,42 +11,22 @@ export const getBoardLabels = (boardID, cardID) => {
 
 /* adicionar label a um cartão  */
 export const addLabelToCard = (cardID, labelID) => {
-  console.log("Running addLabelToCard, cardID:", cardID, "labelID:", labelID);
   return doRequestAPI(routesId.addLabelToCard.id, new DataTransfer().setCardId(cardID).setLabelId(labelID));
 };
 
 /* remover um label de um cartão  */
 export const removeLabelFromCard = (cardID, labelID) => {
-  console.log("Running removeLabelFromCard");
-  // const url = `https://api.trello.com/1/cards/${cardID}/idLabels/${labelID}`;
-  // const url = `http://teste.mock/cards/${cardID}/idLabels/${labelID}`;
-  // let params = Object.assign({}, auth.getCredentials());
-  // return axios.delete(url, { params: params });
   return doRequestAPI(routesId.removeLabelFromCard.id, new DataTransfer().setCardId(cardID).setLabelId(labelID));
 };
 
 /* criar um label vinculado a um quadro  */
-export const createLabel = (boardID, opts) => {
-  console.log("Running createLabel");
-  if (opts.color === null) opts.color = 'null';
-  // const url = `https://api.trello.com/1/labels`;
-  const url = `http://teste.mock/labels`;
-  let params = Object.assign({}, auth.getCredentials(), {
-    idBoard: boardID,
-    name: opts.name,
-    color: opts.color,
-  });
-  return axios.post(url, params);
+export const createLabel = (boardID, cardID, opts) => {
+  return doRequestAPI(routesId.createLabel.id, new DataTransfer().setCardId(cardID).setBoardId(boardID).setLabelName(opts.name).setLabelColor(opts.color));
 };
 
 /* editar um label */
 export const updateLabel = (labelID, opts) => {
-  console.log("Running updateLabel");
-  if (opts.color === null) opts.color = 'null';
-  // const url = `https://api.trello.com/1/labels/${labelID}`;
-  const url = `http://teste.mock/labels/${labelID}`;
-  let params = Object.assign({}, auth.getCredentials(), opts);
-  return axios.put(url, params);
+  return doRequestAPI(routesId.updateLabel.id, new DataTransfer().setLabelId(labelID).setLabelName(opts.name).setLabelColor(opts.color));
 };
 
 /* deletar um label */

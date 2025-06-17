@@ -239,14 +239,13 @@ export const loadTrelloRoutes = async () => {
     // 21
     response = {};
     routes.push({id: routesId.removeLabelFromCard.id, url: "https://api.trello.com/1/cards/@{card.id}/idLabels/@{label.id}", body: `{}`, verb: "", response: JSON.stringify(response)});
-    // // 22
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/labels", body: `{}`, verb: "", response: JSON.stringify(response)});
-    // // 23
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/labels/@{card.label.id}", body: `{}`, verb: "", response: JSON.stringify(response)});
+    // 22
+    response = {};
+    routes.push({id: routesId.createLabel.id, url: "https://api.trello.com/1/labels", body: `{"idBoard":"@{board.id}", "name":"@{label.name}", "color": "@{label.color}"}`, verb: "POST", response: JSON.stringify(response)});
+    // 23
+    response = {
+    };
+    routes.push({id: routesId.updateLabel.id, url: "https://api.trello.com/1/labels/@{label.id}", body: `{"name":"@{label.name}", "color": "@{label.color}"}`, verb: "", response: JSON.stringify(response)});
     // // 24
     // response = {
     // };
@@ -415,6 +414,12 @@ export const loadSimaRoutes = async () => {
     // 21
     response = {};
     routes.push({id: routesId.removeLabelFromCard.id, url: base_url + "/api/badge/@{label.id}/delete/issue/", body: `{"issueId":"@{card.id}"}`, verb: "DELETE", response: JSON.stringify(response)});
+    // 22
+    response = {};
+    routes.push({id: routesId.createLabel.id, url: base_url + "/api/badge/create/", body: `{"projectId":"@{board.id}","issueId":"@{card.id}","color":"@{label.color}","nameTag":"@{label.name}"}`, verb: "POST", response: JSON.stringify(response)})
+    // 23
+    response = {};
+    routes.push({id: routesId.updateLabel.id, url: base_url + "/api/badge/@{label.id}/update/", body: `{"nameTag":"@{label.name}"}`, verb: "PATCH", response: JSON.stringify(response)});
 
     await chrome.storage.sync.set({[values.routes]: routes});
 };

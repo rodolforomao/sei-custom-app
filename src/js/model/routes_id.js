@@ -113,6 +113,16 @@ const routesId = {
         shortdesc: "Remover label de um cartão",
         longdesc: "Rota utilizada para remover um label de um cartão."
     },
+    createLabel: {
+        id: 22,
+        shortdesc: "Criar etiqueta",
+        longdesc: "Rota utilizada para criar uma nova etiqueta."
+    },
+    updateLabel: {
+        id: 23,
+        shortdesc: "Atualizar etiqueta",
+        longdesc: "Rota utilizada para atualizar uma etiqueta existente."
+    },
 }
 
 export default routesId;

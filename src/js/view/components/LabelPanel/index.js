@@ -40,7 +40,7 @@ const LabelPanelContainer = ({ boardID, cardID, cardLabels, onClose }) => {
     try {
       const {
         data: { id },
-      } = await api.createLabel(boardID, label);
+      } = await api.createLabel(boardID, cardID, label);
       await api.addLabelToCard(cardID, id);
       await actions.doRefreshCardsWithID(cardID);
       await fetchLabels();

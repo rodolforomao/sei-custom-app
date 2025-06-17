@@ -74,9 +74,6 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
     const params = verb === "get" ? obj : {};
     // Monta as variáveis que serão enviadas no corpo (body) da requisição
     const data = verb !== "get" ? obj : {};
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[REQUEST CONFIG] Verb: ${verb} / Credentials: ${sendCookie} / URL Params: ${Object.keys(params).length > 0} / Body Data: ${Object.keys(data).length > 0}`);
-    }
     originalResponse = await sendRequest(url, verb, params, data, headers, sendCookie, true);
     if (process.env.NODE_ENV === 'development') {
       console.log("Resposta original da rota %d: %o", routeId, originalResponse);
