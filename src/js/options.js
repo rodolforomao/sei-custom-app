@@ -225,7 +225,7 @@ const getVerbSelectElement = (index, savedVerb) => {
   select.id = id;
   select.name = id;
   select.className = 'form-control';
-  const options = ['GET', 'POST', 'PUT', 'DELETE'];
+  const options = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
   options.forEach((option) => {
     const opt = document.createElement('option');
     opt.value = option;
