@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import TrelloCard from './components/TrelloCard';
 import TrelloRefreshButton from './components/TrelloRefreshButton';
 import TrelloFilterButton from './components/TrelloFilterButton';
+import TrelloExpandableButton from './components/TrelloExpandableButton';
 import CreateTrelloCardButton from './components/CreateTrelloCardButton';
 
 import * as filter from './helper/filter.js';
@@ -28,6 +29,13 @@ const renderFilterButton = (placeholder, data) => {
       hasFilter={!filter.isFilterEmpty(data.filter)}
       onFilterChange={(type, checked, key) => actions.updateFilter(type, checked, key)}
     ></TrelloFilterButton>,
+    placeholder
+  );
+};
+
+const renderExpandableButton = (placeholder, data) => {
+  ReactDOM.render(
+    <TrelloExpandableButton />,
     placeholder
   );
 };
@@ -135,6 +143,11 @@ export const render = () => {
     'filter-button': {
       selector: '.trello-filter-button',
       fn: renderFilterButton,
+      elements: [],
+    },
+    'expandable-button': {
+      selector: '.trello-expandable-button',
+      fn: renderExpandableButton,
       elements: [],
     },
     'process-box': {
