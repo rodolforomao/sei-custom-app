@@ -1,5 +1,3 @@
-import axios from 'axios';
-import auth from './auth.js';
 import DataTransfer from '../model/datatransfer.js';
 import routesId from '../model/routes_id.js';
 import { doRequestAPI } from './index.js';
@@ -31,9 +29,5 @@ export const updateLabel = (labelID, opts) => {
 
 /* deletar um label */
 export const deleteLabel = (labelID) => {
-  console.log("Running deleteLabel");
-  // const url = `https://api.trello.com/1/labels/${labelID}`;
-  const url = `http://teste.mock/labels/${labelID}`;
-  let params = Object.assign({}, auth.getCredentials());
-  return axios.delete(url, { params: params });
+  return doRequestAPI(routesId.deleteLabel.id, new DataTransfer().setLabelId(labelID));
 };

@@ -123,6 +123,11 @@ const routesId = {
         shortdesc: "Atualizar etiqueta",
         longdesc: "Rota utilizada para atualizar uma etiqueta existente."
     },
+    deleteLabel: {
+        id: 24,
+        shortdesc: "Deletar etiqueta",
+        longdesc: "Rota utilizada para deletar uma etiqueta."
+    }
 }
 
 export default routesId;
