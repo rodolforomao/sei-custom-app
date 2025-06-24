@@ -105,7 +105,9 @@ toggleFormDisplay();
 const loadRoutesForm = () => {
   document.forms['form-routes'].innerHTML = '';
   const routes = Object.values(routesId);
+  console.log("Loading routes form with routes:", routes);
   routes.forEach(async (route) => {
+    console.log("Processing route:", route);
     const routeId = route.id;
     const routeShortDesc = route.shortdesc;
     const savedRoute = await getRoute(routeId);
@@ -218,18 +220,18 @@ const getRouteUrlField = (index, savedUrl) => {
   return div;
 };
 
-const getVerbSelectElement = (index, savedBody) => {
+const getVerbSelectElement = (index, savedVerb) => {
   const select = document.createElement('select');
   const id = `rota-${index}-verb`;
   select.id = id;
   select.name = id;
   select.className = 'form-control';
-  const options = ['GET', 'POST', 'PUT', 'DELETE'];
+  const options = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
   options.forEach((option) => {
     const opt = document.createElement('option');
     opt.value = option;
     opt.textContent = option;
-    if (option === savedBody) {
+    if (option === savedVerb) {
       opt.selected = true;
     }
     select.appendChild(opt);

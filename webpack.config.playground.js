@@ -5,6 +5,10 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const path = require('path');
+
+// Set NODE_ENV before requiring the common config
+process.env.NODE_ENV = 'development';
+
 const common = require('./webpack.config.js');
 
 const outputPath = path.resolve(__dirname, 'playground/output');
@@ -36,6 +40,8 @@ common.plugins = [
   new webpack.DefinePlugin({
     'process.env.NODE_ENV': JSON.stringify('development'),
     'process.env.MOCKED_API': JSON.stringify('true'),
+    'process.env.API_BACKEND': JSON.stringify('http://localhost:5055'),
+    'process.env.EXTENSION_ID': JSON.stringify('inmniboeooddjgipkkodoageimggnbka')
   }),
   new webpack.HotModuleReplacementPlugin(),
   new ReactRefreshWebpackPlugin(),

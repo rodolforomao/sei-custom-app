@@ -30,6 +30,13 @@ class DataTransfer {
         return this.data.card;
     }
 
+    getLabel() {
+        if (this.data.label == undefined) {
+            this.data.label = {};
+        }
+        return this.data.label;
+    }
+
     getCardChecklist() {
         if (this.getCard().checklist == undefined) {
             this.getCard().checklist = {};
@@ -179,6 +186,21 @@ class DataTransfer {
         return this;
     }
 
+    setLabelId(labelId) {
+        this.getLabel().id = labelId;
+        return this;
+    }
+
+    setLabelName(labelName) {
+        this.getLabel().name = labelName;
+        return this;
+    }
+
+    setLabelColor(labelColor) {
+        this.getLabel().color = labelColor;
+        return this;
+    }
+
     build() {
         return this.data;
     }
@@ -192,6 +214,7 @@ class DataTransfer {
         while (originalString.match(TOKEN_REGEX)) {
             const key = originalString.match(TOKEN_REGEX)[1];
             let newValue = getKeyValue(this.data, key);
+            console.log(`Transforming key: ${key} with value: ${newValue}`);
             if (typeof newValue === 'string') {
                 newValue = newValue.replaceAll("\n", "\\n");
             }

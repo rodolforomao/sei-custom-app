@@ -223,7 +223,7 @@ export const deleteCard = (cardID) => {
   store.updateCardsData(cardID, { isLoading: true });
   api
     .deleteCard(cardID)
-    .then(() => doRefreshCardsWithID(cardID))
+    .then(() => { doRefreshCards(); doRefreshCardsWithID(cardID)})
     .catch((error) => {
       store.setIsLoading(false);
       console.log(error);

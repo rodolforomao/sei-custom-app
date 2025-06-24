@@ -65,8 +65,18 @@ export const saveRoute = async (routeId, routeURL, routeBody, routeVerb, respons
  * @returns {{id: String, url: String, body: String}} Retorna um objeto representando a rota.
  */
 export const getRoute = async (routeId) => {
-    const routes = await chrome.storage.sync.get([values.routes]);
-    return routes.routes.find((route) => route.id === routeId);
+    return await new Promise((resolve, reject) => {
+        chrome.storage.sync.get([values.routes],
+            (items) => {
+                if (chrome.runtime.lastError) {
+                    console.error("Erro ao recuperar as rotas do armazenamento: ", chrome.runtime.lastError);
+                    reject(chrome.runtime.lastError);
+                } else {
+                    resolve(items.routes.find((route) => route.id === routeId));
+                }
+            }
+        );
+    });
 };
 
 /**
@@ -171,7 +181,7 @@ export const loadTrelloRoutes = async () => {
     routes.push({id: routesId.updateCard.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"name":"@{card.name}","desc":"@{card.desc}","pos":"bottom","due":"@{card.due}","dueComplete":"@{card.dueComplete}","idList":"@{list.id}","board":"@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
     response = {
     };
-    routes.push({id: routesId.deleteCard.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"desc":"@{card.desc}","name":"@{card.name}","due":"@{card.due},"dueComplete":"@{card.dueComplete}","list":"@{list.id}","board":"@{board.id}"}`, verb: "DELETE", response: JSON.stringify(response)});
+    routes.push({id: routesId.deleteCard.id, url: "https://api.trello.com/1/cards/@{card.id}", body: `{"desc":"@{card.desc}","name":"@{card.name}","due":"@{card.due}","dueComplete":"@{card.dueComplete}","list":"@{list.id}","board":"@{board.id}"}`, verb: "DELETE", response: JSON.stringify(response)});
     response = [{
         id: "@{this.id}",
         name: "@{this.name}",
@@ -215,30 +225,30 @@ export const loadTrelloRoutes = async () => {
     response = {
     };
     routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/checklists/@{card.checklist.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
-    // // 19
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/boards/${boardID}/labels", body: `{}`, verb: "", response: JSON.stringify(response)});
-    // // 20
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/cards/@{card.id}/idLabels", body: `{}`, verb: "", response: JSON.stringify(response)});
-    // // 21
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/cards/@{card.id}/idLabels/@{card.label.id}", body: `{}`, verb: "", response: JSON.stringify(response)});
-    // // 22
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/labels", body: `{}`, verb: "", response: JSON.stringify(response)});
-    // // 23
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/labels/@{card.label.id}", body: `{}`, verb: "", response: JSON.stringify(response)});
-    // // 24
-    // response = {
-    // };
-    // routes.push({id: routesId.deleteCardChecklist.id, url: "https://api.trello.com/1/labels/@{card.label.id}", body: `{}`, verb: "", response: JSON.stringify(response)});
+    // 19
+    response = [{
+        id: "@{this.id}",
+        idBoard: "@{this.idBoard}",
+        name: "@{this.name}",
+        color: "@{this.color}"
+    }];
+    routes.push({id: routesId.getBoardLabels.id, url: "https://api.trello.com/1/boards/@{board.id}/labels", body: `{"limit": 1000}`, verb: "GET", response: JSON.stringify(response)});
+    // 20
+    response = {};
+    routes.push({id: routesId.addLabelToCard.id, url: "https://api.trello.com/1/cards/@{card.id}/idLabels", body: `{"value": "@{card.label.id}"}`, verb: "POST", response: JSON.stringify(response)});
+    // 21
+    response = {};
+    routes.push({id: routesId.removeLabelFromCard.id, url: "https://api.trello.com/1/cards/@{card.id}/idLabels/@{label.id}", body: `{}`, verb: "", response: JSON.stringify(response)});
+    // 22
+    response = {};
+    routes.push({id: routesId.createLabel.id, url: "https://api.trello.com/1/labels", body: `{"idBoard":"@{board.id}", "name":"@{label.name}", "color": "@{label.color}"}`, verb: "POST", response: JSON.stringify(response)});
+    // 23
+    response = {
+    };
+    routes.push({id: routesId.updateLabel.id, url: "https://api.trello.com/1/labels/@{label.id}", body: `{"name":"@{label.name}", "color": "@{label.color}"}`, verb: "", response: JSON.stringify(response)});
+    // 24
+    response = {};
+    routes.push({id: routesId.deleteLabel.id, url: "https://api.trello.com/1/labels/@{label.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
 
     await chrome.storage.sync.set({[values.routes]: routes});
 };
@@ -298,7 +308,7 @@ export const loadSimaRoutes = async () => {
             seiNumbers: ["@{this.processes.descrNumberDocument}"]
         }]
     };
-    routes.push({id: routesId.searchCards.id, url: base_url + "/api/project/sei/", body: `{"numberSei":"@{card.desc}"}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.searchCards.id, url: base_url + "/api/project/sei/", body: `{"numberSei":"@{card.desc}", "filterDesktops": true}`, verb: "GET", response: JSON.stringify(response)});
     // 7
     response = [{
         name: "@{this.name}",
@@ -367,7 +377,7 @@ export const loadSimaRoutes = async () => {
     routes.push({id: routesId.updateCard.id, url: base_url + "/api/issue/@{card.id}/batchUpdate/", body: `{"descr":"@{card.desc}","summary":"@{card.name}","endDate":"@{card.due}","isIssueCompleted":"@{card.dueComplete}","listId":"@{list.id}","projectId": "@{board.id}"}`, verb: "PUT", response: JSON.stringify(response)});
     // 11
     response = {};
-    routes.push({id: routesId.deleteCard.id, url: "", body: ``, verb: "DELETE", response: JSON.stringify(response)});
+    routes.push({id: routesId.deleteCard.id, url: base_url + "/api/issue/@{card.id}/delete/?issueId=@{card.id}", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
     // 12
     response = [];
     routes.push({id: routesId.getCardChecklistData.id, url: "", body: ``, verb: "GET", response: JSON.stringify(response)});
@@ -390,10 +400,28 @@ export const loadSimaRoutes = async () => {
     response = {};
     routes.push({id: routesId.deleteCardChecklist.id, url: "", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
     // 19
-    // response = {
-        
-    // };
-    // routes.push({id: routesId.getBoardLabels.id, url: "http://localhost:5055/api/project/@{board.id}/projectBadge/", body: `{"issueId":"@{card.id}"}`, verb: "GET", response: JSON.stringify(response)});
+    response = [{
+        id: "@{this.id}",
+        idBoard: "@{this.projectId}",
+        name: "@{this.nameTag}",
+        color: "@{this.color}"
+    }];
+    routes.push({id: routesId.getBoardLabels.id, url: base_url + "/api/project/@{board.id}/projectBadge/", body: `{"issueId":"@{card.id}"}`, verb: "GET", response: JSON.stringify(response)});
+    // 20
+    response = {};
+    routes.push({id: routesId.addLabelToCard.id, url: base_url + "/api/badge/create/issue/", body: `{"issueId":"@{card.id}", "id":"@{label.id}"}`, verb: "POST", response: JSON.stringify(response)});
+    // 21
+    response = {};
+    routes.push({id: routesId.removeLabelFromCard.id, url: base_url + "/api/badge/@{label.id}/delete/issue/", body: `{"issueId":"@{card.id}"}`, verb: "DELETE", response: JSON.stringify(response)});
+    // 22
+    response = {};
+    routes.push({id: routesId.createLabel.id, url: base_url + "/api/badge/create/byproject", body: `{"projectId":"@{board.id}","IssueId":"@{card.id}","color":"@{label.color}","nameTag":"@{label.name}"}`, verb: "POST", response: JSON.stringify(response)})
+    // 23
+    response = {};
+    routes.push({id: routesId.updateLabel.id, url: base_url + "/api/badge/@{label.id}/update/", body: `{"nameTag":"@{label.name}", "color":"@{label.color}","updateColor": true}`, verb: "PATCH", response: JSON.stringify(response)});
+    // 24
+    response = {};
+    routes.push({id: routesId.deleteLabel.id, url: base_url + "/api/badge/@{label.id}/delete/", body: `{"nameTag":"@{label.name}"}`, verb: "DELETE", response: JSON.stringify(response)});
 
     await chrome.storage.sync.set({[values.routes]: routes});
 };

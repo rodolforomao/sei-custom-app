@@ -16,7 +16,7 @@ const Line = styled.div`
   justify-content: space-between;
   align-items: stretch;
   margin: 8px 0 0 0;
-  min-height: 32px;
+  min-height: 20px;
 
   &:first-child {
     margin-top: 0;
@@ -70,7 +70,10 @@ const LabelColor = ({ colorName = 'default', selected, onSelectColor }) => {
       href="#"
       $color={colors[colorName]}
       onClick={(e) => {
-        if (onSelectColor) onSelectColor(colorName === 'default' ? null : colorName);
+        if (onSelectColor) {
+          const value = colorName === 'default' ? null : colors[colorName][0]; // envia o HEX!
+          onSelectColor(value);
+        }
         e.preventDefault();
       }}
       data-testid={`color-${colorName}`}
@@ -84,27 +87,71 @@ const LabelColorPicker = ({ color, onSelectColor }) => {
   return (
     <Wrapper>
       <Line>
-        {['green', 'yellow', 'orange', 'red', 'purple'].map((availableColor) => (
+        {['grayDark', 'grayLight', 'grayMedium', 'redBright', 'redSoft'].map((name) => (
           <LabelColor
-            key={availableColor}
-            colorName={availableColor}
-            selected={availableColor === color}
+            key={name}
+            colorName={name}
+            selected={color === colors[name][0]}
             onSelectColor={onSelectColor}
           />
         ))}
       </Line>
       <Line>
-        {['blue', 'sky', 'lime', 'pink', 'black'].map((availableColor) => (
+        {['redDark', 'orangeTransparent', 'orangeLight', 'orangeDark', 'yellowBright'].map((name) => (
           <LabelColor
-            key={availableColor}
-            colorName={availableColor}
-            selected={availableColor === color}
+            key={name}
+            colorName={name}
+            selected={color === colors[name][0]}
             onSelectColor={onSelectColor}
           />
         ))}
       </Line>
       <Line>
-        <LabelColor colorName="default" selected={color === null} onSelectColor={onSelectColor} />
+        {['yellowLight', 'yellowDark', 'greenBright', 'greenLight', 'greenDark'].map((name) => (
+          <LabelColor
+            key={name}
+            colorName={name}
+            selected={color === colors[name][0]}
+            onSelectColor={onSelectColor}
+          />
+        ))}
+      </Line>
+      <Line>
+        {['greenAlt', 'greenAltLight', 'greenAltDark', 'blueSoft', 'blueLight'].map((name) => (
+          <LabelColor
+            key={name}
+            colorName={name}
+            selected={color === colors[name][0]}
+            onSelectColor={onSelectColor}
+          />
+        ))}
+      </Line>
+      <Line>
+        {['blueDark', 'blueAlt', 'blueAltLight', 'blueAltDark', 'purpleAlt'].map((name) => (
+          <LabelColor
+            key={name}
+            colorName={name}
+            selected={color === colors[name][0]}
+            onSelectColor={onSelectColor}
+          />
+        ))}
+      </Line>
+      <Line>
+        {['purpleLight', 'purpleDark', 'pinkAlt', 'pinkLight', 'pinkDark'].map((name) => (
+          <LabelColor
+            key={name}
+            colorName={name}
+            selected={color === colors[name][0]}
+            onSelectColor={onSelectColor}
+          />
+        ))}
+      </Line>
+      <Line>
+        <LabelColor
+          colorName="default"
+          selected={color === null}
+          onSelectColor={onSelectColor}
+        />
         <DefaultColorInfo>
           <DefaultColorTitle>Sem cores.</DefaultColorTitle>
           <DefaultColorSubtitle>Isso não aparecerá na frente dos cartões.</DefaultColorSubtitle>
@@ -113,7 +160,6 @@ const LabelColorPicker = ({ color, onSelectColor }) => {
     </Wrapper>
   );
 };
-
 LabelColorPicker.defaultProps = {
   color: null,
 };

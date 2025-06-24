@@ -195,13 +195,13 @@ class TrelloCard extends React.Component {
     if (!this.props.due) return null;
     const due = dueFormatter(this.props.due, this.props.dueComplete);
     return (
-      <li>
+      <>
         <FooterIcon icon={faCalendarAlt} />
         <span>
           {due.date}{' '}
           <span className={classNames(styles['due-message'], styles['due-' + due.class])}>{due.message}</span>
         </span>
-      </li>
+      </>
     );
   }
 
@@ -314,10 +314,10 @@ class TrelloCard extends React.Component {
             )}
 
             <div className={styles.options}>
-              {/*<a data-tooltip="Etiquetas" target="#" onClick={this.openLabelPanel.bind(this)}>
+              <a data-tooltip="Etiquetas" target="#" onClick={this.openLabelPanel.bind(this)}>
                 <OptionIcon icon={faTags} $highlight={this.props.labels.length > 0} />
               </a>
-              <a data-tooltip="Checklist" target="#" onClick={this.openChecklistPanel.bind(this)}>
+              {/*<a data-tooltip="Checklist" target="#" onClick={this.openChecklistPanel.bind(this)}>
                 <OptionIcon icon={faCheckSquare} $highlight={this.props.hasChecklist} />
               </a>*/}
               <a data-tooltip="Especificar data de entrega" target="#" onClick={this.openDuePanel.bind(this)}>

@@ -25,12 +25,12 @@ const SelectableLabel = styled.a`
   margin: 0 0 4px 8px;
   padding: 6px 12px;
   border-radius: 3px;
-  background-color: ${(props) => colors[props.$color][0]};
+  background-color: ${(props) => props.$color?.startsWith('#') ? props.$color : colors[props.$color][0]};
   cursor: pointer;
   font-family: Helvetica Neue, Arial, Helvetica, sans-serif;
 
   &:hover {
-    box-shadow: -8px 0 ${(props) => colors[props.$color][1]};
+    box-shadow: -8px 0 ${(props) => props.$color?.startsWith('#') ? props.$color : colors[props.$color][1]};
     text-decoration: none !important;
   }
 `;

@@ -10,6 +10,8 @@ import { reAuthenticateOAuth } from '../actions/oauth_util.js';
  */
 let authType = '';
 
+const TEST_AUTH = 'localtest';
+
 /**
  * Função para mudar o tipo de autenticação que será utilizada.
  * 
@@ -26,6 +28,7 @@ export const setAuthType = (type) => {
  * mas sim serão gerenciadas pelo MockedTrelloApi.
  */
 if (process.env.NODE_ENV === 'test' || process.env.MOCKED_API === 'true') {
+  authType = TEST_AUTH;
   const MockedApi = require('tests/e2e/MockedTrelloApi').default;
   window.MockedTrelloApi = MockedApi;
   MockedApi.setup();
@@ -44,7 +47,9 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
   const route = await getRoute(routeId);
   // Monta a URL e o objeto de requisição já trocando os placeholders pelos valores corretos
   const url = dataTransfer.transformString(route.url);
-  // console.log("[INICIO] Rota %o - %o", routeId, url);
+  if (process.env.NODE_ENV === 'development') {
+    console.log("[INICIO] Rota %o - %o", routeId, url);
+  }
   const obj = JSON.parse(dataTransfer.transformString(route.body));
   // Monta as outras variáveis que serão usadas na requisição
   const verb = route.verb.toLowerCase();
@@ -61,7 +66,7 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
       Object.assign(obj, auth.getCredentials());
     }
     // Se não foi identificada a autenticação
-    else {
+    else if (process.env.NODE_ENV !== 'test') {
       console.log("Tipo de autenticação não reconhecido: %o", authType);
       return null;
     }
@@ -69,20 +74,29 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
     const params = verb === "get" ? obj : {};
     // Monta as variáveis que serão enviadas no corpo (body) da requisição
     const data = verb !== "get" ? obj : {};
-    // console.log(`[REQUEST CONFIG] Verb: ${verb} / Credentials: ${sendCookie} / URL Params: ${Object.keys(params).length > 0} / Body Data: ${Object.keys(data).length > 0}`);
     originalResponse = await sendRequest(url, verb, params, data, headers, sendCookie, true);
-    // console.log("Resposta original da rota %d: %o", routeId, originalResponse);
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Resposta original da rota %d: %o", routeId, originalResponse);
+    }
     // Faz a transformação da resposta de acordo com a configuração da rota
     let responseStruct = JSON.parse(route.response);
-    let newResponse = Array.isArray(responseStruct) ? getArrayData(responseStruct, originalResponse.data) : getObjectData(responseStruct, originalResponse.data);
-    // Troca o objeto 'data' da resposta original pelo novo objeto transformado
-    originalResponse.data = newResponse;
-    // console.log("Resposta transformada da rota %d: %o", routeId, newResponse);
+    // Verifica se a estrutura de resposta é um objeto com valor válido para fazer a conversão dos dados
+    if (typeof responseStruct === 'object' && responseStruct !== null && Object.keys(responseStruct).length > 0) {
+      // Se for um objeto, transforma os dados da resposta original de acordo com a estrutura definida
+      let newResponse = Array.isArray(responseStruct) ? getArrayData(responseStruct, originalResponse.data) : getObjectData(responseStruct, originalResponse.data);
+      // Troca o objeto 'data' da resposta original pelo novo objeto transformado
+      originalResponse.data = newResponse;
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Resposta transformada da rota %d: %o", routeId, newResponse);
+      }
+    }
   } catch (e) {
     console.log("Ocorreu um erro ao tentar fazer a requisição para o servidor na rota %d: %o", routeId, e);
     return null;
   }
-  // console.log("[FIM] Rota %o - %o", routeId, url);
+  if (process.env.NODE_ENV === 'development') {
+    console.log("[FIM] Rota %o - %o", routeId, url);
+  }
   return originalResponse;
 };
 

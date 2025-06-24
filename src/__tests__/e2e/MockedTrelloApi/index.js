@@ -16,7 +16,7 @@ const Api = () => {
 
   const setup = () => {
     const mock = new MockAdapter(axios, { onNoMatch: 'passthrough' });
-    const regex = /https:\/\/api.trello.com\/1\/(.*)/;
+    const regex = /http:\/\/teste.mock\/(.*)/;
     mock.onAny(regex).reply(async (config) => {
       const { method, url, params, data } = config;
       const path = url.match(regex)[1];
@@ -203,7 +203,6 @@ const Api = () => {
 
   const handleRequests = (method, path, params = {}, data = {}) => {
     let match = null;
-
     /* searchCards */
     if (method === 'get' && path.match(/^search$/) && params.modelTypes === 'cards') {
       return { cards: cards };

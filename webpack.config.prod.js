@@ -2,9 +2,11 @@ const webpack = require('webpack');
 const ZipPlugin = require('zip-webpack-plugin');
 const { merge } = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
-const common = require('./webpack.config.js');
 
+// Set NODE_ENV before requiring the common config
 process.env.NODE_ENV = 'production';
+
+const common = require('./webpack.config.js');
 
 module.exports = merge(common, {
   mode: 'production',
