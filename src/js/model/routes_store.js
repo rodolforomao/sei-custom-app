@@ -415,7 +415,7 @@ export const loadSimaRoutes = async () => {
     routes.push({id: routesId.removeLabelFromCard.id, url: base_url + "/api/badge/@{label.id}/delete/issue/", body: `{"issueId":"@{card.id}"}`, verb: "DELETE", response: JSON.stringify(response)});
     // 22
     response = {};
-    routes.push({id: routesId.createLabel.id, url: base_url + "/api/badge/create/", body: `{"projectId":"@{board.id}","IssueId":"@{card.id}","color":"@{label.color}","nameTag":"@{label.name}"}`, verb: "POST", response: JSON.stringify(response)})
+    routes.push({id: routesId.createLabel.id, url: base_url + "/api/badge/create/byproject", body: `{"projectId":"@{board.id}","IssueId":"@{card.id}","color":"@{label.color}","nameTag":"@{label.name}"}`, verb: "POST", response: JSON.stringify(response)})
     // 23
     response = {};
     routes.push({id: routesId.updateLabel.id, url: base_url + "/api/badge/@{label.id}/update/", body: `{"nameTag":"@{label.name}", "color":"@{label.color}","updateColor": true}`, verb: "PATCH", response: JSON.stringify(response)});
