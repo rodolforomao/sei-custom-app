@@ -26,7 +26,7 @@ class TrelloCard extends React.Component {
       isEditingDue: false,
       isEditingChecklist: false,
       isEditingLabel: false,
-      isExpanded: false,
+      isExpanded: props.isExpanded,
       processTooltip: {
         show: false,
         x: 0,

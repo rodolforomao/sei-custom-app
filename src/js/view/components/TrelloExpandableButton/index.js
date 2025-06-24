@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import TrelloButton from 'view/components/TrelloButton';
 import { faPlusSquare, faMinusSquare } from '@fortawesome/free-solid-svg-icons';
 
-const TrelloExpandableButton = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const TrelloExpandableButton = ({ isExpanded: initialExpanded = false }) => {
+   const [isExpanded, setIsExpanded] = useState(initialExpanded);
 
   const toggleExpand = () => {
     const eventName = isExpanded ? "collapseAllCards" : "expandAllCards";

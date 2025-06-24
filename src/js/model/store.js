@@ -14,7 +14,8 @@ let initialData = {
   currentLabels: [],
   currentLocations: [],
   canChangeBoard: false,
-  appendNumberOnTitle: false
+  appendNumberOnTitle: false,
+  showCard: false
 };
 
 let data = Object.assign({}, initialData);
@@ -134,6 +135,13 @@ export const setCanChangeBoard = (canChangeBoard, triggerEvent = false) => {
 export const setAppendNumberOnTitle = (appendNumberOnTitle, triggerEvent = false) => {
   if (data.appendNumberOnTitle !== appendNumberOnTitle) {
     data.appendNumberOnTitle = appendNumberOnTitle;
+    if (triggerEvent) triggerEvent('onDataChanged');
+  }
+};
+
+export const setShowCard = (isExpanded, triggerEvent = false) => {
+  if (data.isExpanded !== isExpanded) {
+    data.isExpanded = isExpanded;
     if (triggerEvent) triggerEvent('onDataChanged');
   }
 };
