@@ -92,6 +92,8 @@
 
 .labels {
   margin: 0 5px 10px 5px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .label {
