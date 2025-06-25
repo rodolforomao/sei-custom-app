@@ -126,15 +126,19 @@ class TrelloCard extends React.Component {
     this.setState({ isHovering: true });
   }
 
+ 
+
   onMouseLeave(e) {
-    if (e.buttons > 0) return; /* se tiver pressionando algum botão, não considera (ex.: dragging...) */
-    this.setState({
-      isHovering: false,
-      isEditingDue: false /* close due panel on hover out */,
-      isEditingChecklist: false /* close checklist panel on hover out */,
-      isEditingLabel: false /* close label panel on hover out */,
-    });
-  }
+  if (e.buttons > 0) return;
+  
+  if (this.state.isEditingDue || this.state.isEditingChecklist || this.state.isEditingLabel) return;
+
+  this.setState({
+    isHovering: false,
+    isEditingDue: false,
+    isEditingChecklist: false,
+  });
+}
 
   openDuePanel(e) {
     this.setState({
