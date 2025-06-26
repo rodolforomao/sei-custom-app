@@ -401,8 +401,13 @@ export const loadSimaRoutes = async () => {
     }];
     routes.push({id: routesId.getCardChecklistData.id, url: base_url + "/api/checklist/", body: `{"issueID":"@{card.id}"}`, verb: "GET", response: JSON.stringify(response)});
     // 13
-    response = {};
-    routes.push({id: routesId.createCardChecklist.id, url: base_url + "/api/checklist/c/@{card.id}/", body: ``, verb: "POST", response: JSON.stringify(response)});
+    response = {
+        id: "@{checklistID}",
+        name: "@{checklistName}",
+        idCard: "@{issueId}",
+        pos: "@{checklistID}"
+    };
+    routes.push({id: routesId.createCardChecklist.id, url: base_url + "/api/checklist/c/@{card.id}/", body: `{"checklistName":"@{card.checklist.name}"}`, verb: "POST", response: JSON.stringify(response)});
     // 14
     response = {
         id: "@{checklistItemID}",
