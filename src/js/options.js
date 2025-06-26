@@ -105,9 +105,7 @@ toggleFormDisplay();
 const loadRoutesForm = () => {
   document.forms['form-routes'].innerHTML = '';
   const routes = Object.values(routesId);
-  console.log("Loading routes form with routes:", routes);
   routes.forEach(async (route) => {
-    console.log("Processing route:", route);
     const routeId = route.id;
     const routeShortDesc = route.shortdesc;
     const savedRoute = await getRoute(routeId);
