@@ -395,7 +395,7 @@ export const loadSimaRoutes = async () => {
             id: "@{this.checklistItems.checklistItemID}",
             name: "@{this.checklistItems.itemName}",
             pos: "@{this.checklistItems.checklistItemID}",
-            state: "complete",
+            state: "@{this.checklistItems.isCompletedString}",
             idChecklist: "@{this.checklistItems.checklistID}"
         }]
     }];
@@ -425,13 +425,13 @@ export const loadSimaRoutes = async () => {
         state: "@{isCompletedString}",
         idChecklist: "@{checklistID}"
     };
-    routes.push({id: routesId.updateCardChecklistItem.id, url: base_url + "/api/checklist/item/u/@{card.checklist.id}/", body: `{"itemName": "@{card.checklist.item.name}","isCompleted": "@{card.checklist.item.state}"}`, verb: "PATCH", response: JSON.stringify(response)});
+    routes.push({id: routesId.updateCardChecklistItem.id, url: base_url + "/api/checklist/item/u/@{card.checklist.item.id}/", body: `{"itemName": "@{card.checklist.item.name}","isCompleted": "@{card.checklist.item.state}"}`, verb: "PATCH", response: JSON.stringify(response)});
     // 16
     response = {};
     routes.push({id: routesId.updateCardChecklistItemPosition.id, url: "", body: ``, verb: "PUT", response: JSON.stringify(response)});
     // 17
     response = {};
-    routes.push({id: routesId.deleteCardChecklistItem.id, url: base_url + "/api/checklist/item/delete/@{card.checklist.id}/", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
+    routes.push({id: routesId.deleteCardChecklistItem.id, url: base_url + "/api/checklist/item/delete/@{card.checklist.item.id}/", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
     // 18
     response = {};
     routes.push({id: routesId.deleteCardChecklist.id, url: base_url +  "/api/checklist/delete/@{card.checklist.id}/", body: `{}`, verb: "DELETE", response: JSON.stringify(response)});
