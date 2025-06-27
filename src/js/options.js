@@ -37,6 +37,7 @@ const mapUI = () => {
   ui.checkMove = document.getElementById("checkMove");
   ui.checkCreateTitle = document.getElementById("checkCreateTitle");
   ui.checkShowCard = document.getElementById("checkShowCard");
+  ui.checkMoveChecklistItem = document.getElementById("checkMoveChecklistItem");
 
 
   for (const btnSave of Array.prototype.slice.call(document.getElementsByClassName('btn-salvar-config'))) {
@@ -269,6 +270,7 @@ const save = async (e) => {
     canMoveBoard: ui.checkMove.checked,
     appendNumberOnTitle: ui.checkCreateTitle.checked,
     showCard: ui.checkShowCard.checked,
+    moveChecklistItem: ui.checkMoveChecklistItem.checked
   });
 
 
@@ -366,7 +368,8 @@ const restore = () => {
       saveTokenOnCookies: true,
       canMoveBoard: false,
       appendNumberOnTitle: false,
-      showCard: false
+      showCard: false,
+      moveChecklistItem: false
     },
     (items) => {
       ui.authUrl.value = items.authUrl;
@@ -381,6 +384,7 @@ const restore = () => {
       ui.checkMove.checked = items.canMoveBoard;
       ui.checkCreateTitle.checked = items.appendNumberOnTitle;
       ui.checkShowCard.checked = items.showCard;
+      ui.checkMoveChecklistItem.checked = items.moveChecklistItem;
       if (ui.authType.value === 'jwt') {
         openFormJWT();
       } else if (ui.authType.value === 'trello') {

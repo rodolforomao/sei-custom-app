@@ -301,7 +301,7 @@ class TrelloCard extends React.Component {
             )}
 
             {this.state.isEditingChecklist && (
-              <ChecklistPanel cardID={this.props.cardID} onClose={this.closeChecklistPanel} />
+              <ChecklistPanel cardID={this.props.cardID} canMoveChecklistItem={this.props.moveChecklistItem} onClose={this.closeChecklistPanel}  />
             )}
 
             {this.state.isEditingLabel && (

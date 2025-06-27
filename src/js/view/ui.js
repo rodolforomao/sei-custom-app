@@ -41,7 +41,7 @@ const renderExpandableButton = (placeholder, data) => {
   );
 };
 
-const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, canChangeBoard, appendNumberOnTitle, isExpanded) => {
+const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, canChangeBoard, appendNumberOnTitle, isExpanded, moveChecklistItem) => {
   const fullWidth = placeholder.hasAttribute('data-full-width');
 
   ReactDOM.render(
@@ -65,6 +65,7 @@ const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, can
       originalAnchor={originalAnchor}
       canChangeBoard={canChangeBoard}
       isExpanded={isExpanded}
+      moveChecklistItem={moveChecklistItem}
     ></TrelloCard>,
     placeholder
   );
@@ -111,7 +112,7 @@ const renderTrelloBox = (box, data) => {
     /* render trello card */
     if (processAnchor) processAnchor.classList.add('hide');
     cardPlaceholder.classList.remove('hide');
-    renderTrelloCard(cardPlaceholder, cardToConsider, cardsForThisProcess.length > 1, processAnchor, data.canChangeBoard, data.appendNumberOnTitle, data.isExpanded);
+    renderTrelloCard(cardPlaceholder, cardToConsider, cardsForThisProcess.length > 1, processAnchor, data.canChangeBoard, data.appendNumberOnTitle, data.isExpanded, data.moveChecklistItem);
 
     /* remove create card button */
     createCardPlaceholder.classList.add('hide');
