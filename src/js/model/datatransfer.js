@@ -214,7 +214,6 @@ class DataTransfer {
         while (originalString.match(TOKEN_REGEX)) {
             const key = originalString.match(TOKEN_REGEX)[1];
             let newValue = getKeyValue(this.data, key);
-            console.log(`Transforming key: ${key} with value: ${newValue}`);
             if (typeof newValue === 'string') {
                 newValue = newValue.replaceAll("\n", "\\n");
             }

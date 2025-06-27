@@ -15,7 +15,8 @@ let initialData = {
   currentLocations: [],
   canChangeBoard: false,
   appendNumberOnTitle: false,
-  showCard: false
+  showCard: false,
+  moveChecklistItem: false
 };
 
 let data = Object.assign({}, initialData);
@@ -142,6 +143,14 @@ export const setAppendNumberOnTitle = (appendNumberOnTitle, triggerEvent = false
 export const setShowCard = (isExpanded, triggerEvent = false) => {
   if (data.isExpanded !== isExpanded) {
     data.isExpanded = isExpanded;
+    if (triggerEvent) triggerEvent('onDataChanged');
+  }
+};
+
+export const setMoveChecklistItem = (moveChecklistItem, triggerEvent = false) => {
+  console.log("Changing moveChecklistItem to", moveChecklistItem);
+  if (data.moveChecklistItem !== moveChecklistItem) {
+    data.moveChecklistItem = moveChecklistItem;
     if (triggerEvent) triggerEvent('onDataChanged');
   }
 };
