@@ -6,8 +6,10 @@ import { reAuthenticateOAuth } from './actions/oauth_util.js';
 import { pluginActions, pluginContexts } from './constants.js';
 import axios from 'axios';
 import 'css/options.scss';
+import { get } from 'lodash';
 
 let ui = {};
+const base_url = process.env.API_BACKEND;
 
 const defaultTokenUrl =
   'https://trello.com/1/authorize?expiration=never&scope=read,write,account&response_type=token&name=SEITrello';
@@ -32,7 +34,9 @@ const mapUI = () => {
   ui.btnJwt = document.getElementById('btn-link-jwt');
   ui.formTrello = document.getElementById('form-trello');
   ui.formJwt = document.getElementById('form-jwt');
-  ui.defaultDesktop = document.getElementById("selectDesktop");
+  ui.selectDesktop = document.getElementById("select-default-desktop");
+  ui.selectBoard = document.getElementById("select-default-board");
+  ui.selectList = document.getElementById("select-default-list");
   ui.checkCookies = document.getElementById("checkCookies");
   ui.checkMove = document.getElementById("checkMove");
   ui.checkCreateTitle = document.getElementById("checkCreateTitle");
@@ -49,6 +53,10 @@ const mapUI = () => {
   ui.btnTrello.addEventListener('click', openFormTrello);
   ui.btnJwt.addEventListener('click', openFormJWT);
 
+  ui.selectDesktop.addEventListener("change", onChangeDesktop);
+  ui.selectBoard.addEventListener("change", onChangeBoard);
+  ui.selectList.addEventListener("change", onChangeList);
+
   ui.appKey.addEventListener('input', () => {
     updateTokenUrl();
   });
@@ -57,6 +65,38 @@ const mapUI = () => {
     updateTokenUrl();
   });
 };
+
+const onChangeDesktop = async (event) => {
+  const selectedDesktop = event.target.value;
+
+  requestBackendData(`${base_url}/api/desktop/${selectedDesktop}/list/projects/`, (response) => {
+    const boards = response.data;
+    let ids = boards.map(board => board.id);
+    let names = boards.map(board => board.name);
+    const selectElement = document.getElementById("select-default-board");
+    populateSelect(selectElement, ids, names, ui.selectDesktop.value);
+  });
+}
+
+const onChangeBoard = async (event) => {
+  const selectedBoard = event.target.value;
+  const boardName = getTextFromSelectValue(ui.selectBoard, selectedBoard);
+  ui.defaultBoard.value = boardName;
+
+  requestBackendData(`${base_url}/api/project/${selectedBoard}/lists/`, (response) => {
+    const lists = response.data;
+    let ids = lists.map(list => list.id);
+    let names = lists.map(list => list.name);
+    const selectElement = document.getElementById("select-default-list");
+    populateSelect(selectElement, ids, names, ui.selectDesktop.value);
+  });
+}
+
+const onChangeList = async (event) => {
+  const selectedList = event.target.value;
+  const listName = getTextFromSelectValue(ui.selectList, selectedList);
+  ui.defaultList.value = listName;
+}
 
 const openFormTrello = () => {
   ui.formJwt.style.display = 'none';
@@ -95,8 +135,6 @@ const toggleFormDisplay = async () => {
   buttonSaveConfiguration.style.display = isValid ? "block" : "none";
   btnCarregarRotas.style.display = isValid ? "none" : "block";
   btnLimparRotas.style.display = isValid ? "block" : "none";
-
-
 };
 
 
@@ -265,7 +303,7 @@ const save = async (e) => {
     tokenUrl: ui.tokenUrl.value.trim(),
     defaultBoard: ui.defaultBoard.value,
     defaultList: ui.defaultList.value,
-    defaultDesktop: parseFloat(ui.defaultDesktop.value) || 0,
+    defaultDesktop: parseFloat(ui.selectDesktop.value) || 0,
     saveTokenOnCookies: ui.checkCookies.checked,
     canMoveBoard: ui.checkMove.checked,
     appendNumberOnTitle: ui.checkCreateTitle.checked,
@@ -379,7 +417,7 @@ const restore = () => {
       ui.appToken.value = items.appToken;
       ui.defaultBoard.value = items.defaultBoard;
       ui.defaultList.value = items.defaultList;
-      ui.defaultDesktop.value = items.defaultDesktop;
+      ui.selectDesktop.value = items.defaultDesktop;
       ui.checkCookies.checked = items.saveTokenOnCookies;
       ui.checkMove.checked = items.canMoveBoard;
       ui.checkCreateTitle.checked = items.appendNumberOnTitle;
@@ -479,26 +517,46 @@ const backpUrlData = async () => {
 };
 
 const returnDesktop = () => {
+  requestBackendData(`${base_url}/api/pluginSei/returnDesktop/`, (response) => {
+    const desktops = response.data;
+    let ids = desktops.map(desktop => desktop.id);
+    let names = desktops.map(desktop => desktop.nameDesktop);
+    const selectElement = document.getElementById("select-default-desktop");
+    populateSelect(selectElement, ids, names, ui.selectDesktop.value);
+  });
+};
 
-  const base_url = process.env.API_BACKEND;
+const populateSelect = (selectElement, valueList, descList, selectedValue) => {
+  selectElement.innerHTML = ''; // Limpa as opções existentes
+  selectElement.disabled = false; // Habilita o select
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = 'Selecione uma opção';
+  selectElement.appendChild(defaultOption);
 
-  axios.get(`${base_url}/api/pluginSei/returnDesktop`, { withCredentials: true })
-    .then(response => {
-      const desktops = response.data;
+  valueList.forEach((value, index) => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = descList[index];
+    if (value === selectedValue) {
+      option.selected = true;
+    }
+    selectElement.appendChild(option);
+  });
+};
 
-      const selectElement = document.getElementById("selectDesktop");
-
-      // Limpa as opções existentes
-      selectElement.innerHTML = "<option value=''>Selecione uma opção</option>";
-
-      // Adiciona as novas opções
-      desktops.forEach(desktop => {
-        const option = document.createElement("option");
-        option.value = desktop.id;
-        option.textContent = desktop.nameDesktop;
-        selectElement.appendChild(option);
-      });
-    })
+const requestBackendData = (url, callback) => {
+  axios.get(url, { withCredentials: true })
+    .then(response => { callback(response); })
     .catch((err) => console.log(err));
+};
 
+const getTextFromSelectValue = (selectElement, value) => {
+  const options = selectElement.options;
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].value === value) {
+      return options[i].textContent;
+    }
+  }
+  return '';
 }

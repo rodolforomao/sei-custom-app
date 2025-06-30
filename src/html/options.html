@@ -77,22 +77,28 @@
     <h4 style="padding-bottom: 15px;">Configurações de área de trabalho, quadro e lista.</h4>
 
     <div class="form-group">
-      <label for="selectDesktop">Área de trabalho</label>
-      <select class="form-control" id="selectDesktop">
+      <label for="select-default-desktop">Área de trabalho</label>
+      <select class="form-control" id="select-default-desktop" disabled>
         <option></option>
       </select>
+      <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nessa área de trabalho.</small>
     </div>
 
     <div class="form-group">
-      <label for="txt-default-board">Quadro padrão:</label>
-      <input type="text" class="form-control" id="txt-default-board" placeholder="Nome do quadro..." />
-      <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nesse
-        quadro.</small>
+      <label for="select-default-board">Quadro padrão:</label>
+      <select class="form-control" id="select-default-board" disabled>
+        <option></option>
+      </select>
+      <input type="hidden" id="txt-default-board" />
+      <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nesse quadro.</small>
     </div>
 
     <div class="form-group">
-      <label for="txt-default-list">Lista padrão:</label>
-      <input type="text" class="form-control" id="txt-default-list" placeholder="Nome da lista..." />
+      <label for="select-default-list">Lista padrão:</label>
+      <select class="form-control" id="select-default-list" disabled>
+        <option></option>
+      </select>
+      <input type="hidden" id="txt-default-list" />
       <small class="form-text text-muted">Os novos cartões criados a partir dessa extensão entrarão nesta lista.</small>
     </div>
 
