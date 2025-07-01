@@ -68,6 +68,8 @@ const mapUI = () => {
 
 const onChangeDesktop = async (event) => {
   const selectedDesktop = event.target.value;
+  clearSelect(ui.selectBoard);
+  clearSelect(ui.selectList);
 
   requestBackendData(`${base_url}/api/desktop/${selectedDesktop}/list/projects/`, (response) => {
     const boards = response.data;
@@ -82,6 +84,7 @@ const onChangeBoard = async (event) => {
   const selectedBoard = event.target.value;
   const boardName = getTextFromSelectValue(ui.selectBoard, selectedBoard);
   ui.defaultBoard.value = boardName;
+  clearSelect(ui.selectList);
 
   requestBackendData(`${base_url}/api/project/${selectedBoard}/lists/`, (response) => {
     const lists = response.data;
@@ -543,6 +546,11 @@ const populateSelect = (selectElement, valueList, descList, selectedValue) => {
     }
     selectElement.appendChild(option);
   });
+};
+
+const clearSelect = (selectElement) => {
+  selectElement.innerHTML = ''; // Limpa as opções existentes
+  selectElement.disabled = true; // Desabilita o select
 };
 
 const requestBackendData = (url, callback) => {
