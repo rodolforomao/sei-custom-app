@@ -58,10 +58,10 @@ test('render card with some labels', async () => {
     name: 'Título do cartão',
     desc: 'SEI 00000.000001/2020-01',
     labels: [
-      { id: 'label1', name: 'urgente', color: 'red' },
-      { id: 'label2', name: 'analisar', color: 'green' },
-      { id: 'label3', name: 'normal', color: null },
-      { id: 'label4', name: '', color: 'yellow' },
+      { id: 'label1', name: 'urgente', color: LABEL_COLORS['red'][0] },
+      { id: 'label2', name: 'analisar', color: LABEL_COLORS['green'][0] },
+      { id: 'label3', name: 'normal', color: LABEL_COLORS['default'][0] },
+      { id: 'label4', name: '', color: LABEL_COLORS['yellow'][0] },
     ],
   });
   await clickTrelloRefreshButton();
