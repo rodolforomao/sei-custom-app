@@ -66,7 +66,8 @@ const Api = () => {
       delete data['idList'];
     }
     if (data.due === 'null') data.due = null;
-    cards = cards.map((card) => (card.id === cardID ? { ...card, ...data } : card));
+    const cleanData = Object.fromEntries(Object.entries(data).filter(([key, value]) => value != null));
+    cards = cards.map((card) => (card.id === cardID ? { ...card, ...cleanData } : card));
     return getCardById(cardID);
   };
 
