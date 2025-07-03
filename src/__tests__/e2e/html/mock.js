@@ -36,7 +36,7 @@ const getMockingRoutes = () => {
  * Cria a configuração do mock do Chrome API
  * @returns {Object} Configuração do mock do Chrome
  */
-const createChromeMock = () => ({
+export const createChromeMock = () => ({
   storage: {
     sync: {
       get: (data, fn) => {
