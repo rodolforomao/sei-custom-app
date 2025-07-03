@@ -178,7 +178,7 @@ test('removeLabelFromCard', async () => {
 
 test('createLabel', async () => {
   window.MockedTrelloApi.setLabels([]);
-  await api.createLabel('board1', {
+  await api.createLabel('board1', '', {
     name: 'urgente',
     color: 'red',
   });
