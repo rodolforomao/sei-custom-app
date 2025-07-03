@@ -39,8 +39,12 @@ const addTrelloCommandButtons = () => {
   placeholder.classList.add('trello-refresh-button');
   whereToAdd.appendChild(placeholder);
 
+  // placeholder = document.createElement('div');
+  // placeholder.classList.add('trello-filter-button');
+  // whereToAdd.appendChild(placeholder);
+
   placeholder = document.createElement('div');
-  placeholder.classList.add('trello-filter-button');
+  placeholder.classList.add('trello-expandable-button');
   whereToAdd.appendChild(placeholder);
 };
 

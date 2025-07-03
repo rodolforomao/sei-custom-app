@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import TrelloCard from './components/TrelloCard';
 import TrelloRefreshButton from './components/TrelloRefreshButton';
 import TrelloFilterButton from './components/TrelloFilterButton';
+import TrelloExpandableButton from './components/TrelloExpandableButton';
 import CreateTrelloCardButton from './components/CreateTrelloCardButton';
 
 import * as filter from './helper/filter.js';
@@ -32,7 +33,15 @@ const renderFilterButton = (placeholder, data) => {
   );
 };
 
-const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, canChangeBoard, appendNumberOnTitle) => {
+const renderExpandableButton = (placeholder, data) => {
+  ReactDOM.render(
+    <TrelloExpandableButton
+    isExpanded={data.isExpanded} />,
+    placeholder
+  );
+};
+
+const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, canChangeBoard, appendNumberOnTitle, isExpanded, moveChecklistItem) => {
   const fullWidth = placeholder.hasAttribute('data-full-width');
 
   ReactDOM.render(
@@ -55,6 +64,8 @@ const renderTrelloCard = (placeholder, card, hasAnotherCard, originalAnchor, can
       fullWidth={fullWidth}
       originalAnchor={originalAnchor}
       canChangeBoard={canChangeBoard}
+      isExpanded={isExpanded}
+      moveChecklistItem={moveChecklistItem}
     ></TrelloCard>,
     placeholder
   );
@@ -71,6 +82,10 @@ const renderCreateTrelloCardButton = (placeholder, processNumber, data, newCardD
   );
 };
 
+const removeSpecialChars = (text) => {
+  return text.replace(/[^0-9]/g, '').trim();
+};
+
 const renderTrelloBox = (box, data) => {
   const processNumber = box.getAttribute('data-trello-process-number');
   const processAnchor = box.querySelector('[data-trello-process-anchor]');
@@ -79,7 +94,7 @@ const renderTrelloBox = (box, data) => {
 
   if (!processNumber || !cardPlaceholder || !createCardPlaceholder) return;
 
-  const cardsForThisProcess = data.cards.filter((card) => card.processNumber === processNumber);
+  const cardsForThisProcess = data.cards.filter((card) => card.processNumber === processNumber || card.processNumber === removeSpecialChars(processNumber));
 
   const hasTrelloCard = cardsForThisProcess.length > 0;
 
@@ -97,7 +112,7 @@ const renderTrelloBox = (box, data) => {
     /* render trello card */
     if (processAnchor) processAnchor.classList.add('hide');
     cardPlaceholder.classList.remove('hide');
-    renderTrelloCard(cardPlaceholder, cardToConsider, cardsForThisProcess.length > 1, processAnchor, data.canChangeBoard, data.appendNumberOnTitle);
+    renderTrelloCard(cardPlaceholder, cardToConsider, cardsForThisProcess.length > 1, processAnchor, data.canChangeBoard, data.appendNumberOnTitle, data.isExpanded, data.moveChecklistItem);
 
     /* remove create card button */
     createCardPlaceholder.classList.add('hide');
@@ -131,6 +146,11 @@ export const render = () => {
     'filter-button': {
       selector: '.trello-filter-button',
       fn: renderFilterButton,
+      elements: [],
+    },
+    'expandable-button': {
+      selector: '.trello-expandable-button',
+      fn: renderExpandableButton,
       elements: [],
     },
     'process-box': {

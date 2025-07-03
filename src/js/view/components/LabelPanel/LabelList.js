@@ -5,7 +5,7 @@ import LabelItem from './LabelItem';
 
 const List = styled.ul`
   list-style: none;
-  margin: 15px 0 15px 0;
+  margin: 8px 0 15px 0;
   padding: 0 10px 0 0;
 `;
 
@@ -23,7 +23,7 @@ export const Buttons = styled.div`
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
-  margin: 6px 0 0 0;
+  margin: 8px 0 0 0;
   padding: 0 10px 0 8px;
 `;
 
@@ -38,6 +38,9 @@ const LabelList = ({ boardLabels, cardLabels, onAddLabel, onRemoveLabel, onCreat
 
   return (
     <>
+    <Buttons>
+        <CreateLabelButton onClick={onCreateClick}>Criar uma nova etiqueta</CreateLabelButton>
+      </Buttons>
       <List data-testid="board-labels">
         {boardLabels.map((boardLabel) => (
           <LabelItem
@@ -55,9 +58,6 @@ const LabelList = ({ boardLabels, cardLabels, onAddLabel, onRemoveLabel, onCreat
         ))}
         {boardLabels.length === 0 && <NoItemMessage>Não há etiquetas.</NoItemMessage>}
       </List>
-      <Buttons>
-        <CreateLabelButton onClick={onCreateClick}>Criar uma nova etiqueta</CreateLabelButton>
-      </Buttons>
     </>
   );
 };

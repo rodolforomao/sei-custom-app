@@ -3,7 +3,8 @@
 */
 
 .trello-refresh-button,
-.trello-filter-button {
+.trello-filter-button,
+.trello-expandable-button {
   display: inline-block;
   vertical-align: top;
 }
@@ -12,6 +13,10 @@
   margin-left: -1px;
 }
 .trello-filter-button {
+  margin-left: 1px;
+}
+
+.trello-expandable-button {
   margin-left: 1px;
 }
 

@@ -98,6 +98,36 @@ const routesId = {
         shortdesc: "Deletar checklist",
         longdesc: "Rota utilizada para deletar um checklist."
     },
+    getBoardLabels: {
+        id: 19,
+        shortdesc: "Recuperar labels de um quadro",
+        longdesc: "Rota utilizada para recuperar os labels de um quadro."
+    },
+    addLabelToCard: {
+        id: 20,
+        shortdesc: "Adicionar label a um cartão",
+        longdesc: "Rota utilizada para adicionar um label a um cartão."
+    },
+    removeLabelFromCard: {
+        id: 21,
+        shortdesc: "Remover label de um cartão",
+        longdesc: "Rota utilizada para remover um label de um cartão."
+    },
+    createLabel: {
+        id: 22,
+        shortdesc: "Criar etiqueta",
+        longdesc: "Rota utilizada para criar uma nova etiqueta."
+    },
+    updateLabel: {
+        id: 23,
+        shortdesc: "Atualizar etiqueta",
+        longdesc: "Rota utilizada para atualizar uma etiqueta existente."
+    },
+    deleteLabel: {
+        id: 24,
+        shortdesc: "Deletar etiqueta",
+        longdesc: "Rota utilizada para deletar uma etiqueta."
+    }
 }
 
 export default routesId;

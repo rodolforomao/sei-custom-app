@@ -10,7 +10,9 @@ export const load = (opts) => {
       appToken: '',
       authType: '',
       canMoveBoard: false,
-      appendNumberOnTitle: false
+      appendNumberOnTitle: false,
+      showCard: false,
+      moveChecklistItem: false
     },
     (items) => {
       api.setCredentials(items.appKey, items.appToken);
@@ -19,6 +21,8 @@ export const load = (opts) => {
       store.onDataChanged(() => ui.render());
       store.setCanChangeBoard(items.canMoveBoard, false);
       store.setAppendNumberOnTitle(items.appendNumberOnTitle, false);
+      store.setShowCard(items.showCard, false);
+      store.setMoveChecklistItem(items.moveChecklistItem, false);
 
       if (opts && 'processNumber' in opts) {
         actions.refreshCards(opts['processNumber']);

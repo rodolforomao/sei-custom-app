@@ -40,7 +40,7 @@ const LabelPanelContainer = ({ boardID, cardID, cardLabels, onClose }) => {
     try {
       const {
         data: { id },
-      } = await api.createLabel(boardID, label);
+      } = await api.createLabel(boardID, cardID, label);
       await api.addLabelToCard(cardID, id);
       await actions.doRefreshCardsWithID(cardID);
       await fetchLabels();
@@ -84,7 +84,7 @@ const LabelPanelContainer = ({ boardID, cardID, cardLabels, onClose }) => {
   const fetchLabels = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await api.getBoardLabels(boardID);
+      const response = await api.getBoardLabels(boardID, cardID);
       if ('data' in response && response.data.length > 0) {
         let updatedBoardLabels = [...response.data];
         setBoardLabels(updatedBoardLabels);

@@ -30,6 +30,13 @@ class DataTransfer {
         return this.data.card;
     }
 
+    getLabel() {
+        if (this.data.label == undefined) {
+            this.data.label = {};
+        }
+        return this.data.label;
+    }
+
     getCardChecklist() {
         if (this.getCard().checklist == undefined) {
             this.getCard().checklist = {};
@@ -176,6 +183,21 @@ class DataTransfer {
 
     setCardChecklistItemPos(position) {
         this.getCardChecklistItem().position = position;
+        return this;
+    }
+
+    setLabelId(labelId) {
+        this.getLabel().id = labelId;
+        return this;
+    }
+
+    setLabelName(labelName) {
+        this.getLabel().name = labelName;
+        return this;
+    }
+
+    setLabelColor(labelColor) {
+        this.getLabel().color = labelColor;
         return this;
     }
 

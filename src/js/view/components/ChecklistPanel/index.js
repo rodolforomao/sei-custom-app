@@ -5,7 +5,7 @@ import * as api from 'api';
 import * as store from 'model/store.js';
 import * as alert from 'view/alert.js';
 
-const ChecklistPanelContainer = ({ cardID, onClose }) => {
+const ChecklistPanelContainer = ({ cardID, canMoveChecklistItem, onClose }) => {
   const [tasks, setTasks] = useState([]);
   const [checklistID, setChecklistID] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -146,7 +146,7 @@ const ChecklistPanelContainer = ({ cardID, onClose }) => {
       tasks={tasks}
       loading={loading}
       onChange={onChange}
-      onChangeOrder={onChangeOrder}
+      onChangeOrder={canMoveChecklistItem ? onChangeOrder : null}
       onRemove={onRemove}
       onAdd={onAdd}
       onClose={onClose}

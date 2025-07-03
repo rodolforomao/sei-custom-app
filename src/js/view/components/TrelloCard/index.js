@@ -15,7 +15,7 @@ import * as alert from 'view/alert.js';
 import { OptionIcon, FooterIcon, HasAnotherCardIndicator } from './styles.js';
 
 import { faCalendarAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { faSyncAlt, faExternalLinkAlt, faCheckSquare, faAlignLeft, faTags } from '@fortawesome/free-solid-svg-icons';
+import { faSyncAlt, faExternalLinkAlt, faCheckSquare, faAlignLeft, faTags, faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 
 class TrelloCard extends React.Component {
   constructor(props) {
@@ -26,6 +26,7 @@ class TrelloCard extends React.Component {
       isEditingDue: false,
       isEditingChecklist: false,
       isEditingLabel: false,
+      isExpanded: props.isExpanded,
       processTooltip: {
         show: false,
         x: 0,
@@ -37,6 +38,24 @@ class TrelloCard extends React.Component {
     this.closeChecklistPanel = this.closeChecklistPanel.bind(this);
     this.closeLabelPanel = this.closeLabelPanel.bind(this);
   }
+
+   componentDidMount() {
+    window.addEventListener('expandAllCards', this.expandCard);
+    window.addEventListener('collapseAllCards', this.collapseCard);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('expandAllCards', this.expandCard);
+    window.removeEventListener('collapseAllCards', this.collapseCard);
+  }
+
+  expandCard = () => {
+    this.setState({ isExpanded: true });
+  };
+
+  collapseCard = () => {
+    this.setState({ isExpanded: false });
+  };
 
   showTooltip(e) {
     this.setState({
@@ -107,15 +126,19 @@ class TrelloCard extends React.Component {
     this.setState({ isHovering: true });
   }
 
+ 
+
   onMouseLeave(e) {
-    if (e.buttons > 0) return; /* se tiver pressionando algum botão, não considera (ex.: dragging...) */
-    this.setState({
-      isHovering: false,
-      isEditingDue: false /* close due panel on hover out */,
-      isEditingChecklist: false /* close checklist panel on hover out */,
-      isEditingLabel: false /* close label panel on hover out */,
-    });
-  }
+  if (e.buttons > 0) return;
+  
+  if (this.state.isEditingDue || this.state.isEditingChecklist || this.state.isEditingLabel) return;
+
+  this.setState({
+    isHovering: false,
+    isEditingDue: false,
+    isEditingChecklist: false,
+  });
+}
 
   openDuePanel(e) {
     this.setState({
@@ -158,7 +181,7 @@ class TrelloCard extends React.Component {
       uiLabels.push(
         <span
           key={idx}
-          
+
           style={{ backgroundColor: label.color, marginLeft: '2px', marginRight: '2px', color: '#FFFFFF', padding: '2px 3px' }}
         >
           {label.name}
@@ -176,13 +199,13 @@ class TrelloCard extends React.Component {
     if (!this.props.due) return null;
     const due = dueFormatter(this.props.due, this.props.dueComplete);
     return (
-      <li>
+      <>
         <FooterIcon icon={faCalendarAlt} />
         <span>
           {due.date}{' '}
           <span className={classNames(styles['due-message'], styles['due-' + due.class])}>{due.message}</span>
         </span>
-      </li>
+      </>
     );
   }
 
@@ -215,15 +238,15 @@ class TrelloCard extends React.Component {
   }
 
   renderProcessAnchor() {
-    if (!this.props.originalAnchor) return null;
-
+  // Se originalAnchor existir, renderiza normalmente
+  if (this.props.originalAnchor) {
     const relevantClasses = this.props.originalAnchor
       .getAttribute('class')
       .split(' ')
       .filter((className) => className.startsWith('processo'));
 
     return (
-      <li>
+      <li className={styles.iconExpand}>
         <FooterIcon icon={faAlignLeft} />
         <a
           className={classNames(relevantClasses)}
@@ -237,6 +260,19 @@ class TrelloCard extends React.Component {
       </li>
     );
   }
+
+  // Se originalAnchor for null, mas tiver processNumber
+  if (!this.props.originalAnchor && this.props.processNumber) {
+    return (
+      <li className={styles.iconExpand}>
+        <FooterIcon icon={faAlignLeft} />
+         <span className={styles.processoNumber}>{this.props.processNumber}</span>
+      </li>
+    );
+  }
+
+  return null;
+}
 
   render() {
     const isDescriptionEmpty = !(typeof this.props.description === 'string' && this.props.description.length > 0);
@@ -254,103 +290,120 @@ class TrelloCard extends React.Component {
         onMouseLeave={this.onMouseLeave.bind(this)}
         data-testid="card"
       >
-        {this.renderLoadingOverlay()}
+        {/* Conteúdo escondido se não estiver expandido */}
+        {this.state.isExpanded && (
+          <>
+            {this.renderLoadingOverlay()}
 
-        {this.state.isEditingDue && (
-          <DuePanel
-            due={this.props.due}
-            dueComplete={this.props.dueComplete}
-            onClose={this.closeDuePanel.bind(this)}
-            onChangeDue={this.onChangeDue.bind(this)}
-          />
+            {this.state.isEditingDue && (
+              <DuePanel
+                due={this.props.due}
+                dueComplete={this.props.dueComplete}
+                onClose={this.closeDuePanel.bind(this)}
+                onChangeDue={this.onChangeDue.bind(this)}
+              />
+            )}
+
+            {this.state.isEditingChecklist && (
+              <ChecklistPanel cardID={this.props.cardID} canMoveChecklistItem={this.props.moveChecklistItem} onClose={this.closeChecklistPanel}  />
+            )}
+
+            {this.state.isEditingLabel && (
+              <LabelPanel
+                cardID={this.props.cardID}
+                boardID={this.props.location.board.id}
+                cardLabels={this.props.labels}
+                onClose={this.closeLabelPanel}
+              />
+            )}
+
+            <div className={styles.options}>
+              <a data-tooltip="Etiquetas" target="#" onClick={this.openLabelPanel.bind(this)}>
+                <OptionIcon icon={faTags} $highlight={this.props.labels.length > 0} />
+              </a>
+              <a data-tooltip="Checklist" target="#" onClick={this.openChecklistPanel.bind(this)}>
+                <OptionIcon icon={faCheckSquare} $highlight={this.props.hasChecklist} />
+              </a>
+              <a data-tooltip="Especificar data de entrega" target="#" onClick={this.openDuePanel.bind(this)}>
+                <OptionIcon icon={faCalendarAlt} $highlight={!!this.props.due} />
+              </a>
+              <a data-tooltip="Remover Cartão" target="#" onClick={this.deleteCard.bind(this)}>
+                <OptionIcon icon={faTrashAlt} />
+              </a>
+              <a data-tooltip="Atualizar Cartão" target="#" onClick={this.refreshCard}>
+                <OptionIcon icon={faSyncAlt} />
+              </a>
+              <a data-tooltip="Abrir no Trello" target="_blank" rel="noreferrer" href={this.props.url}>
+                <OptionIcon icon={faExternalLinkAlt} />
+              </a>
+              <a data-tooltip="Esconder cartão" onClick={() => this.setState({ isExpanded: false })}>
+                <OptionIcon icon={faMinusSquare} />
+              </a>
+            </div>
+
+            {this.props.hasAnotherCard && <HasAnotherCardIndicator />}
+
+            <EditableParagraph
+              paragraphClass={styles.name}
+              value={this.props.name}
+              onChange={(value) => {
+                this.onChangeName(value);
+              }}
+            ></EditableParagraph>
+
+            {this.renderLabels()}
+
+            <div className={styles.location} data-testid="card-location">
+              em{' '}
+              <CardLocationSelector
+                type="board"
+                canChangeBoard={this.props.canChangeBoard}
+                showSelector={this.state.isHovering}
+                onChange={this.onChangeLocation.bind(this)}
+                selected={this.props.location.board}
+              ></CardLocationSelector>{' '}
+              /{' '}
+              <CardLocationSelector
+                type="list"
+                showSelector={this.state.isHovering}
+                onChange={this.onChangeLocation.bind(this)}
+                selected={this.props.location.list}
+                currentBoard={this.props.location.board}
+              ></CardLocationSelector>
+            </div>
+
+            <EditableParagraph
+              wrapperClass={classNames(styles['descr-wrapper'], {
+                [styles['hide']]: isDescriptionEmpty && !this.state.isEditingDescription,
+              })}
+              paragraphClass={styles.descr}
+              value={this.props.description}
+              onChangeState={(status) => {
+                this.setState({ isEditingDescription: status === 'edit' });
+              }}
+              onChange={(value) => {
+                this.onChangeDescription(value);
+              }}
+            ></EditableParagraph>
+          </>
         )}
 
-        {this.state.isEditingChecklist && (
-          <ChecklistPanel cardID={this.props.cardID} onClose={this.closeChecklistPanel} />
-        )}
-
-        {this.state.isEditingLabel && (
-          <LabelPanel
-            cardID={this.props.cardID}
-            boardID={this.props.location.board.id}
-            cardLabels={this.props.labels}
-            onClose={this.closeLabelPanel}
-          />
-        )}
-
-        <div className={styles.options}>
-          <a data-tooltip="Etiquetas" target="#" onClick={this.openLabelPanel.bind(this)}>
-            <OptionIcon icon={faTags} $highlight={this.props.labels.length > 0} />
-          </a>
-          <a data-tooltip="Checklist" target="#" onClick={this.openChecklistPanel.bind(this)}>
-            <OptionIcon icon={faCheckSquare} $highlight={this.props.hasChecklist} />
-          </a>
-          <a data-tooltip="Especificar data de entrega" target="#" onClick={this.openDuePanel.bind(this)}>
-            <OptionIcon icon={faCalendarAlt} $highlight={!!this.props.due} />
-          </a>
-          <a data-tooltip="Remover Cartão" target="#" onClick={this.deleteCard.bind(this)}>
-            <OptionIcon icon={faTrashAlt} />
-          </a>
-          <a data-tooltip="Atualizar Cartão" target="#" onClick={this.refreshCard}>
-            <OptionIcon icon={faSyncAlt} />
-          </a>
-          <a data-tooltip="Abrir no Trello" target="_blank" rel="noreferrer" href={this.props.url}>
-            <OptionIcon icon={faExternalLinkAlt} />
-          </a>
-        </div>
-
-        {this.props.hasAnotherCard && <HasAnotherCardIndicator />}
-
-        <EditableParagraph
-          paragraphClass={styles.name}
-          value={this.props.name}
-          onChange={(value) => {
-            this.onChangeName(value);
-          }}
-        ></EditableParagraph>
-
-        {this.renderLabels()}
-        
-        <div className={styles.location} data-testid="card-location">
-          em{' '}
-          <CardLocationSelector
-            type="board"
-            canChangeBoard={this.props.canChangeBoard}
-            showSelector={this.state.isHovering}
-            onChange={this.onChangeLocation.bind(this)}
-            selected={this.props.location.board}
-          ></CardLocationSelector>{' '}
-          /{' '}
-          <CardLocationSelector
-            type="list"
-            showSelector={this.state.isHovering}
-            onChange={this.onChangeLocation.bind(this)}
-            selected={this.props.location.list}
-            currentBoard={this.props.location.board}
-          ></CardLocationSelector>
-        </div>
-
-        <EditableParagraph
-          wrapperClass={classNames(styles['descr-wrapper'], {
-            [styles['hide']]: isDescriptionEmpty && !this.state.isEditingDescription,
-          })}
-          paragraphClass={styles.descr}
-          value={this.props.description}
-          onChangeState={(status) => {
-            this.setState({ isEditingDescription: status === 'edit' });
-          }}
-          onChange={(value) => {
-            this.onChangeDescription(value);
-          }}
-        ></EditableParagraph>
-
+        {/* Footer sempre visível */}
         <div className={styles.footer}>
-          <ul>
-            {this.renderProcessAnchor()}
-            {this.renderDue()}
+          <ul className={!this.state.isExpanded ? styles.processExpand : ''}>
+              {this.renderProcessAnchor()}
+              {!this.state.isExpanded && (
+                <a data-tooltip="Mostrar cartão"  onClick={() => this.setState({ isExpanded: true })}>
+                  <OptionIcon icon={faPlusSquare} $margin="5px" />
+                </a>
+              )}
+            {this.state.isExpanded && (
+              <li style={{}}>{this.renderDue()}</li>
+            )}
           </ul>
         </div>
       </div>
+
     );
   }
 }
