@@ -196,7 +196,8 @@ const Api = () => {
 
   const updateLabel = (labelID, labelData) => {
     if (labelData.color === 'null') labelData.color = null;
-    labels = labels.map((label) => (label.id === labelID ? { ...label, ...labelData } : label));
+    const cleanData = Object.fromEntries(Object.entries(labelData).filter(([key, value]) => value != null));
+    labels = labels.map((label) => (label.id === labelID ? { ...label, ...cleanData } : label));
     for (let card of cards) {
       card.labels = card.labels.map((label) => (label.id === labelID ? { ...label, ...labelData } : label));
     }
