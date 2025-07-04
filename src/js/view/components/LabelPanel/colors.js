@@ -10,45 +10,45 @@ export default {
   sky: ['#00c2e0', '#0098b7'],
   lime: ['#51e898', '#4bbf6b'],
   pink: ['#ff80ce', '#c9558f'],
-  black: ['#4D4D4D', '#4D4D4D'],
+  black: ['#4d4d4d', '#4d4d4d'],
   
   grayDark: ['#666666', '#666666'],
-  grayLight: ['#CCCCCC', '#CCCCCC'],
-  grayMedium: ['#B3B3B3', '#B3B3B3'],
+  grayLight: ['#cccccc', '#cccccc'],
+  grayMedium: ['#b3b3b3', '#b3b3b3'],
 
   redBright: ['#ed1800', '#ed1800'],
-  redSoft: ['#D33115', '#D33115'],
-  redDark: ['#9F0500', '#9F0500'],
+  redSoft: ['#d33115', '#d33115'],
+  redDark: ['#9f0500', '#9f0500'],
 
   orangeTransparent: ['#fe92008c', '#fe92008c'],
-  orangeLight: ['#E27300', '#E27300'],
-  orangeDark: ['#C45100', '#C45100'],
+  orangeLight: ['#e27300', '#e27300'],
+  orangeDark: ['#c45100', '#c45100'],
 
-  yellowBright: ['#FCDC00', '#FCDC00'],
-  yellowLight: ['#FCC400', '#FCC400'],
+  yellowBright: ['#fcdc00', '#fcdc00'],
+  yellowLight: ['#fcc400', '#fcc400'],
   yellowDark: ['#d3b005', '#d3b005'],
 
-  greenBright: ['#DBDF00', '#DBDF00'],
-  greenLight: ['#B0BC00', '#B0BC00'],
+  greenBright: ['#dbdf00', '#dbdf00'],
+  greenLight: ['#b0bc00', '#b0bc00'],
   greenDark: ['#808900', '#808900'],
 
-  greenAlt: ['#A4DD00', '#A4DD00'],
-  greenAltLight: ['#68BC00', '#68BC00'],
-  greenAltDark: ['#194D33', '#194D33'],
+  greenAlt: ['#a4dd00', '#a4dd00'],
+  greenAltLight: ['#68bc00', '#68bc00'],
+  greenAltDark: ['#194d33', '#194d33'],
 
-  blueSoft: ['#68CCCA', '#68CCCA'],
-  blueLight: ['#16A5A5', '#16A5A5'],
-  blueDark: ['#0C797D', '#0C797D'],
+  blueSoft: ['#68ccca', '#68ccca'],
+  blueLight: ['#16a5a5', '#16a5a5'],
+  blueDark: ['#0c797d', '#0c797d'],
 
-  blueAlt: ['#73D8FF', '#73D8FF'],
-  blueAltLight: ['#009CE0', '#009CE0'],
-  blueAltDark: ['#0062B1', '#0062B1'],
+  blueAlt: ['#73d8ff', '#73d8ff'],
+  blueAltLight: ['#009ce0', '#009ce0'],
+  blueAltDark: ['#0062b1', '#0062b1'],
 
   purpleAlt: ['#a299d9', '#a299d9'],
-  purpleLight: ['#7B64FF', '#7B64FF'],
+  purpleLight: ['#7b64ff', '#7b64ff'],
   purpleDark: ['#653294', '#653294'],
 
   pinkAlt: ['#fc7dff', '#fc7dff'],
-  pinkLight: ['#FA28FF', '#FA28FF'],
-  pinkDark: ['#AB149E', '#AB149E']
+  pinkLight: ['#fa28ff', '#fa28ff'],
+  pinkDark: ['#ab149e', '#ab149e']
 };

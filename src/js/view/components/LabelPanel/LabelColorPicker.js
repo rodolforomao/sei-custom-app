@@ -91,7 +91,7 @@ const LabelColorPicker = ({ color, onSelectColor }) => {
           <LabelColor
             key={name}
             colorName={name}
-            selected={color === colors[name][0]}
+            selected={color === name}
             onSelectColor={onSelectColor}
           />
         ))}
@@ -101,7 +101,7 @@ const LabelColorPicker = ({ color, onSelectColor }) => {
           <LabelColor
             key={name}
             colorName={name}
-            selected={color === colors[name][0]}
+            selected={color === name}
             onSelectColor={onSelectColor}
           />
         ))}
@@ -111,7 +111,7 @@ const LabelColorPicker = ({ color, onSelectColor }) => {
           <LabelColor
             key={name}
             colorName={name}
-            selected={color === colors[name][0]}
+            selected={color === name}
             onSelectColor={onSelectColor}
           />
         ))}
@@ -121,7 +121,7 @@ const LabelColorPicker = ({ color, onSelectColor }) => {
           <LabelColor
             key={name}
             colorName={name}
-            selected={color === colors[name][0]}
+            selected={color === name}
             onSelectColor={onSelectColor}
           />
         ))}
@@ -131,7 +131,7 @@ const LabelColorPicker = ({ color, onSelectColor }) => {
           <LabelColor
             key={name}
             colorName={name}
-            selected={color === colors[name][0]}
+            selected={color === name}
             onSelectColor={onSelectColor}
           />
         ))}
@@ -141,7 +141,7 @@ const LabelColorPicker = ({ color, onSelectColor }) => {
           <LabelColor
             key={name}
             colorName={name}
-            selected={color === colors[name][0]}
+            selected={color === name}
             onSelectColor={onSelectColor}
           />
         ))}

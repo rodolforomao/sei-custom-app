@@ -51,6 +51,8 @@ export const createChromeMock = () => ({
           defaultList: 'Lista 1',
           canMoveBoard: true,
           appendNumberOnTitle: true,
+          showCard: true,
+          moveChecklistItem: true,
           routes: getMockingRoutes(),
         })
       },

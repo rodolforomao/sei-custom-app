@@ -82,6 +82,7 @@ const Button = ({ onClick, icon, title, visible = true }) => (
           if (onClick) onClick();
         }}
         title={title}
+        data-panel-btn="close"
       >
         <IconButton icon={icon} />
       </AnchorButton>

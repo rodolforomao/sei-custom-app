@@ -176,7 +176,7 @@ test('create label', async () => {
   await expect(card).toClick('button', { text: 'Criar uma nova etiqueta' });
   await page.waitForTimeout(500);
 
-  await expect(card).toClick('a[data-testid="color-green"]');
+  await expect(card).toClick('a[data-testid="color-greenAlt"]');
   await expect(card).toFill('input', 'analisar');
 
   await expect(card).toClick('button', { text: 'Criar' });
@@ -184,7 +184,7 @@ test('create label', async () => {
 
   expect(await getBoardLabels(panel)).toEqual([
     { name: 'urgente', bgColor: LABEL_COLORS['red'][0], selected: false },
-    { name: 'analisar', bgColor: LABEL_COLORS['green'][0], selected: true },
+    { name: 'analisar', bgColor: LABEL_COLORS['greenAlt'][0], selected: true },
   ]);
 });
 
@@ -206,14 +206,14 @@ test('edit label', async () => {
   await btnEdit.click();
   await page.waitForTimeout(500);
 
-  await expect(card).toClick('a[data-testid="color-yellow"]');
+  await expect(card).toClick('a[data-testid="color-yellowLight"]');
   await expect(card).toFill('input', 'outra descrição');
 
   await expect(card).toClick('button', { text: 'Salvar' });
   await page.waitForTimeout(500);
 
   expect(await getBoardLabels(panel)).toEqual([
-    { name: 'outra descrição', bgColor: LABEL_COLORS['yellow'][0], selected: true },
+    { name: 'outra descrição', bgColor: LABEL_COLORS['yellowLight'][0], selected: true },
   ]);
 });
 

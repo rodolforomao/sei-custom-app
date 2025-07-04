@@ -58,6 +58,7 @@ test('render card', async () => {
     'Remover Cartão',
     'Atualizar Cartão',
     'Abrir no Trello',
+    'Esconder cartão'
   ]);
 
   /* checar se os botões estão invisíveis */
@@ -130,8 +131,10 @@ test('open and close panels', async () => {
     /* checar se painel abriu */
     await matchPanel(card, panel.title);
 
-    /* checar se painel fechou quando o mouse se moveu para fora do cartão */
-    await page.hover('div.trello-refresh-button');
+    /* checar se painel fechou quando clica no botão de fechar */
+    const anchor = await expect(card).toMatchElement(`a[data-panel-btn="close"]`);
+    await anchor.click();
+    await page.waitForTimeout(500);
     await expect(matchPanel(card, panel.title)).rejects.toThrow();
 
     /* abre novamente e clica no X para fechar */
