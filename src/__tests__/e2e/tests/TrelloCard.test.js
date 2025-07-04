@@ -81,6 +81,30 @@ test('render card', async () => {
   ).toBe('https://trello.com/c/card1');
 });
 
+test('minimize and maximize card', async () => {
+  const title = 'Cartão com descrição';
+  MockedTrelloApi.addCard({
+    name: title,
+    desc: 'SEI 00000.000001/2020-01\nEsta é a descrição do cartão.',
+  });
+  const processNumber = '00000.000001/2020-01';
+  await clickTrelloRefreshButton();
+  const card = await matchTrelloCard(processNumber);
+
+  let paragraph = (await card.$$('p'))[0];
+  await expect(await paragraph.evaluate((node) => node.textContent)).toBe(title);
+  /* clicar no botão para minimizar o painel */
+  await clickCardButton(card, 'Esconder cartão');
+  // Verifica se o painel escolheu
+  paragraph = (await card.$$('p'))[0];
+  await expect(await paragraph.evaluate((node) => node.textContent)).not.toBe(title);
+  /* clicar no botão para maximizar o painel */
+  await clickCardButton(card, 'Mostrar cartão');
+  // Verifica se o painel expandiu
+  paragraph = (await card.$$('p'))[0];
+  await expect(await paragraph.evaluate((node) => node.textContent)).toBe(title);
+});
+
 test('render card with process not visualized', async () => {
   MockedTrelloApi.addCard({
     name: 'Processo não visualizado',
