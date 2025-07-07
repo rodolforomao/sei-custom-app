@@ -333,7 +333,7 @@ class TrelloCard extends React.Component {
               <a data-tooltip="Atualizar Cartão" target="#" onClick={this.refreshCard}>
                 <OptionIcon icon={faSyncAlt} />
               </a>
-              <a data-tooltip="Abrir no Trello" target="_blank" rel="noreferrer" href={this.props.url}>
+              <a data-tooltip="Visualizar Cartão" target="_blank" rel="noreferrer" href={this.props.url}>
                 <OptionIcon icon={faExternalLinkAlt} />
               </a>
               <a data-tooltip="Esconder cartão" onClick={() => this.setState({ isExpanded: false })}>

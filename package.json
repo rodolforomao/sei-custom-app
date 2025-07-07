@@ -1,7 +1,7 @@
 {
   "name": "sei_trello",
   "version": "1.0.0",
-  "description": "Integração SEI e Trello",
+  "description": "Integração SEI e uma API externa",
   "main": "index.js",
   "browserslist": "defaults",
   "scripts": {

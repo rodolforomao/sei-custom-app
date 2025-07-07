@@ -7,7 +7,7 @@ import * as handler from 'model/handler.js';
 import * as alert from 'view/alert.js';
 import { getDefaultBoardAndListFromStorage } from './utils.js';
 
-const DEFAULT_SYNC_ERROR_MSG = `Erro ao sincronizar com o Trello. Verifique se as credenciais informadas nas <a href="#" class="btn-open-extension-option">opções</a> estão corretas e se o quadro e a lista padrão foram informados. Caso positivo, tente novamente mais tarde, pois os servidores podem estar fora do ar. Se o problema persistir, entre em contato com o suporte.`;
+const DEFAULT_SYNC_ERROR_MSG = `Erro durante a sincronização dos dados. Verifique se as credenciais informadas nas <a href="#" class="btn-open-extension-option">opções</a> estão corretas e se o quadro e a lista padrão foram informados. Caso positivo, tente novamente mais tarde, pois os servidores podem estar fora do ar. Se o problema persistir, entre em contato com o suporte.`;
 
 const doRefreshCards = async (processNumber) => {
   const { defaultBoard } = await getDefaultBoardAndList();

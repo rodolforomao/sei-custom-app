@@ -27,7 +27,7 @@ module.exports = merge(common, {
     }),
     new ZipPlugin({
       path: '../', // Output zip in the project root
-      filename: 'sei-trello-dist.zip'
+      filename: 'sei-plugin-dist.zip'
     }),
   ],
 });
