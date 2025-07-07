@@ -5,4 +5,6 @@ export const Panel = styled(FloatingPanel)`
   position: absolute;
   left: 0;
   top: 42px;
+  max-height: 700px;
+  overflow-y: auto;
 `;
