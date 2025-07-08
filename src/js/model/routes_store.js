@@ -72,6 +72,10 @@ export const getRoute = async (routeId) => {
                     console.error("Erro ao recuperar as rotas do armazenamento: ", chrome.runtime.lastError);
                     reject(chrome.runtime.lastError);
                 } else {
+                    if (!Array.isArray(items.routes) || items.routes.length === 0) {
+                        resolve(null);
+                        return;
+                    }
                     resolve(items.routes.find((route) => route.id === routeId));
                 }
             }

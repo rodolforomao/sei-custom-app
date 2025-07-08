@@ -21,17 +21,15 @@ const mapUI = () => {
   ui.authUrl = document.getElementById('authUrl');
   ui.tokenUrl = document.getElementById('tokenUrl');
   ui.anchorTokenUrl = document.getElementById('anchor-token-url');
-  // ui.lblTokenUrl = document.getElementById('lbl-token-url');
-  // ui.lblNoAppKeyInfo = document.getElementById('lbl-no-app-key-info');
   ui.defaultBoard = document.getElementById('txt-default-board');
   ui.defaultList = document.getElementById('txt-default-list');
-  // ui.btnSave = document.getElementsByClassName('btn-salvar-config');
   ui.btnTrelloRoutes = document.getElementById('btn-trello-routes');
   ui.btnClearRoutes = document.getElementById('btn-clear-routes');
   ui.btnAuthReq = document.getElementById('btn-auth-req');
   ui.btnUserData = document.getElementById('btn-user-data');
   ui.btnTrello = document.getElementById('btn-link-trello');
   ui.btnJwt = document.getElementById('btn-link-jwt');
+  ui.btnSima = document.getElementById('btn-link-sima');
   ui.formTrello = document.getElementById('form-trello');
   ui.formJwt = document.getElementById('form-jwt');
   ui.selectDesktop = document.getElementById("select-default-desktop");
@@ -52,6 +50,7 @@ const mapUI = () => {
   ui.btnAuthReq.addEventListener('click', openPopup);
   ui.btnTrello.addEventListener('click', openFormTrello);
   ui.btnJwt.addEventListener('click', openFormJWT);
+  ui.btnSima.addEventListener('click', loadSimaConfig);
 
   ui.selectDesktop.addEventListener("change", onChangeDesktop);
   ui.selectBoard.addEventListener("change", onChangeBoard);
@@ -113,12 +112,25 @@ const openFormJWT = () => {
   ui.authType.value = 'jwt';
 }
 
+const loadSimaConfig = async () => {
+  openFormJWT();
+  ui.authUrl.value = base_url.replace('-back', '').replace('5055', '5173') + '/menu/?param=pluginValidation&state=true';
+  ui.tokenUrl.value = base_url + '/auth/oauth/gettoken/';
+  await loadSimaRoutes();
+  loadRoutesForm();
+  toggleElementDisplay('form-routes', 'block');
+  toggleElementDisplay('btn-clear-routes', 'block');
+  toggleElementDisplay('btn-trello-routes', 'none');
+  toggleElementDisplay('btnSalvarConfig', 'block');
+  alert.success('Configuração do SIMA realizada com sucesso.');
+};
+
 const validationRoute = async () => {
   const routes = Object.values(routesId);
   const routeId = routes[0]?.id;
   const savedRoute = await getRoute(routeId);
 
-  if (savedRoute.url) {
+  if (savedRoute && savedRoute.url) {
     return true;
   }
   return false;
@@ -389,7 +401,7 @@ const loadDefaultRoutes = async (event) => {
 
     toggleElementDisplay('btnSalvarConfig', 'block');
 
-    alert.success('Rotas do carregadas com sucesso.');
+    alert.success('Rotas carregadas com sucesso.');
   } else {
     toggleElementDisplay('btn-clear-routes', 'none');
     toggleElementDisplay('btn-trello-routes', 'block');
@@ -428,8 +440,10 @@ const restore = () => {
       ui.checkMoveChecklistItem.checked = items.moveChecklistItem;
       if (ui.authType.value === 'jwt') {
         openFormJWT();
+        loadRoutesForm();
       } else if (ui.authType.value === 'trello') {
         openFormTrello();
+        loadRoutesForm();
       }
       updateTokenUrl();
     }
@@ -439,7 +453,6 @@ const restore = () => {
 document.addEventListener('DOMContentLoaded', () => {
   mapUI();
   restore();
-  loadRoutesForm();
 });
 
 const buttons = document.querySelectorAll('.nav-item button');
