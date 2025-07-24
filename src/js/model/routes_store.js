@@ -378,7 +378,7 @@ export const loadSimaRoutes = async () => {
         labels: [],
         due: "@{endDate}",
         dueComplete: "@{isIssueCompleted}",
-        shortUrl: "",
+        shortUrl: "@{shortUrl}",
         idChecklists: [],
         seiNumbers: "@{seiNumbers}"
     };
