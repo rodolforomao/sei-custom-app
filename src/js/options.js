@@ -6,7 +6,6 @@ import { reAuthenticateOAuth } from './actions/oauth_util.js';
 import { pluginActions, pluginContexts } from './constants.js';
 import axios from 'axios';
 import 'css/options.scss';
-import { get } from 'lodash';
 
 let ui = {};
 const base_url = process.env.API_BACKEND;
@@ -309,23 +308,30 @@ const updateTokenUrl = () => {
 };
 
 const save = async (e) => {
-  e.preventDefault();
-  const dataToSave = Object.assign({}, {
+  const filledData = {
     appKey: ui.appKey.value,
     appToken: ui.appToken.value,
     authType: ui.authType.value,
     authUrl: ui.authUrl.value.trim(),
     tokenUrl: ui.tokenUrl.value.trim(),
-    defaultBoard: ui.defaultBoard.value,
-    defaultList: ui.defaultList.value,
     defaultDesktop: parseFloat(ui.selectDesktop.value) || 0,
     saveTokenOnCookies: ui.checkCookies.checked,
     canMoveBoard: ui.checkMove.checked,
     appendNumberOnTitle: ui.checkCreateTitle.checked,
     showCard: ui.checkShowCard.checked,
     moveChecklistItem: ui.checkMoveChecklistItem.checked
-  });
+  };
+  // Salva o defaultBoard somente se estiver preenchido para evitar sobrescrever o que está salvo com vazio
+  if (ui.defaultBoard.value) {
+    filledData.defaultBoard = ui.defaultBoard.value;
+  }
+  // Salva o defaultList somente se estiver preenchido para evitar sobrescrever o que está salvo com vazio
+  if (ui.defaultList.value) {
+    filledData.defaultList = ui.defaultList.value;
+  }
 
+  e.preventDefault();
+  const dataToSave = Object.assign({}, filledData);
 
   await clearRoutes();
   const newRoutes = [];

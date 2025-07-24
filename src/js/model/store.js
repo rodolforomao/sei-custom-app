@@ -148,7 +148,6 @@ export const setShowCard = (isExpanded, triggerEvent = false) => {
 };
 
 export const setMoveChecklistItem = (moveChecklistItem, triggerEvent = false) => {
-  console.log("Changing moveChecklistItem to", moveChecklistItem);
   if (data.moveChecklistItem !== moveChecklistItem) {
     data.moveChecklistItem = moveChecklistItem;
     if (triggerEvent) triggerEvent('onDataChanged');
