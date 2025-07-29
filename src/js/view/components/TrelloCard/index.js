@@ -327,9 +327,9 @@ class TrelloCard extends React.Component {
               <a data-tooltip="Especificar data de entrega" target="#" onClick={this.openDuePanel.bind(this)}>
                 <OptionIcon icon={faCalendarAlt} $highlight={!!this.props.due} />
               </a>
-              <a data-tooltip="Remover Cartão" target="#" onClick={this.deleteCard.bind(this)}>
+              {/*<a data-tooltip="Remover Cartão" target="#" onClick={this.deleteCard.bind(this)}>
                 <OptionIcon icon={faTrashAlt} />
-              </a>
+              </a*/}
               <a data-tooltip="Atualizar Cartão" target="#" onClick={this.refreshCard}>
                 <OptionIcon icon={faSyncAlt} />
               </a>
