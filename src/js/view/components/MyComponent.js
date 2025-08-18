@@ -1,25 +1,32 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 function MyComponent() {
-  const elementRef = useRef(null);
+  // ID único para o botão
+  const buttonId = 'my-component-button';
 
   useEffect(() => {
-    const element = elementRef.current;
-    if (element) {
-      const handleClick = () => {
-        console.log('Botão clicado dentro do MyComponent');
-        // Aqui você coloca qualquer ação que o botão deve fazer
-      };
+    // Função que será chamada quando o botão for clicado
+    const handleClick = (e) => {
+      const target = e.target.closest(`#${buttonId}`);
+      if (target) {
+        console.log('Botão clicado via delegação global');
+        // Aqui você pode colocar qualquer ação do botão
+      }
+    };
 
-      element.addEventListener('click', handleClick);
+    // Delegando o clique no document
+    document.addEventListener('click', handleClick);
 
-      return () => {
-        element.removeEventListener('click', handleClick);
-      };
-    }
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
   }, []);
 
-  return <button ref={elementRef} type="button">Botão Fora</button>;
+  return (
+    <button id={buttonId} type="button">
+      Botão Fora
+    </button>
+  );
 }
 
 export default MyComponent;
