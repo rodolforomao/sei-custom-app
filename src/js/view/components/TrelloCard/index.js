@@ -37,16 +37,31 @@ class TrelloCard extends React.Component {
     this.refreshCard = this.refreshCard.bind(this);
     this.closeChecklistPanel = this.closeChecklistPanel.bind(this);
     this.closeLabelPanel = this.closeLabelPanel.bind(this);
+    this.handleDocumentClick = this.handleDocumentClick.bind(this);
   }
 
-   componentDidMount() {
+
+  componentDidMount() {
     window.addEventListener('expandAllCards', this.expandCard);
     window.addEventListener('collapseAllCards', this.collapseCard);
+    // Event delegation for expand action
+    document.addEventListener('click', this.handleDocumentClick, true);
   }
 
   componentWillUnmount() {
     window.removeEventListener('expandAllCards', this.expandCard);
     window.removeEventListener('collapseAllCards', this.collapseCard);
+    document.removeEventListener('click', this.handleDocumentClick, true);
+  }
+
+  handleDocumentClick(e) {
+    // Look for expand button by data attribute
+    const expandBtn = e.target.closest('[data-trellocard-expand]');
+    if (expandBtn && expandBtn.getAttribute('data-trellocard-id') === String(this.props.cardID)) {
+      this.setState({ isExpanded: true });
+      e.preventDefault();
+      e.stopPropagation();
+    }
   }
 
   expandCard = () => {
@@ -393,7 +408,12 @@ class TrelloCard extends React.Component {
           <ul className={!this.state.isExpanded ? styles.processExpand : ''}>
               {this.renderProcessAnchor()}
               {!this.state.isExpanded && (
-                <a data-tooltip="Mostrar cartão"  onClick={() => this.setState({ isExpanded: true })}>
+                <a
+                  data-tooltip="Mostrar cartão"
+                  data-trellocard-expand
+                  data-trellocard-id={this.props.cardID}
+                  // onClick removed for delegation
+                >
                   <OptionIcon icon={faPlusSquare} $margin="5px" />
                 </a>
               )}
