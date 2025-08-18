@@ -16,6 +16,7 @@ import { OptionIcon, FooterIcon, HasAnotherCardIndicator } from './styles.js';
 
 import { faCalendarAlt, faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { faSyncAlt, faExternalLinkAlt, faCheckSquare, faAlignLeft, faTags, faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import MyComponent from '../MyComponent.js';
 
 class TrelloCard extends React.Component {
   constructor(props) {
@@ -420,6 +421,7 @@ class TrelloCard extends React.Component {
             {this.state.isExpanded && (
               <li style={{}}>{this.renderDue()}</li>
             )}
+          <MyComponent />
           </ul>
         </div>
       </div>

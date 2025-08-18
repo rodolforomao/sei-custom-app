@@ -15,3 +15,15 @@ document.addEventListener('click', (el) => {
     });
   }
 });*/
+
+window.addEventListener("error", (e) => {
+  console.warn("[Minha extensão] Erro capturado (ignorado):", e.message);
+  return true; // evita propagação que poderia quebrar
+});
+
+window.addEventListener("unhandledrejection", (e) => {
+  console.warn("[Minha extensão] Promise rejeitada sem tratamento:", e.reason);
+});
+
+// Seu código normal vem depois...
+console.log("[Minha extensão] common.js carregado com segurança!");
