@@ -1,32 +1,64 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-function MyComponent() {
-  // ID único para o botão
-  const buttonId = 'my-component-button';
+function MyComponent({ state, setState, cardId }) {
+  const elementRef = useRef(null);
 
   useEffect(() => {
-    // Função que será chamada quando o botão for clicado
-    const handleClick = (e) => {
-      const target = e.target.closest(`#${buttonId}`);
-      if (target) {
-        console.log('Botão clicado via delegação global');
-        // Aqui você pode colocar qualquer ação do botão
-      }
-    };
+    const element = elementRef.current;
+    if (element) {
+      const handleClick = (e) => {
+        const elementHolder = element.parentElement.parentElement.parentElement;
+        console.log('Current element: ' + element);
+        //setState({ isExpanded: !state });
+        console.log('Element holder: ' + elementHolder);
+        // console.log('Data testid: ' + elementHolder.getAttribute('data-testid'));
+        // console.log('[BEF] Parent element class list: ' + elementHolder.classList);
+        // elementHolder.classList.add('expanded-card');
+        // console.log('[AFT] Parent element class list: ' + elementHolder.classList);
 
-    // Delegando o clique no document
-    document.addEventListener('click', handleClick);
+        setState({ isExpanded: !state });
+        console.log('FIM');
+      };
 
-    return () => {
-      document.removeEventListener('click', handleClick);
-    };
+      // Add event listener directly to the DOM element
+      element.addEventListener('click', handleClick);
+
+      // Cleanup
+      return () => {
+        element.removeEventListener('click', handleClick);
+      };
+    }
   }, []);
 
-  return (
-    <button id={buttonId} type="button">
-      Botão Fora
-    </button>
-  );
+  return <div ref={elementRef}>Click me</div>;
 }
+
+// function MyComponent({ state, setState, cardId }) {
+//   // ID único para o botão
+//   const elementRef = useRef(null);
+
+//   useEffect(() => {
+//     // Função que será chamada quando o botão for clicado
+//     const element = elementRef.current;
+//     if (element) {
+//       const handleClick = (e) => {
+//         console.log('Clicou no botão');
+//       };
+//     }
+
+//     // Delegando o clique no document
+//     element.addEventListener('click', handleClick);
+
+//     return () => {
+//       element.removeEventListener('click', handleClick);
+//     };
+//   }, []);
+
+//   return (
+//     <button id={cardId} type="button">
+//       Botão Fora
+//     </button>
+//   );
+// }
 
 export default MyComponent;

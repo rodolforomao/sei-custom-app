@@ -421,7 +421,7 @@ class TrelloCard extends React.Component {
             {this.state.isExpanded && (
               <li style={{}}>{this.renderDue()}</li>
             )}
-          <MyComponent />
+            <MyComponent state={this.state.isExpanded} setState={this.setState.bind(this)} cardId={this.props.cardID} />
           </ul>
         </div>
       </div>
