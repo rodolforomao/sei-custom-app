@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-function MyComponent({ state, setState, cardId }) {
+function MyComponent() {
   const elementRef = useRef(null);
 
   useEffect(() => {
@@ -9,15 +9,14 @@ function MyComponent({ state, setState, cardId }) {
       const handleClick = (e) => {
         const elementHolder = element.parentElement.parentElement.parentElement;
         console.log('Current element: ' + element);
-        //setState({ isExpanded: !state });
         console.log('Element holder: ' + elementHolder);
         // console.log('Data testid: ' + elementHolder.getAttribute('data-testid'));
         // console.log('[BEF] Parent element class list: ' + elementHolder.classList);
         // elementHolder.classList.add('expanded-card');
         // console.log('[AFT] Parent element class list: ' + elementHolder.classList);
 
-        setState({ isExpanded: !state });
-        console.log('FIM');
+        //setState({ isExpanded: !state });
+        //console.log('FIM');
       };
 
       // Add event listener directly to the DOM element
