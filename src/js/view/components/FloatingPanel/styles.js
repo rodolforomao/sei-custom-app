@@ -15,7 +15,7 @@ export const Panel = styled.div`
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   min-width: 300px;
-  min-height: 50px;
+  min-height: 350px;
   z-index: 1001;
 
   span,

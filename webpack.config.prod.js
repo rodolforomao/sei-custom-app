@@ -23,7 +23,7 @@ module.exports = merge(common, {
       'process.env.NODE_ENV': JSON.stringify('production'),
       'process.env.MOCKED_API': JSON.stringify('false'),
       'process.env.API_BACKEND': JSON.stringify('https://servicos.dnit.gov.br/sima-back'),
-      'process.env.EXTENSION_ID': JSON.stringify('idgpfcigpineakeljpkhfbeilhagjgfa')
+      'process.env.EXTENSION_ID': JSON.stringify('lngoblhmdocedmdehgeihejpjkghloam')
     }),
     new ZipPlugin({
       path: '../', // Output zip in the project root
@@ -31,3 +31,5 @@ module.exports = merge(common, {
     }),
   ],
 });
+
+//ogfjocmfhhmgkkfacbldnnejelmadiae
