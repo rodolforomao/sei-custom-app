@@ -47,7 +47,7 @@ const renderInShadow = (placeholder, jsx) => {
 
   // Aplica CSS raw (SCSS convertido)
   if (sheet) {
-    shadowRoot.adoptedStyleSheets = [sheet];
+    shadowRoot.adoptedStyleSheets = [...shadowRoot.adoptedStyleSheets, sheet];
   } else {
     let styleTag = shadowRoot.querySelector('style#shadow-styles');
     if (!styleTag) {
@@ -237,6 +237,23 @@ export const render = () => {
   updateCurrentData(data, processBoxes);
 };
 
+// Observa o DOM para reinjetar caso sumam os elementos
+const observeDOM = () => {
+  let timeout = null;
+
+  const throttledRender = () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => render(), 300);
+  };
+
+  const observer = new MutationObserver(throttledRender);
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+};
+
 // Inicializa
 render();
-
+observeDOM();
