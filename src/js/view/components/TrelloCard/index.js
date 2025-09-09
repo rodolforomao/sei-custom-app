@@ -39,7 +39,7 @@ class TrelloCard extends React.Component {
     this.closeLabelPanel = this.closeLabelPanel.bind(this);
   }
 
-   componentDidMount() {
+  componentDidMount() {
     window.addEventListener('expandAllCards', this.expandCard);
     window.addEventListener('collapseAllCards', this.collapseCard);
   }
@@ -126,19 +126,19 @@ class TrelloCard extends React.Component {
     this.setState({ isHovering: true });
   }
 
- 
+
 
   onMouseLeave(e) {
-  if (e.buttons > 0) return;
-  
-  if (this.state.isEditingDue || this.state.isEditingChecklist || this.state.isEditingLabel) return;
+    if (e.buttons > 0) return;
 
-  this.setState({
-    isHovering: false,
-    isEditingDue: false,
-    isEditingChecklist: false,
-  });
-}
+    if (this.state.isEditingDue || this.state.isEditingChecklist || this.state.isEditingLabel) return;
+
+    this.setState({
+      isHovering: false,
+      isEditingDue: false,
+      isEditingChecklist: false,
+    });
+  }
 
   openDuePanel(e) {
     this.setState({
@@ -238,41 +238,41 @@ class TrelloCard extends React.Component {
   }
 
   renderProcessAnchor() {
-  // Se originalAnchor existir, renderiza normalmente
-  if (this.props.originalAnchor) {
-    const relevantClasses = this.props.originalAnchor
-      .getAttribute('class')
-      .split(' ')
-      .filter((className) => className.startsWith('processo'));
+    // Se originalAnchor existir, renderiza normalmente
+    if (this.props.originalAnchor) {
+      const relevantClasses = this.props.originalAnchor
+        .getAttribute('class')
+        .split(' ')
+        .filter((className) => className.startsWith('processo'));
 
-    return (
-      <li className={styles.iconExpand}>
-        <FooterIcon icon={faAlignLeft} />
-        <a
-          className={classNames(relevantClasses)}
-          onMouseOver={this.showTooltip.bind(this)}
-          onMouseOut={this.hideTooltip.bind(this)}
-          href={this.props.originalAnchor.getAttribute('href')}
-        >
-          {this.props.originalAnchor.textContent.trim()}
-        </a>
-        {this.renderProcessTooltip()}
-      </li>
-    );
+      return (
+        <li className={styles.iconExpand}>
+          <FooterIcon icon={faAlignLeft} />
+          <a
+            className={classNames(relevantClasses)}
+            onMouseOver={this.showTooltip.bind(this)}
+            onMouseOut={this.hideTooltip.bind(this)}
+            href={this.props.originalAnchor.getAttribute('href')}
+          >
+            {this.props.originalAnchor.textContent.trim()}
+          </a>
+          {this.renderProcessTooltip()}
+        </li>
+      );
+    }
+
+    // Se originalAnchor for null, mas tiver processNumber
+    if (!this.props.originalAnchor && this.props.processNumber) {
+      return (
+        <li className={styles.iconExpand}>
+          <FooterIcon icon={faAlignLeft} />
+          <span className={styles.processoNumber}>{this.props.processNumber}</span>
+        </li>
+      );
+    }
+
+    return null;
   }
-
-  // Se originalAnchor for null, mas tiver processNumber
-  if (!this.props.originalAnchor && this.props.processNumber) {
-    return (
-      <li className={styles.iconExpand}>
-        <FooterIcon icon={faAlignLeft} />
-         <span className={styles.processoNumber}>{this.props.processNumber}</span>
-      </li>
-    );
-  }
-
-  return null;
-}
 
   render() {
     const isDescriptionEmpty = !(typeof this.props.description === 'string' && this.props.description.length > 0);
@@ -305,7 +305,7 @@ class TrelloCard extends React.Component {
             )}
 
             {this.state.isEditingChecklist && (
-              <ChecklistPanel cardID={this.props.cardID} canMoveChecklistItem={this.props.moveChecklistItem} onClose={this.closeChecklistPanel}  />
+              <ChecklistPanel cardID={this.props.cardID} canMoveChecklistItem={this.props.moveChecklistItem} onClose={this.closeChecklistPanel} />
             )}
 
             {this.state.isEditingLabel && (
@@ -391,12 +391,12 @@ class TrelloCard extends React.Component {
         {/* Footer sempre visível */}
         <div className={styles.footer}>
           <ul className={!this.state.isExpanded ? styles.processExpand : ''}>
-              {this.renderProcessAnchor()}
-              {!this.state.isExpanded && (
-                <a data-tooltip="Mostrar cartão"  onClick={() => this.setState({ isExpanded: true })}>
-                  <OptionIcon icon={faPlusSquare} $margin="5px" />
-                </a>
-              )}
+            {this.renderProcessAnchor()}
+            {!this.state.isExpanded && (
+              <a data-tooltip="Mostrar cartão" onClick={() => this.setState({ isExpanded: true })}>
+                <OptionIcon icon={faPlusSquare} $margin="5px" />
+              </a>
+            )}
             {this.state.isExpanded && (
               <li style={{}}>{this.renderDue()}</li>
             )}
