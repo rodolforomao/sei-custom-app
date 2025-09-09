@@ -758,3 +758,24 @@ Ao inserir a URL para recuperar o Token JWT os seguintes parâmetros serão auto
 - `code_verifier` com a string aleatória (criada pelo plugin) usada para gerar o code_challenge na etapa de autenticação
 
 Importante: Após recuperar o Token JWT ele será armazenado para uso posterior na requisições feitas ao backend. O Token será enviado por meio de cookie caso a opção "Usar autenticação por Cookies" esteja selecionada, caso contrário o Token será enviado no header da requisição no formato "Authorization: Bearer <token>".
+
+## Procedimentos para publicar nova versão do plugin
+
+1. Fazer o merge da branch que contém as alterações com a branch master
+2. Abrir o arquivo manifest.json e atualizar:
+    1. version para a nova versão que é usada como controle da Chrome Web Store
+    2. version_name para o versão que será visível para o usuário
+3. Compilar o código usando `npm run webpack:prod`
+4. Abrir o repositório no GitHub [SEI-Custom-App](https://github.com/rodolforomao/sei-custom-app/tags) e no menu lateral da direita, clicar no link "Releases"
+5. Na página que abre clicar no botão "Draft a new release"
+6. Configure a nova release da seguinte maneira:
+    1. Clique na opção "Tag" digite o número da nova versão (nova tag) e clique em "Create new tag"
+        - Atenção: Não é obrigatório mas é boa prática manter o número desta tag igual à versão da exensão que está no arquivo `manifest.json`.
+    2. Target: Selecione a branch "master"
+    3. Release title: Dê um título para a nova versão
+    4. Release notes:
+        1. Previous tag: Selecione a tag anterior
+        2. Escreva uma descrição do que tem de novo nessa versão (bugs corrigidos, novas funcionalidades e etc)
+    5. Anexe o arquivo zip com o novo código do Plugin
+    6. Revisar o conteúdo e clicar no botão "Publish release"
+7. Fazer o upload do arquivo dist/sei-trello-dist.zip para a [Chrome Web Store](https://chrome.google.com/u/1/webstore/devconsole/)
