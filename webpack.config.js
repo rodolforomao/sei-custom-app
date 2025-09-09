@@ -82,6 +82,11 @@ module.exports = {
         include: /node_modules/,
         use: ['style-loader', 'css-loader']
       },
+      {
+        test: /\.css$/i,
+        resourceQuery: /raw/, // só pega imports com ?raw
+        use: 'raw-loader'
+      },
 
       // JS
       {
