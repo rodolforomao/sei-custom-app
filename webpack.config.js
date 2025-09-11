@@ -1,10 +1,8 @@
-const webpack = require('webpack');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-/* este diretório é onde será gerada automaticamente toda estrutura da extensão */
 const outputPath = path.resolve(__dirname, 'dist/expanded');
 
 module.exports = {
@@ -12,29 +10,22 @@ module.exports = {
     process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'production'
       ? process.env.NODE_ENV
       : process.env.NODE_ENV === 'test'
-      ? 'none'
-      : 'development',
+        ? 'none'
+        : 'development',
 
   entry: {
-    /* entry points da app */
     process_list: './src/js/entries/process_list',
     process_content: './src/js/entries/process_content',
-
-    /* outros scripts */
     common: './src/js/common.js',
     service_worker: './src/js/service_worker.js',
     options: './src/js/options.js',
   },
+
   output: {
     path: outputPath,
-    filename: ({ chunk }) => {
-      if (['options'].includes(chunk.name)) {
-        return 'html/[name].js';
-      } else {
-        return 'js/[name].js';
-      }
-    },
+    filename: ({ chunk }) => (['options'].includes(chunk.name) ? 'html/[name].js' : 'js/[name].js'),
   },
+
   resolve: {
     alias: {
       model: path.resolve(__dirname, 'src/js/model'),
@@ -47,98 +38,77 @@ module.exports = {
       css: path.resolve(__dirname, 'src/css'),
     },
   },
+
   module: {
     rules: [
-      /* estilos neste path serão exportados para um .css */
+      // SCSS
       {
         test: /\.scss$/,
-        include: [path.resolve(__dirname, 'src/css')],
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
+        oneOf: [
+          // 1 SCSS raw para Shadow DOM
           {
-            loader: 'sass-loader',
-            options: {
-              api: 'modern',
-              sassOptions: {},
-            }
-          }
-        ],
-      },
-
-      /* estilos dos componentes não serão exportados para arquivo */
-      {
-        test: /\.scss$/,
-        include: [path.resolve(__dirname, 'src/js')],
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
+            resourceQuery: /raw/,
+            use: ['raw-loader', 'sass-loader']
           },
-          'postcss-loader',
+
+          // 2️ CSS global
           {
-            loader: 'sass-loader',
-            options: {
-              api: 'modern',
-              sassOptions: {},
-            }
+            include: [path.resolve(__dirname, 'src/css')],
+            use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
           },
-        ],
-      },
 
-      /* estilos dos componentes importados do node_modules */
-      {
-        test: /\.(scss|css)$/,
-        include: [path.resolve(__dirname, 'node_modules')],
-        use: [
-          'style-loader',
-          'css-loader?importLoaders=1',
+          // 3 CSS Modules para componentes
           {
-            loader: 'sass-loader',
-            options: {
-              api: 'modern',
-              sassOptions: {},
-            }
+            include: [path.resolve(__dirname, 'src/js')],
+            use: [
+              'style-loader',
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  importLoaders: 1
+                }
+              },
+              'postcss-loader',
+              'sass-loader'
+            ]
           }
-        ],
+        ]
       },
 
-      /* transforma os js */
+      // CSS puro de node_modules
+      {
+        test: /\.css$/,
+        include: /node_modules/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.css$/i,
+        resourceQuery: /raw/, // só pega imports com ?raw
+        use: 'raw-loader'
+      },
+
+      // JS
       {
         test: /\.js$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: 'babel-loader',
-        },
+        exclude: /node_modules/,
+        use: 'babel-loader'
       },
 
-      /* carrega as imagens em DataURL*/
+      // Imagens
       {
         test: /\.(png|jpg|gif|svg)$/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: { limit: 8192, fallback: 'file-loader' },
-          },
-        ],
-      },
-    ],
+        type: 'asset',
+        parser: { dataUrlCondition: { maxSize: 8192 } }
+      }
+    ]
   },
+
   devtool: 'cheap-module-source-map',
+
   plugins: [
     new MiniCssExtractPlugin({
-      filename: ({ chunk }) => {
-        if (['options'].includes(chunk.name)) {
-          return 'html/[name].css';
-        } else {
-          return 'css/[name].css';
-        }
-      },
+      filename: ({ chunk }) => (['options'].includes(chunk.name) ? 'html/[name].css' : 'css/[name].css'),
     }),
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
