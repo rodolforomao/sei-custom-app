@@ -6,8 +6,12 @@ export const searchCards = (processNumber) => {
   return doRequestAPI(routesId.searchCards.id, new DataTransfer().setCardDesc(processNumber));
 };
 
-export const searchBoardCards = (trelloBoard) => {
-  return doRequestAPI(routesId.searchBoardCards.id, new DataTransfer().setBoardId(trelloBoard.id));
+export const searchBoardCards = (trelloBoard, processNumber) => {
+  const data = new DataTransfer()
+    .setBoardId(trelloBoard.id)
+    .setProcessNumber(processNumber || '');
+
+  return doRequestAPI(routesId.searchBoardCards.id, data);
 };
 
 export const getCardData = (cardID) => {

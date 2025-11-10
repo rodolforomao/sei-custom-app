@@ -61,6 +61,11 @@ class DataTransfer {
         return this;
     }
 
+    setProcessNumber(processNumber) {
+        this.data.processNumber = processNumber;
+        return this;
+    }
+
     setListId(id) {//
         this.getList().id = id;
         return this;
@@ -125,7 +130,7 @@ class DataTransfer {
         this.getCard().desc = desc;
         return this;
     }
-    
+
     setCardProcessNumber(processNumber) {
         this.getCard().processNumber = processNumber;
         return this;
@@ -170,7 +175,7 @@ class DataTransfer {
         this.getCardChecklistItem().id = name;
         return this;
     }
-    
+
     setCardChecklistItemName(name) {
         this.getCardChecklistItem().name = name;
         return this;
