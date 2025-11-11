@@ -6,29 +6,37 @@ import * as controller from 'controller/trello.js';
 import 'css/process_content.scss';
 
 (() => {
-  if (window._PLUGINSEI_EXT_INITIALIZED) return;
-  window._PLUGINSEI_EXT_INITIALIZED = true;
+  // Validação conflito SEI PRO
+  const globalScope = window.top || window;
 
-  const CACHE_KEY = 'PLUGIN_SEI_REQUEST_TIME';
-  const MIN_INTERVAL_MS = 5000; 
+  // Se já rodou nesta aba, não executa de novo
+  if (globalScope._PLUGINSEI_EXT_ALREADY_LOADED) {
+    console.log('[PLUGIN SEI] já inicializado nesta aba.');
+    return;
+  }
+  globalScope._PLUGINSEI_EXT_ALREADY_LOADED = true;
 
-  const getLastRequestTime = () => parseInt(localStorage.getItem(CACHE_KEY) || '0', 10);
-  const setLastRequestTime = (time) => localStorage.setItem(CACHE_KEY, time.toString());
+  // Gera um ID novo a cada reload
+  const pageId = crypto.randomUUID();
+  globalScope._PLUGINSEI_PAGE_ID = pageId;
+  console.log('[PLUGIN SEI] Page ID:', pageId);
 
   const initTrello = () => {
     dom.prepare();
 
     const box = document.querySelector('[data-trello-process-box]');
-    if (!box) return;
+    if (!box) {
+      console.log('[PLUGIN SEI] Nenhum box encontrado.');
+      return;
+    }
 
     const processNumber = box.getAttribute('data-trello-process-number');
-    if (!processNumber) return;
+    if (!processNumber) {
+      console.log('[PLUGIN SEI] Nenhum número de processo encontrado.');
+      return;
+    }
 
-    const now = Date.now();
-    const last = getLastRequestTime();
-    if (now - last < MIN_INTERVAL_MS) return;
-
-    setLastRequestTime(now);
+    console.log('[PLUGIN SEI] Chamando controller.load para', processNumber);
     controller.load({ processNumber });
   };
 
