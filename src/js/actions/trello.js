@@ -12,11 +12,19 @@ const DEFAULT_SYNC_ERROR_MSG = `Erro durante a sincronização dos dados. Verifi
 const doRefreshCards = async (processNumber) => {
   const { defaultBoard } = await getDefaultBoardAndList();
 
+  const recuperatorProcess = Array.isArray(processNumber)
+    ? processNumber[0]
+    : processNumber;
+
+  const processNumbers = recuperatorProcess.processNumbers ?? processNumber;
+
   /* Primeiro, busca todos os cartões do quadro padrão. */
-  const { data: boardLists } = await api.searchBoardCards(defaultBoard, processNumber);
+  const { data: boardLists } = await api.searchBoardCards(defaultBoard, processNumbers);
   const foundCards = handler.getCardsFromBoard(boardLists, defaultBoard);
   
   /* Depois, busca todos os cartões de todos os quadros pelo método search (que tem delay/cache) */
+  processNumber = recuperatorProcess.processAlls ? null : processNumber;
+
   const {
     data: { cards: searchedCards },
   } = await api.searchCards(processNumber);

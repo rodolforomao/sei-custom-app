@@ -344,7 +344,7 @@ export const loadSimaRoutes = async () => {
             seiNumbers: ["@{this.issues.processes.descrNumberDocument}"]
         }]
     }];
-    routes.push({id: routesId.searchBoardCards.id, url: base_url + "/api/project/return/issues/", body: `{"cardsWithProcess":true, "filterDesktops": true}`, verb: "GET", response: JSON.stringify(response)});
+    routes.push({id: routesId.searchBoardCards.id, url: base_url + "/api/project/return/issues/", body: `{"cardsWithProcess":true, "filterDesktops": true, "processNumber": []}`, verb: "POST", response: JSON.stringify(response)});
     // 8
     response = {
         id: "@{id}",

@@ -50,10 +50,13 @@ const addTrelloCommandButtons = () => {
 
 const addTrelloBoxes = () => {
   const anchors = findAllProcessAnchors();
+  const processNumbers = [];
   anchors.forEach((anchor) => {
     const tableRow = anchor.parentNode.parentNode;
     const tds = tableRow.querySelectorAll('td');
     const processNumber = anchor.textContent.trim();
+
+    processNumbers.push(processNumber)
 
     /* transform the row in a process-box */
     tableRow.setAttribute('data-trello-process-box', '');
@@ -75,10 +78,16 @@ const addTrelloBoxes = () => {
     /* get more data from row */
     const extraData = extractRelevantDataFromRow(tableRow);
     for (let key in extraData) tableRow.setAttribute('data-trello-' + key, extraData[key]);
+
   });
+
+   return processNumbers;
 };
 
 export const prepare = () => {
   addTrelloCommandButtons();
   addTrelloBoxes();
+  const processNumbers = addTrelloBoxes();
+
+  return processNumbers;
 };

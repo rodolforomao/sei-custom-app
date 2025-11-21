@@ -19,7 +19,6 @@ import 'css/process_content.scss';
   // Gera um ID novo a cada reload
   const pageId = crypto.randomUUID();
   globalScope._PLUGINSEI_PAGE_ID = pageId;
-  console.log('[PLUGIN SEI] Page ID:', pageId);
 
   const initTrello = () => {
     dom.prepare();
@@ -36,7 +35,6 @@ import 'css/process_content.scss';
       return;
     }
 
-    console.log('[PLUGIN SEI] Chamando controller.load para', processNumber);
     controller.load({ processNumber });
   };
 

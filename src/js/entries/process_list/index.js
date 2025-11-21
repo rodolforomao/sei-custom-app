@@ -6,6 +6,13 @@ import * as controller from 'controller/trello.js';
 
 import 'css/process_list.scss';
 
-dom.prepare();
+const processNumbers = dom.prepare();
 
-controller.load();
+controller.load({
+  processNumber: [
+    {
+      processNumbers: processNumbers, 
+      processAlls: true              
+    }
+  ]
+});

@@ -45,24 +45,24 @@ if (process.env.NODE_ENV === 'test' || process.env.MOCKED_API === 'true') {
  */
 export const doRequestAPI = async (routeId, dataTransfer) => {
   const route = await getRoute(routeId);
-  // Monta a URL e o objeto de requisição já trocando os placeholders pelos valores corretos
-   const urlBase = route.url;
-  let url = dataTransfer.transformString(urlBase);
 
-  if (dataTransfer.data?.processNumber) {
-    const separator = url.includes("?") ? "&" : "?";
-    url += `${separator}processNumber=${encodeURIComponent(dataTransfer.data.processNumber)}`;
+  // Monta a URL e o objeto de requisição já trocando os placeholders pelos valores corretos
+  const urlBase = route.url;
+  const url = dataTransfer.transformString(urlBase);
+
+  // Monta o objeto que será enviado no body
+  const obj = JSON.parse(dataTransfer.transformString(route.body));
+
+  // Se houver dados adicionais em dataTransfer.data, mescla com o body
+    if (dataTransfer.data?.processNumber) {
+    obj.processNumber = dataTransfer.data.processNumber;
   }
 
   if (process.env.NODE_ENV === "development") {
     console.log("[INICIO] Rota %o - %o", routeId, url);
+    console.log("Body enviado:", obj);
   }
 
-  const obj = JSON.parse(dataTransfer.transformString(route.body));
-
-   console.log(obj);
-
-  // Monta as outras variáveis que serão usadas na requisição
   const verb = route.verb.toLowerCase();
   let headers = {};
   let originalResponse;
