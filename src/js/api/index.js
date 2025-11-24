@@ -52,9 +52,11 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
 
   // Monta o objeto que será enviado no body
   const obj = JSON.parse(dataTransfer.transformString(route.body));
+  const verb = route.verb.toLowerCase();
+
 
   // Se houver dados adicionais em dataTransfer.data, mescla com o body
-    if (dataTransfer.data?.processNumber) {
+    if (dataTransfer.data?.processNumber && verb !== "get" ) {
     obj.processNumber = dataTransfer.data.processNumber;
   }
 
@@ -63,7 +65,6 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
     console.log("Body enviado:", obj);
   }
 
-  const verb = route.verb.toLowerCase();
   let headers = {};
   let originalResponse;
   const sendCookie = await shouldSendCookie();
