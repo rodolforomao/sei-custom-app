@@ -6,6 +6,7 @@ import * as store from 'model/store.js';
 import * as handler from 'model/handler.js';
 import * as alert from 'view/alert.js';
 import { getDefaultBoardAndListFromStorage } from './utils.js';
+import * as dom from './../entries/process_list/dom.js';
 
 const DEFAULT_SYNC_ERROR_MSG = `Erro durante a sincronização dos dados. Verifique se as credenciais informadas nas <a href="#" class="btn-open-extension-option">opções</a> estão corretas e se o quadro e a lista padrão foram informados. Caso positivo, tente novamente mais tarde, pois os servidores podem estar fora do ar. Se o problema persistir, entre em contato com o suporte.`;
 
@@ -138,7 +139,11 @@ export const refreshCardData = (cardID) => {
 
 export const refreshCards = (processNumber) => {
   store.setIsLoading(true);
-  doRefreshCards(processNumber)
+  const processNumbers = dom.getProcessNumbersFromDom();
+  doRefreshCards({
+    processNumbers,
+    processAlls: true
+  })
     .then(() => {
       store.setIsLoading(false);
     })

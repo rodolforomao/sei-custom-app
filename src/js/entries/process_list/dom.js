@@ -91,3 +91,8 @@ export const prepare = () => {
 
   return processNumbers;
 };
+
+export const getProcessNumbersFromDom = () => {
+  const anchors = document.querySelectorAll('[data-trello-process-anchor]');
+  return Array.from(anchors).map(anchor => anchor.textContent.trim());
+};
