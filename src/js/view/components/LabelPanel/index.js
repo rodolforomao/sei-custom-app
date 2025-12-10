@@ -38,16 +38,20 @@ const LabelPanelContainer = ({ boardID, cardID, cardLabels, onClose }) => {
   const onCreate = async (label) => {
     setLoading(true);
     try {
-      const {
-        data: { id },
-      } = await api.createLabel(boardID, cardID, label);
-      await api.addLabelToCard(cardID, id);
+      const { data } = await api.createLabel(boardID, cardID, label);
       await actions.doRefreshCardsWithID(cardID);
       await fetchLabels();
+      alert.success(data.message);
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      alert.error('Não foi possível criar a etiqueta.');
+
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Não foi possível criar a etiqueta.';
+
+      alert.error(message);
       onClose();
     }
   };

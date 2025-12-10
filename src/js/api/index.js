@@ -104,7 +104,7 @@ export const doRequestAPI = async (routeId, dataTransfer) => {
     }
   } catch (e) {
     console.log("Ocorreu um erro ao tentar fazer a requisição para o servidor na rota %d: %o", routeId, e);
-    return null;
+    throw e;
   }
   if (process.env.NODE_ENV === 'development') {
     console.log("[FIM] Rota %o - %o", routeId, url);
@@ -212,7 +212,7 @@ const sendRequest = async (url, method, params, data, headers, withCredentials, 
     }
     // Se não for 401, ou se não quis fazer login novamente, retorna o erro
     console.log("Erro ao tentar enviar requisição: %o", e);
-    return null;
+    throw e;
   }
 };
 
