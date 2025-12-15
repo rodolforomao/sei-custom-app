@@ -139,11 +139,13 @@ export const refreshCardData = (cardID) => {
 
 export const refreshCards = (processNumber) => {
   store.setIsLoading(true);
-  const processNumbers = dom.getProcessNumbersFromDom();
-  doRefreshCards({
-    processNumbers,
-    processAlls: true
-  })
+
+  // Se processNumber existir, passa ele, senão passa todos do DOM
+  const numberProcess = processNumber
+    ? processNumber
+    : { processNumbers: dom.getProcessNumbersFromDom(), processAlls: true };
+
+  doRefreshCards(numberProcess)
     .then(() => {
       store.setIsLoading(false);
     })
@@ -154,6 +156,7 @@ export const refreshCards = (processNumber) => {
       store.resetData();
     });
 };
+
 
 export const updateCardData = (cardID, newCardData) => {
   Object.assign(newCardData, { isLoading: true });
