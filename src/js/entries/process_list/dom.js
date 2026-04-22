@@ -33,7 +33,7 @@ const extractRelevantDataFromRow = (row) => {
 };
 
 const addTrelloCommandButtons = () => {
-  const whereToAdd = document.querySelector('#divComandos');
+  const whereToAdd = document.querySelector('.barraBotoesSEI');
 
   let placeholder = document.createElement('div');
   placeholder.classList.add('trello-refresh-button');

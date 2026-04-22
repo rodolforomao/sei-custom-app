@@ -9,7 +9,7 @@ export const getCards = (cardList, filteredProcessNumber = null) => {
   let cards = [];
   cardList.forEach((cardFromTrello) => {
     let match = null;
-    let description = cardFromTrello.desc;
+    let description = cardFromTrello.desc || '';
     let processList = [];
     // Verifica se o backend já retornou uma lista de processos associados a este cartão
     if (cardFromTrello.seiNumbers) {
